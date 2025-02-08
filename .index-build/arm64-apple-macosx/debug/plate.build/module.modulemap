@@ -1,0 +1,4 @@
+module plate {
+    header "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate-Swift.h"
+    requires objc
+}

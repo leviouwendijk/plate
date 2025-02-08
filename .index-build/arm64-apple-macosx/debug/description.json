@@ -1,0 +1,394 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.plate-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/sources",
+      "importPath" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/align.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ansi.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ascii.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/box.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/bundle.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/capitalization.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/case-conversion.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/clipboard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/convert-types.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/date.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/debug.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/indent.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/json.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/network-request.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/plate.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/spacer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/vat.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "plate",
+      "moduleOutputPath" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/Modules/plate.swiftmodule",
+      "objects" : [
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/align.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/ansi.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/ascii.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/box.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/bundle.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/capitalization.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/case-conversion.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/clipboard.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/convert-types.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/date.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/debug.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/indent.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/json.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/network-request.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/rounding.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/spacer.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/vat.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-enable-batch-mode",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate-Swift.h",
+        "-swift-version",
+        "6",
+        "-enable-library-evolution",
+        "-emit-module-interface-path",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/Modules/plate.swiftinterface",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-F",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "plate"
+      ],
+      "outputFileMapPath" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/Modules/plate.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/align.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ansi.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ascii.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/box.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/bundle.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/capitalization.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/case-conversion.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/clipboard.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/convert-types.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/date.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/debug.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/indent.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/json.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/network-request.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/plate.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/spacer.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/vat.swift"
+      ],
+      "tempsPath" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "plate" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "plate",
+      "-package-name",
+      "plate",
+      "-incremental",
+      "-c",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/align.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ansi.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ascii.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/box.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/bundle.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/capitalization.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/case-conversion.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/clipboard.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/convert-types.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/date.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/debug.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/indent.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/json.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/network-request.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/plate.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/spacer.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/vat.swift",
+      "-I",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-enable-batch-mode",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate-Swift.h",
+      "-swift-version",
+      "6",
+      "-enable-library-evolution",
+      "-emit-module-interface-path",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/Modules/plate.swiftinterface",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-F",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "plate",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "plate" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "writeCommands" : {
+    "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/align.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ansi.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/ascii.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/box.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/bundle.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/capitalization.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/case-conversion.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/clipboard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/convert-types.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/date.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/debug.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/indent.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/json.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/network-request.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/plate.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/spacer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/vat.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/sources"
+    },
+    "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+    }
+  }
+}

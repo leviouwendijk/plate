@@ -14,7 +14,38 @@ import Foundation
 // Set timezone variable
 public enum CustomTimeZone: String {
     case utc = "UTC"
-    case amsterdam = "Europe/Amsterdam"
+    
+    // North America
+    case hawaii = "Pacific/Honolulu"         // UTC-10
+    case alaska = "America/Anchorage"         // UTC-9
+    case pacific = "America/Los_Angeles"        // UTC-8
+    case mountain = "America/Denver"          // UTC-7
+    case central = "America/Chicago"          // UTC-6
+    case eastern = "America/New_York"         // UTC-5
+    case atlantic = "America/Halifax"         // UTC-4
+    
+    // South America
+    case brazil = "America/Sao_Paulo"         // UTC-3
+    
+    // Europe & Africa
+    case london = "Europe/London"             // UTC+0
+    case amsterdam = "Europe/Amsterdam"       // UTC+1
+    case athens = "Europe/Athens"             // UTC+2
+    case moscow = "Europe/Moscow"             // UTC+3
+    
+    // Middle East & South Asia
+    case dubai = "Asia/Dubai"                 // UTC+4
+    case kolkata = "Asia/Kolkata"             // UTC+5:30
+    case dhaka = "Asia/Dhaka"                 // UTC+6
+    
+    // Southeast Asia
+    case bangkok = "Asia/Bangkok"             // UTC+7
+    case hongKong = "Asia/Hong_Kong"           // UTC+8
+    
+    // East Asia & Oceania
+    case tokyo = "Asia/Tokyo"                 // UTC+9
+    case sydney = "Australia/Sydney"          // UTC+10
+    case auckland = "Pacific/Auckland"        // UTC+12
     
     var set: TimeZone {
         return TimeZone(identifier: self.rawValue) ?? TimeZone.current
@@ -35,11 +66,11 @@ func defaultDate() -> Date {
 
 // DateComponents -> Date
 public protocol DateConvertible {
-    func toDate(using calendar: Calendar, timezone: CustomTimeZone) -> Date
+    func toDate(using calendar: Calendar,_ timezone: CustomTimeZone) -> Date
 }
 
 extension DateComponents: DateConvertible {
-    public func toDate(using calendar: Calendar = .current, timezone: CustomTimeZone = .amsterdam) -> Date {
+    public func toDate(using calendar: Calendar = .current,_ timezone: CustomTimeZone = .amsterdam) -> Date {
         var calendar = calendar
         calendar.timeZone = timezone.set
 
@@ -53,11 +84,11 @@ extension DateComponents: DateConvertible {
 
 // String -> DateComponents
 public protocol DateRetrievable {
-    func date() -> Date
+    func date(_ timezone: CustomTimeZone) -> Date
 }
 
 extension String {
-    public func date() -> Date {
+    public func date(_ timezone: CustomTimeZone = .amsterdam) -> Date {
         let components = self.split(separator: "-")
 
         guard components.count == 3,
@@ -75,7 +106,7 @@ extension String {
         dateComponents.month = month
         dateComponents.day = day
 
-        return dateComponents.toDate() // will either return date from inputs or defaultDate() value
+        return dateComponents.toDate(timezone) // will either return date from inputs or defaultDate() value
     }
 }
 
@@ -90,7 +121,7 @@ public enum DateStyle {
 }
 
 extension Date: Formattable {
-    public func format(to timezone: CustomTimeZone = .amsterdam,_ style: DateStyle) -> String {
+    public func format(to timezone: CustomTimeZone = .amsterdam,_ style: DateStyle = .dateTime) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = timezone.set
         

@@ -62,15 +62,29 @@ public enum ANSIColor: String {
     case cursorPosition = "\u{001B}[{line};{column}H"
     case clearLine = "\u{001B}[2K"
     case clearScreen = "\u{001B}[2J"
+
+    public static func rgb(_ r: Int,_ g: Int,_ b: Int, _ background: Bool = false) -> String {
+        if !background {
+            return "\u{001B}[38;2;\(r);\(g);\(b)m"
+        } else {
+            return "\u{001B}[48;2;\(r);\(g);\(b)m"
+        }
+    }
 }
 
 public protocol StringANSIFormattable {
     func ansi(_ colors: ANSIColor...) -> String
+    func ansiRGB(_ r: Int, _ g: Int, _ b: Int, _ background: Bool) -> String
 }
 
 extension String: StringANSIFormattable {
     public func ansi(_ colors: ANSIColor...) -> String {
         let colorCodes = colors.map { $0.rawValue }.joined()
         return "\(colorCodes)\(self)\(ANSIColor.reset.rawValue)"
+    }
+
+    public func ansiRGB(_ r: Int, _ g: Int, _ b: Int, _ background: Bool = false) -> String {
+        let colorCode = ANSIColor.rgb(r, g, b, background)
+        return "\(colorCode)\(self)\(ANSIColor.reset.rawValue)"
     }
 }

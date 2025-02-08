@@ -1,0 +1,331 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.0.3 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)
+// swift-module-flags: -target arm64-apple-macosx10.13 -enable-objc-interop -enable-library-evolution -swift-version 6 -Onone -module-name plate -package-name plate
+import AppKit
+import Foundation
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public enum Alignment {
+  case left
+  case right
+  public static func == (a: plate.Alignment, b: plate.Alignment) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol Alignable {
+  func align(_ side: plate.Alignment, _ width: Swift.Int) -> Swift.String
+}
+extension Swift.String : plate.Alignable {
+  public func align(_ side: plate.Alignment, _ width: Swift.Int = 80) -> Swift.String
+}
+public enum ANSIColor : Swift.String {
+  case reset
+  case bold
+  case dim
+  case italic
+  case underline
+  case blink
+  case inverse
+  case hidden
+  case strikethrough
+  case black
+  case red
+  case green
+  case yellow
+  case blue
+  case magenta
+  case cyan
+  case white
+  case defaultText
+  case brightBlack
+  case brightRed
+  case brightGreen
+  case brightYellow
+  case brightBlue
+  case brightMagenta
+  case brightCyan
+  case brightWhite
+  case blackBackground
+  case redBackground
+  case greenBackground
+  case yellowBackground
+  case blueBackground
+  case magentaBackground
+  case cyanBackground
+  case whiteBackground
+  case defaultBackground
+  case brightBlackBackground
+  case brightRedBackground
+  case brightGreenBackground
+  case brightYellowBackground
+  case brightBlueBackground
+  case brightMagentaBackground
+  case brightCyanBackground
+  case brightWhiteBackground
+  case cursorUp
+  case cursorDown
+  case cursorRight
+  case cursorLeft
+  case cursorPosition
+  case clearLine
+  case clearScreen
+  public static func rgb(_ r: Swift.Int, _ g: Swift.Int, _ b: Swift.Int, _ background: Swift.Bool = false) -> Swift.String
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public protocol StringANSIFormattable {
+  func ansi(_ colors: plate.ANSIColor...) -> Swift.String
+  func ansiRGB(_ r: Swift.Int, _ g: Swift.Int, _ b: Swift.Int, _ background: Swift.Bool) -> Swift.String
+}
+extension Swift.String : plate.StringANSIFormattable {
+  public func ansi(_ colors: plate.ANSIColor...) -> Swift.String
+  public func ansiRGB(_ r: Swift.Int, _ g: Swift.Int, _ b: Swift.Int, _ background: Swift.Bool = false) -> Swift.String
+}
+public let asciiLetters: [Swift.Character : [Swift.String]]
+public func asciify(_ text: Swift.String)
+public protocol ASCIIable {
+  func ascii() -> Swift.String
+}
+extension Swift.String : plate.ASCIIable {
+  public func ascii() -> Swift.String
+}
+public func stripANSI(_ string: Swift.String) -> Swift.String
+public func createBox(for content: Swift.String) -> Swift.String
+public enum Selection {
+  case first
+  case all
+  case varied
+  public static func == (a: plate.Selection, b: plate.Selection) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol Capitalization {
+  func capitalize(_ selection: plate.Selection) -> Swift.String
+}
+extension Swift.String : plate.Capitalization {
+  public func capitalize(_ selection: plate.Selection) -> Swift.String
+}
+public func convertToSnakeCase(_ input: Swift.String) -> Swift.String
+public func convertToCamelCase(_ input: Swift.String) -> Swift.String
+public protocol CamelSnakeConvertible {
+  func snake() -> Swift.String
+  func camel() -> Swift.String
+}
+extension plate.CamelSnakeConvertible where Self : Swift.RawRepresentable, Self.RawValue == Swift.String {
+  public func snake() -> Swift.String
+  public func camel() -> Swift.String
+}
+extension Swift.String {
+  public func snake() -> Swift.String
+  public func camel() -> Swift.String
+}
+extension Swift.CodingKey {
+  public var snakeCase: Swift.String {
+    get
+  }
+  public var camelCase: Swift.String {
+    get
+  }
+}
+extension Foundation.JSONEncoder {
+  public static func snakeCaseEncoder() -> Foundation.JSONEncoder
+  public static func camelCaseEncoder() -> Foundation.JSONEncoder
+}
+extension Foundation.JSONDecoder {
+  public static func snakeCaseDecoder() -> Foundation.JSONDecoder
+  public static func camelCaseDecoder() -> Foundation.JSONDecoder
+}
+public struct AnyKey : Swift.CodingKey {
+  public var stringValue: Swift.String
+  public var intValue: Swift.Int?
+  public init?(stringValue: Swift.String)
+  public init?(intValue: Swift.Int)
+}
+public struct CustomStrategies {
+  public static func encodeCamelToSnake() -> Foundation.JSONEncoder.KeyEncodingStrategy
+  public static func encodeSnakeToCamel() -> Foundation.JSONEncoder.KeyEncodingStrategy
+  public static func decodeFromSnakeToCamel() -> Foundation.JSONDecoder.KeyDecodingStrategy
+  public static func decodeFromCamelToSnake() -> Foundation.JSONDecoder.KeyDecodingStrategy
+}
+public protocol QuicklyEncodable : Swift.Encodable {
+}
+public protocol QuicklyDecodable : Swift.Decodable {
+}
+extension Foundation.Data {
+  public func toJSONString(encoding: Swift.String.Encoding = .utf8) -> Swift.String?
+}
+extension plate.QuicklyEncodable {
+  public func quickEncode(encodingStrategy: Foundation.JSONEncoder.KeyEncodingStrategy = CustomStrategies.encodeCamelToSnake(), outputFormatting: Foundation.JSONEncoder.OutputFormatting = .prettyPrinted) -> Swift.String?
+}
+extension plate.QuicklyDecodable {
+  public static func quickDecode(from jsonString: Swift.String, decodingStrategy: Foundation.JSONDecoder.KeyDecodingStrategy = CustomStrategies.decodeFromSnakeToCamel()) -> Self?
+}
+public func copyToClipboard(_ text: Swift.String)
+public func copyNSToClipboard(_ attributedString: Foundation.NSAttributedString)
+public protocol StringCopyable {
+  func sCopy()
+}
+extension Swift.String : plate.StringCopyable {
+  public func sCopy()
+}
+public protocol NSAttributedStringCopyable {
+  func nsCopy()
+}
+extension Foundation.NSAttributedString : plate.NSAttributedStringCopyable {
+  public func nsCopy()
+}
+public enum CustomTimeZone : Swift.String {
+  case utc
+  case hawaii
+  case alaska
+  case pacific
+  case mountain
+  case central
+  case eastern
+  case atlantic
+  case brazil
+  case london
+  case amsterdam
+  case athens
+  case moscow
+  case dubai
+  case kolkata
+  case dhaka
+  case bangkok
+  case hongKong
+  case tokyo
+  case sydney
+  case auckland
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum DateConversionError : Swift.Error {
+  case invalidDateComponents
+  case invalidStringPassed
+  public static func == (a: plate.DateConversionError, b: plate.DateConversionError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol DateConvertible {
+  func toDate(using calendar: Foundation.Calendar, _ timezone: plate.CustomTimeZone) -> Foundation.Date
+}
+extension Foundation.DateComponents : plate.DateConvertible {
+  public func toDate(using calendar: Foundation.Calendar = .current, _ timezone: plate.CustomTimeZone = .amsterdam) -> Foundation.Date
+}
+public protocol DateRetrievable {
+  func date(_ timezone: plate.CustomTimeZone) -> Foundation.Date
+}
+extension Swift.String {
+  public func date(_ timezone: plate.CustomTimeZone = .amsterdam) -> Foundation.Date
+}
+public protocol Formattable {
+  func format(to timezone: plate.CustomTimeZone, _ style: plate.DateStyle) -> Swift.String
+}
+public enum DateStyle {
+  case date
+  case dateTime
+  public static func == (a: plate.DateStyle, b: plate.DateStyle) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Foundation.Date : plate.Formattable {
+  public func format(to timezone: plate.CustomTimeZone = .amsterdam, _ style: plate.DateStyle = .dateTime) -> Swift.String
+}
+public protocol StringIndentable {
+  func indent(_ indentation: Swift.Int) -> Swift.String
+}
+extension Swift.String : plate.StringIndentable {
+  public func indent(_ indentation: Swift.Int = 4) -> Swift.String
+}
+public func loadDataFromFile(_ filePath: Swift.String) -> Foundation.Data?
+public func decodeJSON<T>(_ data: Foundation.Data, as type: T.Type) -> T? where T : Swift.Decodable
+public func requestHTTP(url: Foundation.URL, httpMethod: Swift.String, headers: [Swift.String : Swift.String]? = nil, body: Foundation.Data?, logDebug: Swift.Bool = false, completion: @escaping @Sendable (Swift.Bool, Foundation.Data?, (any Swift.Error)?) -> Swift.Void)
+public func roundedToInt(_ value: Swift.Double) -> Swift.Int
+extension Swift.Double {
+  public func rounded(toPlaces places: Swift.Int) -> Swift.Double
+}
+public protocol Roundable {
+  func roundTo(_ multiple: Self) -> Self
+}
+extension Swift.Double : plate.Roundable {
+  public func roundTo(_ multiple: Swift.Double) -> Swift.Double
+}
+extension Swift.Int : plate.Roundable {
+  public func roundTo(_ multiple: Swift.Int) -> Swift.Int
+}
+public func printSpacerBasic(_ lines: Swift.Int)
+public enum LineStyle {
+  case blank
+  case hash
+  case line
+  case dot
+  public static func == (a: plate.LineStyle, b: plate.LineStyle) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public func printSpacer(_ lines: Swift.Int = 1, _ style: plate.LineStyle? = .blank, _ length: Swift.Int = 80)
+public struct Divider {
+  public let separator: plate.LineStyle
+  public let separatorLines: Swift.Int
+  public let length: Swift.Int
+  public let whitelines: Swift.Int
+  public init(separator: plate.LineStyle, separatorLines: Swift.Int, length: Swift.Int, whitelines: Swift.Int)
+}
+public func makeDividerFromConfig(_ dividerConfig: plate.Divider) -> () -> Swift.Void
+public enum VAT {
+  case vat
+  case revenue
+  public static func == (a: plate.VAT, b: plate.VAT) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol ValueAddedTaxableDouble {
+  func vat(_ vatRate: Swift.Int, _ calculatedValue: plate.VAT) -> Swift.Double
+}
+public protocol ValueAddedTaxableInt {
+  func vat(_ vatRate: Swift.Int, _ calculatedValue: plate.VAT) -> Swift.Int
+}
+extension Swift.Double : plate.ValueAddedTaxableDouble {
+  public func vat(_ vatRate: Swift.Int = 21, _ calculatedValue: plate.VAT = .vat) -> Swift.Double
+}
+extension Swift.Int : plate.ValueAddedTaxableInt {
+  public func vat(_ vatRate: Swift.Int = 21, _ calculatedValue: plate.VAT = .vat) -> Swift.Int
+}
+extension plate.Alignment : Swift.Equatable {}
+extension plate.Alignment : Swift.Hashable {}
+extension plate.ANSIColor : Swift.Equatable {}
+extension plate.ANSIColor : Swift.Hashable {}
+extension plate.ANSIColor : Swift.RawRepresentable {}
+extension plate.Selection : Swift.Equatable {}
+extension plate.Selection : Swift.Hashable {}
+extension plate.CustomTimeZone : Swift.Equatable {}
+extension plate.CustomTimeZone : Swift.Hashable {}
+extension plate.CustomTimeZone : Swift.RawRepresentable {}
+extension plate.DateConversionError : Swift.Equatable {}
+extension plate.DateConversionError : Swift.Hashable {}
+extension plate.DateStyle : Swift.Equatable {}
+extension plate.DateStyle : Swift.Hashable {}
+extension plate.LineStyle : Swift.Equatable {}
+extension plate.LineStyle : Swift.Hashable {}
+extension plate.VAT : Swift.Equatable {}
+extension plate.VAT : Swift.Hashable {}

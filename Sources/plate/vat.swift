@@ -14,7 +14,7 @@ public protocol ValueAddedTaxableInt {
 }
 
 extension Double: ValueAddedTaxableDouble {
-    public func vat(_ vatRate: Int = 21, _ calculatedValue: VAT) -> Double {
+    public func vat(_ vatRate: Int = 21, _ calculatedValue: VAT = .vat) -> Double {
         let vatRateDouble = Double(vatRate)
         switch calculatedValue {
         case .vat:
@@ -26,7 +26,7 @@ extension Double: ValueAddedTaxableDouble {
 }
 
 extension Int: ValueAddedTaxableInt {
-    public func vat(_ vatRate: Int = 21, _ calculatedValue: VAT) -> Int {
+    public func vat(_ vatRate: Int = 21, _ calculatedValue: VAT = .vat) -> Int {
         let doubleValue = Double(self)
         let vatRateDouble = Double(vatRate)
         let result: Double

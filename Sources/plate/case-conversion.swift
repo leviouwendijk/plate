@@ -107,15 +107,15 @@ extension JSONDecoder {
 
 // Define a generic CodingKey that allows dynamic key conversion
 public struct AnyKey: CodingKey {
-    var stringValue: String
-    var intValue: Int?
+    public var stringValue: String
+    public var intValue: Int?
 
-    init?(stringValue: String) {
+    public init?(stringValue: String) {
         self.stringValue = stringValue
         self.intValue = nil
     }
 
-    init?(intValue: Int) {
+    public init?(intValue: Int) {
         self.stringValue = "\(intValue)"
         self.intValue = intValue
     }
@@ -165,7 +165,7 @@ extension Data {
 }
 
 extension QuicklyEncodable {
-    public public func quickEncode(
+    public func quickEncode(
         encodingStrategy: JSONEncoder.KeyEncodingStrategy = CustomStrategies.encodeCamelToSnake(),
         outputFormatting: JSONEncoder.OutputFormatting = .prettyPrinted
     ) -> String? {
