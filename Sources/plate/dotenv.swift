@@ -7,7 +7,7 @@ public struct DotEnv {
         var finalPath = ""
         var traversals = traverse
 
-        while traverse > 0 {
+        while traversals > 0 {
             finalPath.append("../")
             traversals -= 1
         }
