@@ -68,6 +68,12 @@
     "swiftmodule": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/debug~partial.swiftmodule",
     "swift-dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/debug.swiftdeps"
   },
+  "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/dotenv.swift": {
+    "dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/dotenv.d",
+    "object": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/dotenv.swift.o",
+    "swiftmodule": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/dotenv~partial.swiftmodule",
+    "swift-dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/dotenv.swiftdeps"
+  },
   "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/indent.swift": {
     "dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/indent.d",
     "object": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/indent.swift.o",
@@ -91,6 +97,12 @@
     "object": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate.swift.o",
     "swiftmodule": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate~partial.swiftmodule",
     "swift-dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate.swiftdeps"
+  },
+  "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/printable.swift": {
+    "dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/printable.d",
+    "object": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/printable.swift.o",
+    "swiftmodule": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/printable~partial.swiftmodule",
+    "swift-dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/printable.swiftdeps"
   },
   "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift": {
     "dependencies": "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/rounding.d",

@@ -270,7 +270,7 @@ extension Swift.Int : plate.Roundable {
   public func roundTo(_ multiple: Swift.Int) -> Swift.Int
 }
 public func printSpacerBasic(_ lines: Swift.Int)
-public enum LineStyle {
+public enum LineStyle : Swift.Sendable {
   case blank
   case hash
   case line
@@ -290,6 +290,7 @@ public struct Divider {
   public init(separator: plate.LineStyle, separatorLines: Swift.Int, length: Swift.Int, whitelines: Swift.Int)
 }
 public func makeDividerFromConfig(_ dividerConfig: plate.Divider) -> () -> Swift.Void
+public func defaultDivider()
 public enum VAT {
   case vat
   case revenue

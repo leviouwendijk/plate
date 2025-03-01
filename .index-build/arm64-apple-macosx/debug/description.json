@@ -84,6 +84,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/printable.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift"
         },
         {
@@ -122,6 +126,7 @@
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/json.swift.o",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/network-request.swift.o",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/plate.swift.o",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/printable.swift.o",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/rounding.swift.o",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/spacer.swift.o",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/.index-build/arm64-apple-macosx/debug/plate.build/vat.swift.o"
@@ -195,6 +200,7 @@
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/json.swift",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/network-request.swift",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/plate.swift",
+        "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/printable.swift",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/spacer.swift",
         "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/vat.swift"
@@ -230,6 +236,7 @@
       "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/json.swift",
       "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/network-request.swift",
       "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/plate.swift",
+      "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/printable.swift",
       "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/rounding.swift",
       "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/spacer.swift",
       "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/vat.swift",
@@ -360,6 +367,10 @@
         {
           "kind" : "file",
           "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/plate.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/leviouwendijk/myworkdir/programming/libraries/plate/Sources/plate/printable.swift"
         },
         {
           "kind" : "file",

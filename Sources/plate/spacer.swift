@@ -14,7 +14,7 @@ public func printSpacerBasic(_ lines: Int) {
 // Defining particular characters and printing a set length 
 
 // Setting up an enumeration
-public enum LineStyle {
+public enum LineStyle: Sendable {
     case blank
     case hash
     case line
@@ -62,4 +62,14 @@ public func makeDividerFromConfig(_ dividerConfig: Divider) -> () -> Void {
         printSpacer(div.separatorLines, div.separator, div.length)
         printSpacer(div.whitelines, .blank)
     }
+}
+
+public func defaultDivider() { 
+    let dividerConfig: Divider = Divider(
+        separator: .line, 
+        separatorLines: 1,
+        length: 60,
+        whitelines: 2
+    )
+    makeDividerFromConfig(dividerConfig)()
 }
