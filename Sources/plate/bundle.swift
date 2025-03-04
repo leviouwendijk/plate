@@ -21,3 +21,24 @@ public func getResource(_ resource: String) -> String {
     // return Bundle.module.path(forResource: filename, ofType: filetype) ?? ""
     return Bundle.main.path(forResource: filename, ofType: filetype) ?? ""
 }
+
+public struct SplitResource {
+    let name: String
+    let filetype: String
+}
+
+public func splitFile(_ resource: String) -> SplitResource {
+    let empty = SplitResource(name: "null", filetype: "null") 
+
+    let components = resource.split(separator: ".")
+
+    guard components.count == 2 else {
+        print("Error: Invalid resource name format. Use 'filename.extension'.")
+        return empty 
+    }
+
+    let filename = String(components[0])
+    let filetype = String(components[1])
+
+    return SplitResource(name: filename, filetype: filetype)
+}
