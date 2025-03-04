@@ -5,6 +5,11 @@ import Foundation
 public func getResource(_ resource: String) -> String {
     let components = resource.split(separator: ".")
 
+    // If no extension is provided, assume it's a directory
+    if components.count == 1 {
+        return Bundle.main.path(forResource: resource, ofType: nil) ?? ""
+    }
+
     guard components.count == 2 else {
         print("Error: Invalid resource name format. Use 'filename.extension'.")
         return ""
