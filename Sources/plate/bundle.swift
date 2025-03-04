@@ -2,7 +2,7 @@
 // just pass a single file string
 import Foundation
 
-func getResource(_ resource: String) -> String {
+public func getResource(_ resource: String) -> String {
     let components = resource.split(separator: ".")
 
     guard components.count == 2 else {
