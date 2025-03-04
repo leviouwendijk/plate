@@ -23,8 +23,8 @@ public func getResource(_ resource: String) -> String {
 }
 
 public struct SplitResource {
-    let name: String
-    let filetype: String
+    public let name: String
+    public let filetype: String
 }
 
 public func splitFile(_ resource: String) -> SplitResource {
