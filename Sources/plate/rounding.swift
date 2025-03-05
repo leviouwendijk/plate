@@ -5,10 +5,18 @@ public func roundedToInt(_ value: Double) -> Int {
     return Int(value.rounded())
 }
 
-// Extension to round double to specified decimal places
+// backwards compatibility
 extension Double {
     public func rounded(toPlaces places: Int) -> Double {
         let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
+    }
+}
+
+// new extension to round faster, to 2 decimals by default
+extension Double {
+    public func rnd(_ decimals: Int = 2) -> Double {
+        let divisor = pow(10.0, Double(decimals))
         return (self * divisor).rounded() / divisor
     }
 }
