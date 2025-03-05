@@ -40,13 +40,12 @@ extension Int: Roundable {
     }
 }
 
-// formatting Doubles inline to decimal-rounded String
 public protocol StringRoundable {
-    func strnd(_ value: Self,_ decimals: Int) -> String
+    func strnd(_ decimals: Int) -> String
 }
 
 extension Double: StringRoundable {
-    public func strnd(_ value: Double,_ decimals: Int = 2) -> String {
-        return String(format: "%.\(decimals)f", value)
+    public func strnd(_ decimals: Int = 2) -> String {
+        return String(format: "%.\(decimals)f", self)
     }
 }
