@@ -5,6 +5,8 @@ import Foundation
 // }
 
 public struct Directories {
+    public init() {}
+
     public struct Home {
         public init() {}
 
