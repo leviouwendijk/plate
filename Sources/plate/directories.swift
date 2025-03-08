@@ -6,11 +6,13 @@ import Foundation
 
 public struct Directories {
     public struct Home {
-        public func asURL() -> URL {
+        public init() {}
+
+        public func url() -> URL {
             return FileManager.default.homeDirectoryForCurrentUser
         }
 
-        public func asString() -> String {
+        public func string() -> String {
             return "\(FileManager.default.homeDirectoryForCurrentUser)"
         }
     }
