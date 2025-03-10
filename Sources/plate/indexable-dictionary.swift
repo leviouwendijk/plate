@@ -1,5 +1,7 @@
 import Foundation
 
+// experimental phase:
+
 public struct IndexableDictionary<Key: Hashable & Codable, Value: Codable>: Codable {
     public var keys: [Key] = []
     public var values: [Key: Value] = [:]
