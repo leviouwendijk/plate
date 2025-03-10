@@ -9,5 +9,5 @@ DerivedData/
 
 .index-build/
 
-libplate.dylib.dSYM
-libplate.dylib
+# libplate.dylib.dSYM
+# libplate.dylib
