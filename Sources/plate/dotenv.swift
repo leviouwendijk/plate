@@ -35,3 +35,10 @@ public struct DotEnv {
         }
     }
 }
+
+public func environment(_ variable: String) -> String {
+    guard let value = ProcessInfo.processInfo.environment[variable] else {
+        fatalError("Environment variable \(variable) not found!")
+    }
+    return value
+}
