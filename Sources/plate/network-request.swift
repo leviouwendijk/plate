@@ -1,30 +1,64 @@
 import Foundation
 
+public enum Authorization: Sendable {
+    case none
+    case login(username: String, password: String)
+    case bearer(token: String)
+    case custom(header: String, value: String)
+}
+
 public enum HTTPMethod: String, Sendable {
     case get = "GET"
-    case put = "PUT"
     case post = "POST"
+    case put = "PUT"
+    case delete = "DELETE"  
+    case patch = "PATCH"    
+    case head = "HEAD"      
+    case options = "OPTIONS" 
+    case trace = "TRACE"    
+    case connect = "CONNECT" 
 }
 
 public struct NetworkRequest: Sendable {
     public let url: URL
     public let method: HTTPMethod
-    public let headers: [String: String]
+    public let auth: Authorization
+    public var headers: [String: String]
     public let body: Data?
     public let log: Bool
 
     public init(
         url: URL,
         method: HTTPMethod,
+        auth: Authorization,
         headers: [String: String] = [:],
         body: Data? = nil,
         log: Bool = false
     ) {
         self.url = url
         self.method = method
-        self.headers = headers
+        self.auth = auth
         self.body = body
         self.log = log
+        self.headers = [:]
+
+        var completeHeaders = headers
+        completeHeaders.merge(authorizationHeader(auth)) { (_, new) in new }
+        self.headers = completeHeaders
+    }
+
+    private func authorizationHeader(_ auth: Authorization) -> [String: String] {
+        switch auth {
+        case .none:
+            return [:]
+        case .login(let username, let password):
+            let credentials = "\(username):\(password)".data(using: .utf8)?.base64EncodedString() ?? ""
+            return ["Authorization": "Basic \(credentials)"]
+        case .bearer(let token):
+            return ["Authorization": "Bearer \(token)"]
+        case .custom(let header, let value):
+            return [header: value]
+        }
     }
     
     public func execute(completion: @escaping @Sendable (Bool, Data?, Error?) -> Void) {
