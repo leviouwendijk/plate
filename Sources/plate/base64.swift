@@ -16,6 +16,19 @@ extension URL: Base64Encodable {
     }
 }
 
+extension String: Base64Encodable {
+    public func base64() -> String? {
+        do {
+            let url = URL(fileURLWithPath: self)
+            let fileData = try Data(contentsOf: url)
+            return fileData.base64EncodedString()
+        } catch {
+            print("Error reading file: \(error)".ansi(.red))
+            return nil
+        }
+    }
+}
+
 public protocol Base64Decodable {
     func base64() -> Data?
 }
