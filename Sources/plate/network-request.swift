@@ -1,10 +1,16 @@
 import Foundation
 
+public enum APIKey: String, Sendable {
+    case lowercase = "x-api-key"
+    case uppercase = "X-API-Key"
+}
+
 public enum Authorization: Sendable {
     case none
     case login(username: String, password: String)
     case bearer(token: String)
     case custom(header: String, value: String)
+    case apikey(header: String = APIKey.lowercase.rawValue, value: String)
 }
 
 public enum HTTPMethod: String, Sendable {
@@ -57,6 +63,8 @@ public struct NetworkRequest: Sendable {
         case .bearer(let token):
             return ["Authorization": "Bearer \(token)"]
         case .custom(let header, let value):
+            return [header: value]
+        case .apikey(let header, let value):
             return [header: value]
         }
     }
