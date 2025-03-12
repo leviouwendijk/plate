@@ -12,6 +12,6 @@ public struct Home {
     }
 
     public static func string() -> String {
-        return "\(FileManager.default.homeDirectoryForCurrentUser)"
+        return FileManager.default.homeDirectoryForCurrentUser.path
     }
 }
