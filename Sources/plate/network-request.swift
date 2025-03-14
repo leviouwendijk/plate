@@ -83,21 +83,36 @@ public struct NetworkRequest: Sendable {
             }
 
             if let error = error {
-                completion(false, nil, error)
+                completion(false, data, error)
                 return
             }
 
-            guard let data = data, let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
-                let statusError = NSError(
+            guard let httpResponse = response as? HTTPURLResponse else {
+                let unknownError = NSError(
                     domain: "HTTPError",
-                    code: (response as? HTTPURLResponse)?.statusCode ?? -1,
-                    userInfo: [NSLocalizedDescriptionKey: "Request failed"]
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Unknown response"]
                 )
-                completion(false, nil, statusError)
+                completion(false, data, unknownError)
                 return
             }
-            
-            completion(true, data, nil)
+
+            if (200..<300).contains(httpResponse.statusCode) {
+                completion(true, data, nil)
+            } else {
+                let errorMessage: String
+                if let data = data, let message = String(data: data, encoding: .utf8) {
+                    errorMessage = message
+                } else {
+                    errorMessage = "Request failed with status code \(httpResponse.statusCode)"
+                }
+                let statusError = NSError(
+                    domain: "HTTPError",
+                    code: httpResponse.statusCode,
+                    userInfo: [NSLocalizedDescriptionKey: errorMessage]
+                )
+                completion(false, data, statusError)
+            }
         }.resume()
     }
 }
