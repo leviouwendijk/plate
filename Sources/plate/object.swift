@@ -62,12 +62,14 @@ public struct BuildObjectDetails: Codable {
     public let version: ObjectVersion
     public let details: String
     public let location: String
+    public let date: Date
 
-    public init(name: String, version: ObjectVersion, details: String, location: String) {
+    public init(name: String, version: ObjectVersion, details: String, location: String, date: Date) {
         self.name = name
         self.version = version
         self.details = details
         self.location = location
+        self.date = date
     }
 }
 
