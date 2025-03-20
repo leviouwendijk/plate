@@ -43,7 +43,7 @@ public struct ObjectVersion: Codable {
 }
 
 // for local repository build info: object.pkl 
-struct BuildObjectConfiguration: Codable {
+public struct BuildObjectConfiguration: Codable {
     public let name: String
     public let type: ExecutableObjectType
     public let version: ObjectVersion
@@ -57,7 +57,7 @@ struct BuildObjectConfiguration: Codable {
     }
 }
 
-struct BuildObjectDetails: Codable {
+public struct BuildObjectDetails: Codable {
     public let name: String
     public let version: ObjectVersion
     public let details: String
@@ -72,7 +72,7 @@ struct BuildObjectDetails: Codable {
 }
 
 // for the .pkl file in the bm/index.pkl
-struct BuildObjectList: Codable {
+public struct BuildObjectList: Codable {
     public let type: ExecutableObjectType
     public let objects: [BuildObjectDetails]
 
