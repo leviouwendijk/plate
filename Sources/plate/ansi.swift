@@ -88,3 +88,10 @@ extension String: StringANSIFormattable {
         return "\(colorCode)\(self)\(ANSIColor.reset.rawValue)"
     }
 }
+
+// extension Error {
+//     public func ansi(_ colors: ANSIColor...) -> String {
+//         let errorMessage = String(describing: self)
+//         return errorMessage.ansi(colors...)
+//     }
+// }
