@@ -12,7 +12,7 @@ public enum ObjectVersionLevel: String, RawRepresentable, Codable {
     case patch
 }
 
-public struct ObjectVersion: Codable {
+public struct ObjectVersion: Codable, Comparable {
     public var major: Int
     public var minor: Int
     public var patch: Int
