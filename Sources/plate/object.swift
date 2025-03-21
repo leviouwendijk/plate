@@ -80,7 +80,7 @@ public struct BuildObjectDetails: Codable {
 // for the .pkl file in the bm/index.pkl
 public struct BuildObjectList: Codable {
     public let type: ExecutableObjectType
-    public let objects: [BuildObjectDetails]
+    public var objects: [BuildObjectDetails]
 
     public init(type: ExecutableObjectType, objects: [BuildObjectDetails]) {
         self.type = type
