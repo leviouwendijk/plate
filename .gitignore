@@ -11,3 +11,7 @@ DerivedData/
 
 libplate.dylib.dSYM
 libplate.dylib
+
+libSemanticVersion.dylib
+libSystemPackage.dylib
+libplate.dylib

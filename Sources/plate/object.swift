@@ -40,6 +40,12 @@ public struct ObjectVersion: Codable {
             patch += 1
         }
     }
+
+    public static func < (lhs: ObjectVersion, rhs: ObjectVersion) -> Bool {
+        if lhs.major != rhs.major { return lhs.major < rhs.major }
+        if lhs.minor != rhs.minor { return lhs.minor < rhs.minor }
+        return lhs.patch < rhs.patch
+    }
 }
 
 // for local repository build info: object.pkl 
