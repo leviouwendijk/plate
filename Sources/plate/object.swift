@@ -6,7 +6,7 @@ public enum ExecutableObjectType: String, RawRepresentable, Codable {
     case script
 }
 
-public enum ObjectVersionLevel: String, RawRepresentable, Codable {
+public enum ObjectVersionLevel: String, RawRepresentable, Codable, CaseIterable {
     case major
     case minor
     case patch
