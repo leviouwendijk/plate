@@ -61,9 +61,9 @@ public struct APIConfiguration {
 
     }
 
-    public func endpoint(_ name: String) -> String {
-        guard let selectedEndpoint = endpoints.first(where: { $0.endpoint == name }) else {
-            return baseUrlString() + "/" + name
+    public func endpoint(_ route: String,_ name: String) -> String {
+        guard let selectedEndpoint = endpoints.first(where: { $0.endpoint == name && $0.route == route }) else {
+            return baseUrlString() + "/" + route + "/" + name
         }
         return baseUrlString() + "/" + selectedEndpoint.string()
     }
