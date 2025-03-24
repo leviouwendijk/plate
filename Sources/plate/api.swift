@@ -17,7 +17,7 @@ public struct APIEndpoint {
     public let endpoint: String
     public let details: String
 
-    public init(route: String, endpoint: String, details: String) {
+    public init(route: String, endpoint: String, details: String = "") {
         self.route = route
         self.endpoint = endpoint
         self.details = details
