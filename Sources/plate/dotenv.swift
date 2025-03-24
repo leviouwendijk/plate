@@ -28,9 +28,11 @@ public struct DotEnv {
                 continue
             }
 
-            let exportRemoved = trimmed.replacingOccurrences(of: "export ", with: "")
+            let cleaned = trimmed
+                .replacingOccurrences(of: "export ", with: "")
+                .replacingOccurrences(of: "\"", with: "")
 
-            let parts = exportRemoved.split(separator: "=", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            let parts = cleaned.split(separator: "=", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             if parts.count == 2 {
                 setenv(parts[0], parts[1], 1)
             }
