@@ -121,10 +121,10 @@ public struct NetworkRequest: Sendable {
 public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unchecked Sendable {
     private var task: URLSessionDataTask?
     private var receivedData = Data()
-
+    
     private let onChunk: (String) -> Void
     private let onComplete: (Error?) -> Void
-
+    
     public init(
         url: URL,
         method: HTTPMethod = .post,
@@ -137,48 +137,52 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         self.onChunk = onChunk
         self.onComplete = onComplete
         super.init()
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.httpBody = body
-
+        
         let allHeaders = headers.merging(authorizationHeader(auth)) { _, new in new }
         for (key, value) in allHeaders {
             request.addValue(value, forHTTPHeaderField: key)
         }
-
+        
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         self.task = session.dataTask(with: request)
     }
-
+    
     public func start() {
         task?.resume()
     }
-
+    
     public func cancel() {
         task?.cancel()
     }
-
+    
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         receivedData.append(data)
-
-        let lines = String(decoding: receivedData, as: UTF8.self).components(separatedBy: "\n")
-
-        for line in lines.dropLast() {
-            onChunk(line)
-        }
-
-        if let lastLine = lines.last {
-            receivedData = Data(lastLine.utf8)
-        } else {
-            receivedData = Data()
+        let fullString = String(decoding: receivedData, as: UTF8.self)
+        let lines = fullString.components(separatedBy: "\n")
+        
+        if lines.count > 1 {
+            for i in 0..<lines.count - 1 {
+                let line = lines[i]
+                if !line.isEmpty {
+                    onChunk(line)
+                }
+            }
+            if let lastLine = lines.last {
+                receivedData = Data(lastLine.utf8)
+            } else {
+                receivedData = Data()
+            }
         }
     }
-
+    
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         onComplete(error)
     }
-
+    
     private func authorizationHeader(_ auth: Authorization) -> [String: String] {
         switch auth {
         case .none:
