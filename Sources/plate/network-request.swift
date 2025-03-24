@@ -116,3 +116,84 @@ public struct NetworkRequest: Sendable {
         }.resume()
     }
 }
+
+// public final class NetworkRequestStream: NSObject, URLSessionDataDelegate {
+//     private var task: URLSessionDataTask?
+//     private var receivedData = Data()
+//     private let onChunk: @Sendable (String) -> Void
+//     private let onComplete: @Sendable (Error?) -> Void
+
+//     public init(
+//         url: URL,
+//         method: HTTPMethod = .post,
+//         auth: Authorization = .none,
+//         headers: [String: String] = [:],
+//         body: Data? = nil,
+//         onChunk: @escaping @Sendable (String) -> Void,
+//         onComplete: @escaping @Sendable (Error?) -> Void
+//     ) {
+//         self.onChunk = onChunk
+//         self.onComplete = onComplete
+//         super.init()
+
+//         var request = URLRequest(url: url)
+//         request.httpMethod = method.rawValue
+//         request.httpBody = body
+
+//         let allHeaders = headers.merging(authorizationHeader(auth)) { _, new in new }
+//         for (key, value) in allHeaders {
+//             request.addValue(value, forHTTPHeaderField: key)
+//         }
+
+//         let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+//         self.task = session.dataTask(with: request)
+//     }
+
+//     public func start() {
+//         task?.resume()
+//     }
+
+//     public func cancel() {
+//         task?.cancel()
+//     }
+
+//     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+//         receivedData.append(data)
+
+//         // Split by newline to handle NDJSON chunks
+//         let lines = String(decoding: receivedData, as: UTF8.self).components(separatedBy: "\n")
+
+//         // Only process complete lines
+//         for line in lines.dropLast() {
+//             onChunk(line)
+//         }
+
+//         // Keep the last incomplete chunk
+//         if let lastLine = lines.last {
+//             receivedData = Data(lastLine.utf8)
+//         } else {
+//             receivedData = Data()
+//         }
+//     }
+
+//     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+//         onComplete(error)
+//     }
+
+//     private func authorizationHeader(_ auth: Authorization) -> [String: String] {
+//         switch auth {
+//         case .none:
+//             return [:]
+//         case .login(let username, let password):
+//             let credentials = "\(username):\(password)"
+//             let encoded = Data(credentials.utf8).base64EncodedString()
+//             return ["Authorization": "Basic \(encoded)"]
+//         case .bearer(let token):
+//             return ["Authorization": "Bearer \(token)"]
+//         case .custom(let header, let value):
+//             return [header: value]
+//         case .apikey(let header, let value):
+//             return [header: value]
+//         }
+//     }
+// }
