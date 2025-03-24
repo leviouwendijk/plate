@@ -13,16 +13,18 @@ public struct APIVersion {
 }
 
 public struct APIEndpoint {
+    public let route: String
     public let endpoint: String
     public let details: String
 
-    public init(endpoint: String, details: String) {
+    public init(route: String, endpoint: String, details: String) {
+        self.route = route
         self.endpoint = endpoint
         self.details = details
     }
 
     public func string() -> String {
-        return endpoint
+        return route + "/" + endpoint
     }
 }
 
