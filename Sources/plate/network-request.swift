@@ -147,7 +147,7 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
             request.addValue(value, forHTTPHeaderField: key)
         }
         
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+        let session = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue.main)
         self.task = session.dataTask(with: request)
     }
     
