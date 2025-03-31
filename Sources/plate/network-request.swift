@@ -275,12 +275,25 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        DispatchQueue.main.async {
-            self.onComplete(error)
+        if !buffer.isEmpty,
+           let finalLine = String(data: buffer, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !finalLine.isEmpty {
+            DispatchQueue.main.async {
+                self.onChunk(finalLine)
+            }
+            buffer.removeAll()
+        }
+        
+        if let nsError = error as NSError?, nsError.domain == NSURLErrorDomain, nsError.code == -1017 {
+            DispatchQueue.main.async {
+                self.onComplete(nil)
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.onComplete(error)
+            }
         }
     }
-    
-    
     
     private static func authorizationHeader(_ auth: Authorization) -> [String: String] {
         switch auth {
