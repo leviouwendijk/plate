@@ -147,7 +147,12 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
             request.addValue(value, forHTTPHeaderField: key)
         }
         
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue.main)
+        // fix for aws?
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        let session = URLSession(configuration: .default, delegate: self, delegateQueue: queue)
+
+        // let session = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue.main)
         self.task = session.dataTask(with: request)
     }
     
