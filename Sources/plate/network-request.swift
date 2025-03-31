@@ -230,7 +230,8 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         
         let delegateQueue = OperationQueue()
         delegateQueue.qualityOfService = .userInitiated
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
+        // let session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
+        let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         self.task = session.dataTask(with: request)
     }
     
@@ -299,3 +300,27 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         }
     }
 }
+
+// public final class SimpleStreamingDelegate: NSObject, URLSessionDataDelegate {
+//     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+//         if let chunk = String(data: data, encoding: .utf8) {
+//             print("Received chunk: \(chunk)")
+//         } else {
+//             print("Received \(data.count) bytes (undecodable)")
+//         }
+//     }
+//     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+//         if let httpResponse = response as? HTTPURLResponse {
+//             print("Response Status: \(httpResponse.statusCode)")
+//             print("Response Headers: \(httpResponse.allHeaderFields)")
+//         }
+//         completionHandler(.allow)
+//     }
+//     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+//         if let error = error {
+//             print("Streaming ended with error: \(error)")
+//         } else {
+//             print("Streaming complete.")
+//         }
+//     }
+// }
