@@ -132,7 +132,7 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         headers: [String: String] = [:],
         body: Data? = nil,
         onChunk: @escaping (String) -> Void,
-        onComplete: @escaping (Error?) -> Void,
+        onComplete: @escaping (Error?) -> Void
     ) {
         self.onChunk = onChunk
         self.onComplete = onComplete
