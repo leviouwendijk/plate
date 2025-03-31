@@ -217,6 +217,7 @@ public actor DataBufferActor {
     
     public func append(_ data: Data) {
         buffer.append(data)
+        print("DataBufferActor: appended \(data.count) bytes, total now \(buffer.count) bytes")
     }
     
     public func extractLines() -> [String] {
@@ -227,6 +228,7 @@ public actor DataBufferActor {
             if let line = String(data: lineData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
             !line.isEmpty {
                 lines.append(line)
+                print("DataBufferActor: extracted line: \(line)")
             }
         }
         return lines
@@ -236,6 +238,7 @@ public actor DataBufferActor {
         if !buffer.isEmpty,
            let line = String(data: buffer, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
            !line.isEmpty {
+           print("DataBufferActor: flushing final line: \(line)")
            buffer.removeAll()
            return line
         }
@@ -282,9 +285,12 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
         // let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         self.task = session.dataTask(with: request)
+
+        print("NetworkRequestStream: Initialized with URL \(url.absoluteString)")
     }
     
     public func start() {
+        print("NetworkRequestStream: Starting task")
         task?.resume()
     }
     
@@ -293,6 +299,7 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     }
     
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        print("NetworkRequestStream: didReceive \(data.count) bytes")
         Task {
             await dataBuffer.append(data)
             let lines = await dataBuffer.extractLines()
