@@ -276,7 +276,7 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         request.httpBody = body
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("keep-alive", forHTTPHeaderField: "Connection")
-        
+        request.setValue("text/plain", forHTTPHeaderField: "Accept")
         
         let allHeaders = headers.merging(Self.authorizationHeader(auth)) { _, new in new }
         for (key, value) in allHeaders {
