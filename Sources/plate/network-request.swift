@@ -186,9 +186,11 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
 
         // Try decoding only when we have valid UTF-8 data
         guard let string = String(data: receivedData, encoding: .utf8) else {
-            // Incomplete UTF-8 sequence, wait for next data chunk
+            print("Incomplete UTF-8 sequence, waiting for next chunk...")
             return
         }
+
+        print("Decoded chunk string:\n\(string)")
 
         let lines = string.components(separatedBy: "\n")
 
