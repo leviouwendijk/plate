@@ -227,11 +227,10 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         }
         request.timeoutInterval = 300
         
-        
         let delegateQueue = OperationQueue()
         delegateQueue.qualityOfService = .userInitiated
-        // let session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+        let session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
+        // let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         self.task = session.dataTask(with: request)
     }
     
@@ -242,8 +241,6 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     public func cancel() {
         task?.cancel()
     }
-    
-    
     
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         buffer.append(data)
@@ -276,12 +273,20 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        // Flush any remaining data in the buffer as a final chunk.
+        if !buffer.isEmpty,
+           let finalChunk = String(data: buffer, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !finalChunk.isEmpty {
+            DispatchQueue.main.async {
+                self.onChunk(finalChunk)
+            }
+            buffer.removeAll()
+        }
+        
         DispatchQueue.main.async {
             self.onComplete(error)
         }
     }
-    
-    
     
     private static func authorizationHeader(_ auth: Authorization) -> [String: String] {
         switch auth {
