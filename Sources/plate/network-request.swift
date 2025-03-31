@@ -196,12 +196,10 @@ public struct NetworkRequest: Sendable {
 
 public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unchecked Sendable {
     private var task: URLSessionDataTask?
-    private var receivedData = Data()
+    private var buffer = Data()
     
     private let onChunk: (String) -> Void
     private let onComplete: (Error?) -> Void
-    
-    private let onResponse: ((HTTPURLResponse) -> Void)?
     
     public init(
         url: URL,
@@ -209,13 +207,11 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         auth: Authorization = .none,
         headers: [String: String] = [:],
         body: Data? = nil,
-        onResponse: ((HTTPURLResponse) -> Void)? = nil,
         onChunk: @escaping (String) -> Void,
         onComplete: @escaping (Error?) -> Void
     ) {
         self.onChunk = onChunk
         self.onComplete = onComplete
-        self.onResponse = onResponse
         super.init()
         
         var request = URLRequest(url: url)
@@ -224,16 +220,16 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("keep-alive", forHTTPHeaderField: "Connection")
         
+        
         let allHeaders = headers.merging(Self.authorizationHeader(auth)) { _, new in new }
         for (key, value) in allHeaders {
             request.setValue(value, forHTTPHeaderField: key)
         }
         request.timeoutInterval = 300
         
-        // Use a background delegate queue (avoid OperationQueue.main)
+        
         let delegateQueue = OperationQueue()
         delegateQueue.qualityOfService = .userInitiated
-        
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
         self.task = session.dataTask(with: request)
     }
@@ -246,28 +242,45 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         task?.cancel()
     }
     
+    
+    
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        receivedData.append(data)
-        while let range = receivedData.range(of: Data([0x0a])) { // Look for newline character (\n)
-            let lineData = receivedData.subdata(in: 0..<range.lowerBound)
-            receivedData.removeSubrange(0...range.lowerBound)
-            if let line = String(data: lineData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines), !line.isEmpty {
-                onChunk(line)
+        buffer.append(data)
+        
+        while let newlineRange = buffer.range(of: Data([0x0A])) {
+            let lineData = buffer.subdata(in: 0..<newlineRange.lowerBound)
+            buffer.removeSubrange(0...newlineRange.lowerBound)
+            
+            if let line = String(data: lineData, encoding: .utf8),
+               !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                
+                DispatchQueue.main.async {
+                    self.onChunk(line)
+                }
+            } else {
+                
+                print("Undecodable or empty line encountered.")
             }
         }
     }
     
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
+                           didReceive response: URLResponse,
                            completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         if let httpResponse = response as? HTTPURLResponse {
-            onResponse?(httpResponse)
+            print("Response Status: \(httpResponse.statusCode)")
+            print("Response Headers: \(httpResponse.allHeaderFields)")
         }
         completionHandler(.allow)
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        onComplete(error)
+        DispatchQueue.main.async {
+            self.onComplete(error)
+        }
     }
+    
+    
     
     private static func authorizationHeader(_ auth: Authorization) -> [String: String] {
         switch auth {
@@ -286,4 +299,3 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         }
     }
 }
-
