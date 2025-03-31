@@ -222,13 +222,17 @@ public actor DataBufferActor {
     
     public func extractLines() -> [String] {
         var lines: [String] = []
-        while let newlineRange = buffer.range(of: Data([0x0A])) {
+        let newlineData = Data([0x0A])
+        
+        while let newlineRange = buffer.range(of: newlineData) {
             let lineData = buffer.subdata(in: 0..<newlineRange.lowerBound)
             buffer.removeSubrange(0...newlineRange.lowerBound)
-            if let line = String(data: lineData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-            !line.isEmpty {
-                lines.append(line)
-                print("DataBufferActor: extracted line: \(line)")
+            
+            if let line = String(data: lineData, encoding: .utf8) {
+                let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    lines.append(trimmed)
+                }
             }
         }
         return lines
