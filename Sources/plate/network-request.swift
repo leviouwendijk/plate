@@ -184,7 +184,7 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         receivedData.append(data)
 
         if debug {
-            print("raw chunk:\n" data)
+            print("raw chunk:\n", data)
         }
 
         // Try decoding only when we have valid UTF-8 data
