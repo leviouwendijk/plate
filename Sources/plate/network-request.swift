@@ -300,6 +300,15 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         print("NetworkRequestStream: didReceive \(data.count) bytes")
+        
+        // Log the raw response data
+        if let rawText = String(data: data, encoding: .utf8) {
+            print("NetworkRequestStream: Raw response chunk: \(rawText)")
+        } else {
+            print("NetworkRequestStream: Received undecodable data")
+        }
+        
+        // Now update the buffer and process the lines
         Task {
             await dataBuffer.append(data)
             let lines = await dataBuffer.extractLines()
@@ -307,15 +316,11 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
                 print("NetworkRequestStream: No complete line extracted yet")
             }
             for line in lines {
-                // Debug: print right before scheduling onChunk.
                 print("NetworkRequestStream: Extracted line: \(line)")
-                // DispatchQueue.main.async {
-                //     print("NetworkRequestStream: Calling onChunk with line: \(line)")
                 Task { @MainActor in
                     print("NetworkRequestStream: Calling onChunk with line: \(line)")
                     self.onChunk(line)
                 }
-                // }
             }
         }
     }
@@ -333,12 +338,12 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         Task {
             if let finalLine = await dataBuffer.flush() {
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     print("NetworkRequestStream: Flushing final line: \(finalLine)")
                     self.onChunk(finalLine)
                 }
             }
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 print("NetworkRequestStream: Calling onComplete with error: \(String(describing: error))")
                 self.onComplete(error)
             }
