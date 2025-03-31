@@ -180,33 +180,46 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
 
     // }
 
+    // public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    //     receivedData.append(data)
+    //     print("Received data chunk: \(data.count) bytes")
+
+    //     // Try decoding only when we have valid UTF-8 data
+    //     guard let string = String(data: receivedData, encoding: .utf8) else {
+    //         print("Incomplete UTF-8 sequence, waiting for next chunk...")
+    //         return
+    //     }
+
+    //     print("Decoded chunk string:\n\(string)")
+
+    //     let lines = string.components(separatedBy: "\n")
+
+    //     // Process all but the last line
+    //     for i in 0..<lines.count - 1 {
+    //         let line = lines[i]
+    //         if !line.isEmpty {
+    //             onChunk(line)
+    //         }
+    //     }
+
+    //     // Keep the last (possibly incomplete) line in the buffer
+    //     if let lastLine = lines.last {
+    //         receivedData = Data(lastLine.utf8)
+    //     } else {
+    //         receivedData = Data()
+    //     }
+    // }
+
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         receivedData.append(data)
-        print("Received data chunk: \(data.count) bytes")
 
-        // Try decoding only when we have valid UTF-8 data
-        guard let string = String(data: receivedData, encoding: .utf8) else {
-            print("Incomplete UTF-8 sequence, waiting for next chunk...")
-            return
-        }
+        while let range = receivedData.range(of: Data([0x0a])) { // newline = \n = 0x0a
+            let lineData = receivedData.subdata(in: 0..<range.lowerBound)
+            receivedData.removeSubrange(0...range.lowerBound)
 
-        print("Decoded chunk string:\n\(string)")
-
-        let lines = string.components(separatedBy: "\n")
-
-        // Process all but the last line
-        for i in 0..<lines.count - 1 {
-            let line = lines[i]
-            if !line.isEmpty {
+            if let line = String(data: lineData, encoding: .utf8), !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 onChunk(line)
             }
-        }
-
-        // Keep the last (possibly incomplete) line in the buffer
-        if let lastLine = lines.last {
-            receivedData = Data(lastLine.utf8)
-        } else {
-            receivedData = Data()
         }
     }
     
