@@ -49,7 +49,7 @@ public func environment(_ variable: String) -> String {
 
 public func processEnvironment(_ variable: String) -> String {
     guard let cstr = getenv(variable) else {
-        assertionFailure("⚠️ Environment variable \(variable) not found.")
+        assertionFailure("Environment variable \(variable) not found.")
         return ""
     }
     return String(cString: cstr)

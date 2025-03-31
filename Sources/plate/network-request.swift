@@ -158,24 +158,52 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     public func cancel() {
         task?.cancel()
     }
-    
+
+    // public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    //     receivedData.append(data)
+    //     let fullString = String(decoding: receivedData, as: UTF8.self)
+    //     let lines = fullString.components(separatedBy: "\n")
+        
+    //     if lines.count > 1 {
+    //         for i in 0..<lines.count - 1 {
+    //             let line = lines[i]
+    //             if !line.isEmpty {
+    //                 onChunk(line)
+    //             }
+    //         }
+    //         if let lastLine = lines.last {
+    //             receivedData = Data(lastLine.utf8)
+    //         } else {
+    //             receivedData = Data()
+    //         }
+    //     }
+
+    // }
+
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         receivedData.append(data)
-        let fullString = String(decoding: receivedData, as: UTF8.self)
-        let lines = fullString.components(separatedBy: "\n")
-        
-        if lines.count > 1 {
-            for i in 0..<lines.count - 1 {
-                let line = lines[i]
-                if !line.isEmpty {
-                    onChunk(line)
-                }
+
+        // Try decoding only when we have valid UTF-8 data
+        guard let string = String(data: receivedData, encoding: .utf8) else {
+            // Incomplete UTF-8 sequence, wait for next data chunk
+            return
+        }
+
+        let lines = string.components(separatedBy: "\n")
+
+        // Process all but the last line
+        for i in 0..<lines.count - 1 {
+            let line = lines[i]
+            if !line.isEmpty {
+                onChunk(line)
             }
-            if let lastLine = lines.last {
-                receivedData = Data(lastLine.utf8)
-            } else {
-                receivedData = Data()
-            }
+        }
+
+        // Keep the last (possibly incomplete) line in the buffer
+        if let lastLine = lines.last {
+            receivedData = Data(lastLine.utf8)
+        } else {
+            receivedData = Data()
         }
     }
     
