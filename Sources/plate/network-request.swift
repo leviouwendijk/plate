@@ -321,6 +321,9 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
             }
             for line in lines {
                 print("NetworkRequestStream: Extracted line: \(line)")
+                let hexLine = line.data(using: .utf8)?.map { String(format: "%02x", $0) }.joined(separator: " ") ?? "n/a"
+                print("NetworkRequestStream: Extracted line (hex): \(hexLine)")
+
                 Task { @MainActor in
                     print("NetworkRequestStream: Calling onChunk with line: \(line)")
                     self.onChunk(line)
