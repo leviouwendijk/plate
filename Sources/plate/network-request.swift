@@ -311,7 +311,10 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
                 print("NetworkRequestStream: Extracted line: \(line)")
                 // DispatchQueue.main.async {
                 //     print("NetworkRequestStream: Calling onChunk with line: \(line)")
+                Task { @MainActor in
+                    print("NetworkRequestStream: Calling onChunk with line: \(line)")
                     self.onChunk(line)
+                }
                 // }
             }
         }
