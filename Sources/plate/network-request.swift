@@ -303,8 +303,14 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         Task {
             await dataBuffer.append(data)
             let lines = await dataBuffer.extractLines()
+            if lines.isEmpty {
+                print("NetworkRequestStream: No complete line extracted yet")
+            }
             for line in lines {
+                // Debug: print right before scheduling onChunk.
+                print("NetworkRequestStream: Extracted line: \(line)")
                 DispatchQueue.main.async {
+                    print("NetworkRequestStream: Calling onChunk with line: \(line)")
                     self.onChunk(line)
                 }
             }
@@ -315,8 +321,8 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
                            didReceive response: URLResponse,
                            completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         if let httpResponse = response as? HTTPURLResponse {
-            print("Response Status: \(httpResponse.statusCode)")
-            print("Response Headers: \(httpResponse.allHeaderFields)")
+            print("NetworkRequestStream: Response Status: \(httpResponse.statusCode)")
+            print("NetworkRequestStream: Response Headers: \(httpResponse.allHeaderFields)")
         }
         completionHandler(.allow)
     }
@@ -325,10 +331,12 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         Task {
             if let finalLine = await dataBuffer.flush() {
                 DispatchQueue.main.async {
+                    print("NetworkRequestStream: Flushing final line: \(finalLine)")
                     self.onChunk(finalLine)
                 }
             }
             DispatchQueue.main.async {
+                print("NetworkRequestStream: Calling onComplete with error: \(String(describing: error))")
                 self.onComplete(error)
             }
         }
