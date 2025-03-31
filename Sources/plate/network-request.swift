@@ -118,6 +118,82 @@ public struct NetworkRequest: Sendable {
 }
 
 // experimental stream variant of networkrequest
+// public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+//     private var task: URLSessionDataTask?
+//     private var receivedData = Data()
+    
+//     private let onChunk: (String) -> Void
+//     private let onComplete: (Error?) -> Void
+    
+//     public init(
+//         url: URL,
+//         method: HTTPMethod = .post,
+//         auth: Authorization = .none,
+//         headers: [String: String] = [:],
+//         body: Data? = nil,
+//         onChunk: @escaping (String) -> Void,
+//         onComplete: @escaping (Error?) -> Void
+//     ) {
+//         self.onChunk = onChunk
+//         self.onComplete = onComplete
+//         super.init()
+        
+//         var request = URLRequest(url: url)
+//         request.httpMethod = method.rawValue
+//         request.httpBody = body
+        
+//         let allHeaders = headers.merging(authorizationHeader(auth)) { _, new in new }
+//         for (key, value) in allHeaders {
+//             request.addValue(value, forHTTPHeaderField: key)
+//         }
+        
+//         let session = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue.main)
+//         self.task = session.dataTask(with: request)
+//     }
+    
+//     public func start() {
+//         task?.resume()
+//     }
+    
+//     public func cancel() {
+//         task?.cancel()
+//     }
+
+//     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+//         receivedData.append(data)
+
+//         while let range = receivedData.range(of: Data([0x0a])) { // newline = \n = 0x0a
+//             let lineData = receivedData.subdata(in: 0..<range.lowerBound)
+//             receivedData.removeSubrange(0...range.lowerBound)
+
+//             if let line = String(data: lineData, encoding: .utf8), !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+//                 onChunk(line)
+//             }
+//         }
+//     }
+    
+//     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+//         onComplete(error)
+//     }
+    
+//     private func authorizationHeader(_ auth: Authorization) -> [String: String] {
+//         switch auth {
+//         case .none:
+//             return [:]
+//         case .login(let username, let password):
+//             let credentials = "\(username):\(password)"
+//             let encoded = Data(credentials.utf8).base64EncodedString()
+//             return ["Authorization": "Basic \(encoded)"]
+//         case .bearer(let token):
+//             return ["Authorization": "Bearer \(token)"]
+//         case .custom(let header, let value):
+//             return [header: value]
+//         case .apikey(let header, let value):
+//             return [header: value]
+//         }
+//     }
+// }
+
 public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unchecked Sendable {
     private var task: URLSessionDataTask?
     private var receivedData = Data()
@@ -125,29 +201,40 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     private let onChunk: (String) -> Void
     private let onComplete: (Error?) -> Void
     
+    private let onResponse: ((HTTPURLResponse) -> Void)?
+    
     public init(
         url: URL,
         method: HTTPMethod = .post,
         auth: Authorization = .none,
         headers: [String: String] = [:],
         body: Data? = nil,
+        onResponse: ((HTTPURLResponse) -> Void)? = nil,
         onChunk: @escaping (String) -> Void,
         onComplete: @escaping (Error?) -> Void
     ) {
         self.onChunk = onChunk
         self.onComplete = onComplete
+        self.onResponse = onResponse
         super.init()
         
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.httpBody = body
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("keep-alive", forHTTPHeaderField: "Connection")
         
-        let allHeaders = headers.merging(authorizationHeader(auth)) { _, new in new }
+        let allHeaders = headers.merging(Self.authorizationHeader(auth)) { _, new in new }
         for (key, value) in allHeaders {
-            request.addValue(value, forHTTPHeaderField: key)
+            request.setValue(value, forHTTPHeaderField: key)
         }
+        request.timeoutInterval = 300
         
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue.main)
+        // Use a background delegate queue (avoid OperationQueue.main)
+        let delegateQueue = OperationQueue()
+        delegateQueue.qualityOfService = .userInitiated
+        
+        let session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
         self.task = session.dataTask(with: request)
     }
     
@@ -158,76 +245,31 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     public func cancel() {
         task?.cancel()
     }
-
-    // public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-    //     receivedData.append(data)
-    //     let fullString = String(decoding: receivedData, as: UTF8.self)
-    //     let lines = fullString.components(separatedBy: "\n")
-        
-    //     if lines.count > 1 {
-    //         for i in 0..<lines.count - 1 {
-    //             let line = lines[i]
-    //             if !line.isEmpty {
-    //                 onChunk(line)
-    //             }
-    //         }
-    //         if let lastLine = lines.last {
-    //             receivedData = Data(lastLine.utf8)
-    //         } else {
-    //             receivedData = Data()
-    //         }
-    //     }
-
-    // }
-
-    // public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-    //     receivedData.append(data)
-    //     print("Received data chunk: \(data.count) bytes")
-
-    //     // Try decoding only when we have valid UTF-8 data
-    //     guard let string = String(data: receivedData, encoding: .utf8) else {
-    //         print("Incomplete UTF-8 sequence, waiting for next chunk...")
-    //         return
-    //     }
-
-    //     print("Decoded chunk string:\n\(string)")
-
-    //     let lines = string.components(separatedBy: "\n")
-
-    //     // Process all but the last line
-    //     for i in 0..<lines.count - 1 {
-    //         let line = lines[i]
-    //         if !line.isEmpty {
-    //             onChunk(line)
-    //         }
-    //     }
-
-    //     // Keep the last (possibly incomplete) line in the buffer
-    //     if let lastLine = lines.last {
-    //         receivedData = Data(lastLine.utf8)
-    //     } else {
-    //         receivedData = Data()
-    //     }
-    // }
-
+    
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         receivedData.append(data)
-
-        while let range = receivedData.range(of: Data([0x0a])) { // newline = \n = 0x0a
+        while let range = receivedData.range(of: Data([0x0a])) { // Look for newline character (\n)
             let lineData = receivedData.subdata(in: 0..<range.lowerBound)
             receivedData.removeSubrange(0...range.lowerBound)
-
-            if let line = String(data: lineData, encoding: .utf8), !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if let line = String(data: lineData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines), !line.isEmpty {
                 onChunk(line)
             }
         }
+    }
+    
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
+                           completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        if let httpResponse = response as? HTTPURLResponse {
+            onResponse?(httpResponse)
+        }
+        completionHandler(.allow)
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         onComplete(error)
     }
     
-    private func authorizationHeader(_ auth: Authorization) -> [String: String] {
+    private static func authorizationHeader(_ auth: Authorization) -> [String: String] {
         switch auth {
         case .none:
             return [:]
@@ -244,3 +286,4 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         }
     }
 }
+
