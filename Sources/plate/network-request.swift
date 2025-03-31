@@ -309,10 +309,10 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
             for line in lines {
                 // Debug: print right before scheduling onChunk.
                 print("NetworkRequestStream: Extracted line: \(line)")
-                DispatchQueue.main.async {
-                    print("NetworkRequestStream: Calling onChunk with line: \(line)")
+                // DispatchQueue.main.async {
+                //     print("NetworkRequestStream: Calling onChunk with line: \(line)")
                     self.onChunk(line)
-                }
+                // }
             }
         }
     }
