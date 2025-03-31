@@ -194,21 +194,21 @@ public struct NetworkRequest: Sendable {
 //     }
 // }
 
-// public actor ChunkBuffer {
-//     private var chunks: [String] = []
+public actor ChunkBuffer {
+    private var chunks: [String] = []
     
-//     public init() { }
+    public init() { }
     
-//     public func append(_ chunk: String) {
-//         chunks.append(chunk)
-//     }
+    public func append(_ chunk: String) {
+        chunks.append(chunk)
+    }
     
-//     public func getAndClear() -> [String] {
-//         let result = chunks
-//         chunks.removeAll()
-//         return result
-//     }
-// }
+    public func getAndClear() -> [String] {
+        let result = chunks
+        chunks.removeAll()
+        return result
+    }
+}
 
 public actor DataBufferActor {
     private var buffer = Data()
