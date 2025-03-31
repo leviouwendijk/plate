@@ -194,9 +194,59 @@ public struct NetworkRequest: Sendable {
 //     }
 // }
 
+// public actor ChunkBuffer {
+//     private var chunks: [String] = []
+    
+//     public init() { }
+    
+//     public func append(_ chunk: String) {
+//         chunks.append(chunk)
+//     }
+    
+//     public func getAndClear() -> [String] {
+//         let result = chunks
+//         chunks.removeAll()
+//         return result
+//     }
+// }
+
+public actor DataBufferActor {
+    private var buffer = Data()
+    
+    public init() { }
+    
+    public func append(_ data: Data) {
+        buffer.append(data)
+    }
+    
+    public func extractLines() -> [String] {
+        var lines: [String] = []
+        while let newlineRange = buffer.range(of: Data([0x0A])) {
+            let lineData = buffer.subdata(in: 0..<newlineRange.lowerBound)
+            buffer.removeSubrange(0...newlineRange.lowerBound)
+            if let line = String(data: lineData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !line.isEmpty {
+                lines.append(line)
+            }
+        }
+        return lines
+    }
+    
+    public func flush() -> String? {
+        if !buffer.isEmpty,
+           let line = String(data: buffer, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !line.isEmpty {
+           buffer.removeAll()
+           return line
+        }
+        return nil
+    }
+}
+
+@available(macOS 10.15, *)
 public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unchecked Sendable {
     private var task: URLSessionDataTask?
-    private var buffer = Data()
+    private let dataBuffer = DataBufferActor()
     
     private let onChunk: (String) -> Void
     private let onComplete: (Error?) -> Void
@@ -243,21 +293,13 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     }
     
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        buffer.append(data)
-        
-        while let newlineRange = buffer.range(of: Data([0x0A])) {
-            let lineData = buffer.subdata(in: 0..<newlineRange.lowerBound)
-            buffer.removeSubrange(0...newlineRange.lowerBound)
-            
-            if let line = String(data: lineData, encoding: .utf8),
-               !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                
+        Task {
+            await dataBuffer.append(data)
+            let lines = await dataBuffer.extractLines()
+            for line in lines {
                 DispatchQueue.main.async {
                     self.onChunk(line)
                 }
-            } else {
-                
-                print("Undecodable or empty line encountered.")
             }
         }
     }
@@ -273,18 +315,15 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        // Flush any remaining data in the buffer as a final chunk.
-        if !buffer.isEmpty,
-           let finalChunk = String(data: buffer, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-           !finalChunk.isEmpty {
-            DispatchQueue.main.async {
-                self.onChunk(finalChunk)
+        Task {
+            if let finalLine = await dataBuffer.flush() {
+                DispatchQueue.main.async {
+                    self.onChunk(finalLine)
+                }
             }
-            buffer.removeAll()
-        }
-        
-        DispatchQueue.main.async {
-            self.onComplete(error)
+            DispatchQueue.main.async {
+                self.onComplete(error)
+            }
         }
     }
     
@@ -306,26 +345,26 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
     }
 }
 
-// public final class SimpleStreamingDelegate: NSObject, URLSessionDataDelegate {
-//     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-//         if let chunk = String(data: data, encoding: .utf8) {
-//             print("Received chunk: \(chunk)")
-//         } else {
-//             print("Received \(data.count) bytes (undecodable)")
-//         }
-//     }
-//     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-//         if let httpResponse = response as? HTTPURLResponse {
-//             print("Response Status: \(httpResponse.statusCode)")
-//             print("Response Headers: \(httpResponse.allHeaderFields)")
-//         }
-//         completionHandler(.allow)
-//     }
-//     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-//         if let error = error {
-//             print("Streaming ended with error: \(error)")
-//         } else {
-//             print("Streaming complete.")
-//         }
-//     }
-// }
+public final class SimpleStreamingDelegate: NSObject, URLSessionDataDelegate {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        if let chunk = String(data: data, encoding: .utf8) {
+            print("Received chunk: \(chunk)")
+        } else {
+            print("Received \(data.count) bytes (undecodable)")
+        }
+    }
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        if let httpResponse = response as? HTTPURLResponse {
+            print("Response Status: \(httpResponse.statusCode)")
+            print("Response Headers: \(httpResponse.allHeaderFields)")
+        }
+        completionHandler(.allow)
+    }
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        if let error = error {
+            print("Streaming ended with error: \(error)")
+        } else {
+            print("Streaming complete.")
+        }
+    }
+}
