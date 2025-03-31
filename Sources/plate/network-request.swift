@@ -180,8 +180,12 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
 
     // }
 
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data, debug: Bool = false) {
         receivedData.append(data)
+
+        if debug {
+            print("raw chunk:\n" data)
+        }
 
         // Try decoding only when we have valid UTF-8 data
         guard let string = String(data: receivedData, encoding: .utf8) else {
