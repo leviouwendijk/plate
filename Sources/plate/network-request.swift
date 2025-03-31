@@ -132,7 +132,7 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
         headers: [String: String] = [:],
         body: Data? = nil,
         onChunk: @escaping (String) -> Void,
-        onComplete: @escaping (Error?) -> Void
+        onComplete: @escaping (Error?) -> Void,
     ) {
         self.onChunk = onChunk
         self.onComplete = onComplete
@@ -180,12 +180,9 @@ public final class NetworkRequestStream: NSObject, URLSessionDataDelegate, @unch
 
     // }
 
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data, debug: Bool = false) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         receivedData.append(data)
-
-        if debug {
-            print("raw chunk:\n", data)
-        }
+        print("Received data chunk: \(data.count) bytes")
 
         // Try decoding only when we have valid UTF-8 data
         guard let string = String(data: receivedData, encoding: .utf8) else {
