@@ -25,6 +25,26 @@ public enum HTTPMethod: String, Sendable {
     case connect = "CONNECT" 
 }
 
+public struct APIError: Decodable, Error {
+    public let success: Bool
+    public let message: String
+    public let error: String?
+    public let missing: [String]?
+
+    // explicitly public initializer
+    public init(
+      success: Bool,
+      message: String,
+      error: String? = nil,
+      missing: [String]? = nil
+    ) {
+        self.success = success
+        self.message = message
+        self.error   = error
+        self.missing = missing
+    }
+}
+
 public struct NetworkRequest: Sendable {
     public let url: URL
     public let method: HTTPMethod
@@ -114,6 +134,28 @@ public struct NetworkRequest: Sendable {
                 completion(false, data, statusError)
             }
         }.resume()
+    }
+
+    public func executeAPI(completion: @Sendable @escaping (Result<Data, APIError>) -> Void) {
+        self.execute { success, data, transportError in
+            if success, let data = data {
+                return completion(.success(data))
+            }
+
+            if let data = data,
+                let apiErr = try? JSONDecoder().decode(APIError.self, from: data) {
+                    return completion(.failure(apiErr))
+            }
+
+            let fallback = APIError(
+                success: false,
+                message: transportError?.localizedDescription ?? "Unknown error",
+                error: nil,
+                missing: nil
+            )
+
+            completion(.failure(fallback))
+        }
     }
 }
 
