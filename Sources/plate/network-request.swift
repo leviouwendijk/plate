@@ -25,13 +25,12 @@ public enum HTTPMethod: String, Sendable {
     case connect = "CONNECT" 
 }
 
-public struct APIError: Decodable, Error {
+public struct APIError: Codable, Error {
     public let success: Bool
     public let message: String
     public let error: String?
     public let missing: [String]?
 
-    // explicitly public initializer
     public init(
       success: Bool,
       message: String,
