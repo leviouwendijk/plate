@@ -8,15 +8,15 @@ public struct SelectableRow: View {
     public let animationDuration: TimeInterval
 
     public init(
-      title: String,
-      isSelected: Bool,
-      animationDuration: Double = 0.2,
-      action: @escaping () -> Void
+        title: String,
+        isSelected: Bool,
+        animationDuration: Double = 0.2,
+        action: @escaping () -> Void
     ) {
-      self.title = title
-      self.isSelected = isSelected
-      self.animationDuration = animationDuration
-      self.action = action
+        self.title = title
+        self.isSelected = isSelected
+        self.animationDuration = animationDuration
+        self.action = action
     }
 
     public var body: some View {
@@ -52,7 +52,7 @@ public struct SelectableRow: View {
             radius: 5
         )
         .contentShape(RoundedRectangle(
-          cornerRadius: 5
+            cornerRadius: 5
         ))
         .onTapGesture {
             withAnimation(.easeInOut(duration: animationDuration)) {
