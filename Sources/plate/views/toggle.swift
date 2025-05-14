@@ -12,6 +12,16 @@ public struct StandardToggle: View {
     public let subtitle: String?
     public let animationDuration: TimeInterval
 
+    private var backgroundColor: Color {
+        #if canImport(UIKit)
+        return Color(UIColor.systemBackground)
+        #elseif canImport(AppKit)
+        return Color(NSColor.windowBackgroundColor)
+        #else
+        return Color.white
+        #endif
+    }
+
     public init(
         style: StandardToggleStyleType = .checkbox,
         isOn: Binding<Bool>,
@@ -26,51 +36,19 @@ public struct StandardToggle: View {
         self.animationDuration = animationDuration
     }
 
-    private var backgroundColor: Color {
-        #if canImport(UIKit)
-        return Color(UIColor.systemBackground)
-        #elseif canImport(AppKit)
-        return Color(NSColor.windowBackgroundColor)
-        #else
-        return Color.white
-        #endif
-    }
-
+    @ViewBuilder
     public var body: some View {
-        Group {
-            switch style {
-            case .checkbox:
-                Button(action: {
-                    withAnimation(.easeInOut(duration: animationDuration)) {
-                        isOn.toggle()
-                    }
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: isOn ? "checkmark.square.fill" : "square")
-                            .font(.headline)
-                            .foregroundColor(isOn ? .accentColor : .secondary)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(title)
-                                .font(.subheadline)
-                                .bold()
-                            if let subtitle = subtitle {
-                                Text(subtitle)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        Spacer()
-                    }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 12)
-                    .background(backgroundColor)
-                    .cornerRadius(8)
+        switch style {
+        case .checkbox:
+            Button(action: {
+                withAnimation(.easeInOut(duration: animationDuration)) {
+                    isOn.toggle()
                 }
-                .buttonStyle(PlainButtonStyle())
-
-            case .switch:
-                Toggle(isOn: $isOn) {
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: isOn ? "checkmark.square.fill" : "square")
+                        .font(.headline)
+                        .foregroundColor(isOn ? .accentColor : .secondary)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(title)
                             .font(.subheadline)
@@ -81,14 +59,34 @@ public struct StandardToggle: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    Spacer()
                 }
-                .toggleStyle(SwitchToggleStyle(tint: .accentColor))
                 .padding(.vertical, 8)
                 .padding(.horizontal, 12)
-                .background(Color(.systemBackground))
-                .cornerRadius(8)
-                .animation(.easeInOut(duration: animationDuration), value: isOn)
             }
+            .buttonStyle(PlainButtonStyle())
+            .background(backgroundColor)
+            .cornerRadius(8)
+
+        case .switch:
+            Toggle(isOn: $isOn) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.subheadline)
+                        .bold()
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .background(backgroundColor)
+            .cornerRadius(8)
+            .animation(.easeInOut(duration: animationDuration), value: isOn)
         }
     }
 }
