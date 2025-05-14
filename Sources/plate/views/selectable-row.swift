@@ -47,10 +47,10 @@ public struct SelectableRow: View {
             RoundedRectangle(cornerRadius: 5)
                 .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
         )
-        .shadow(
-            color: isSelected ? Color.blue.opacity(0.1) : Color.white,
-            radius: 2
-        )
+        // .shadow(
+        //     color: isSelected ? Color.blue.opacity(0.1) : Color.white,
+        //     radius: 2
+        // )
         .contentShape(RoundedRectangle(
             cornerRadius: 5
         ))
