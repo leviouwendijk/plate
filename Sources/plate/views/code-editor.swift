@@ -92,20 +92,23 @@ public struct CodeEditor: NSViewRepresentable {
         tv.textColor = textColor
         tv.backgroundColor = backgroundColor
 
-        // Non-wrapping, infinite width container:
         tv.isHorizontallyResizable = true
         tv.isVerticallyResizable   = true
-        tv.autoresizingMask = [.width, .height]
         tv.textContainer?.widthTracksTextView = false
         tv.textContainer?.containerSize = NSSize(
             width: CGFloat.greatestFiniteMagnitude,
             height: CGFloat.greatestFiniteMagnitude
         )
 
+        tv.autoresizingMask = [.height]
+
         let scroll = NSScrollView()
         scroll.documentView = tv
         scroll.hasVerticalScroller   = true
         scroll.hasHorizontalScroller = true
+        scroll.horizontalScrollElasticity = .allowed
+        scroll.verticalScrollElasticity   = .allowed
+        scroll.autohidesScrollers = false
         scroll.drawsBackground       = false
         return scroll
     }
