@@ -21,24 +21,30 @@ public struct SwipeFadeContainer<Content: View>: View {
     
     public var body: some View {
         content()
+            .contentShape(Rectangle()) 
             .offset(x: dragOffset)
             .opacity(isVisible ? 1 : 0)
             .animation(.easeInOut(duration: animationDuration), value: isVisible)
             .animation(.interactiveSpring(), value: dragOffset)
-            .gesture(
+            .highPriorityGesture(
                 DragGesture(minimumDistance: 10)
                     .updating($dragOffset) { value, state, _ in
-                        state = value.translation.width
+                        // only track horizontal movement
+                        if abs(value.translation.width) > abs(value.translation.height) {
+                            state = value.translation.width
+                        }
                     }
                     .onEnded { value in
-                        // Swipe left to fade out
+                        guard abs(value.translation.width) > abs(value.translation.height) else {
+                            return // vertical swipe, ignore
+                        }
                         if value.translation.width < -threshold {
+                            // Swipe left: hide
                             withAnimation(.easeInOut(duration: animationDuration)) {
                                 isVisible = false
                             }
-                        }
-                        // Swipe right to fade in
-                        else if value.translation.width > threshold {
+                        } else if value.translation.width > threshold {
+                            // Swipe right: show
                             withAnimation(.easeInOut(duration: animationDuration)) {
                                 isVisible = true
                             }
