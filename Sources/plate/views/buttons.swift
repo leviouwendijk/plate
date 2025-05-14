@@ -50,8 +50,10 @@ public struct StandardButton: View {
 
     private var foregroundColor: Color {
         switch type {
-        case .clear, .load, .execute:
+        case .clear, .load:
             return Color.primary
+        case .execute:
+            return Color.black
         case .submit, .delete:
             return Color.white
         }
