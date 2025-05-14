@@ -3,6 +3,7 @@ import SwiftUI
 
 public enum StandardButtonType: String, CaseIterable {
     case clear    // clear a field
+    case load    // load data
     case submit   // submit
     case execute  // execute a process
     case delete   // delete or remove something
@@ -36,6 +37,8 @@ public struct StandardButton: View {
         switch type {
         case .clear:
             return Color.gray.opacity(0.2)
+        case .load:
+            return Color.gray
         case .submit:
             return Color.blue
         case .execute:
@@ -47,7 +50,7 @@ public struct StandardButton: View {
 
     private var foregroundColor: Color {
         switch type {
-        case .clear:
+        case .clear, .load:
             return Color.primary
         case .submit, .execute, .delete:
             return Color.white
@@ -58,6 +61,8 @@ public struct StandardButton: View {
         switch type {
         case .clear:
             return "xmark.circle"
+        case .load:
+            return "square.and.arrow.down.on.square"
         case .submit:
             return "paperplane.fill"
         case .execute:
