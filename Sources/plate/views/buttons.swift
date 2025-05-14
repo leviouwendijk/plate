@@ -83,8 +83,8 @@ public struct StandardButton: View {
             .padding(.horizontal, 16)
             .background(buttonColor)
             .cornerRadius(8)
-            .scaleEffect(isPressed ? 0.95 : 1.0)
-            .opacity(isEnabled ? 1 : 0.6)
+            .scaleEffect(isPressed ? 0.90 : 1.0)
+            .opacity(isEnabled ? 1 : 0.4)
             .animation(.easeInOut(duration: animationDuration), value: isPressed)
 
             if !subtitle.isEmpty {
