@@ -49,7 +49,7 @@ public struct SelectableRow: View {
         )
         .shadow(
             color: isSelected ? Color.blue.opacity(0.1) : Color.white,
-            radius: 5
+            radius: 2
         )
         .contentShape(RoundedRectangle(
             cornerRadius: 5
