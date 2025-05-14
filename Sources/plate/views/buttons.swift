@@ -16,6 +16,7 @@ public struct StandardButton: View {
     public let animationDuration: TimeInterval
 
     @State private var isPressed: Bool = false
+    @Environment(\.isEnabled) private var isEnabled: Bool
 
     public init(
         type: StandardButtonType,
@@ -83,6 +84,7 @@ public struct StandardButton: View {
             .background(buttonColor)
             .cornerRadius(8)
             .scaleEffect(isPressed ? 0.95 : 1.0)
+            .opacity(isEnabled ? 1 : 0.6)
             .animation(.easeInOut(duration: animationDuration), value: isPressed)
 
             if !subtitle.isEmpty {
@@ -92,6 +94,7 @@ public struct StandardButton: View {
             }
         }
         .contentShape(RoundedRectangle(cornerRadius: 8))
+        .allowsHitTesting(isEnabled)
         .gesture(
             DragGesture(minimumDistance: 0)
             .onChanged { _ in
