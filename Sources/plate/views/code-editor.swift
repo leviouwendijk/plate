@@ -86,30 +86,39 @@ public struct CodeEditor: NSViewRepresentable {
     }
 
     public func makeNSView(context: Context) -> NSScrollView {
-        let tv = NSTextView()
-        tv.delegate = context.coordinator
-        tv.font = font
-        tv.textColor = textColor
+        let tv = NSTextView(frame: .zero)
+        tv.delegate       = context.coordinator
+        tv.isRichText     = false              // plain text only
+        tv.font           = font
+        tv.textColor      = textColor
         tv.backgroundColor = backgroundColor
 
         tv.isHorizontallyResizable = true
         tv.isVerticallyResizable   = true
-        tv.textContainer?.widthTracksTextView = false
+        tv.textContainer?.widthTracksTextView  = false
+        tv.textContainer?.heightTracksTextView = false
         tv.textContainer?.containerSize = NSSize(
-            width: CGFloat.greatestFiniteMagnitude,
+            width:  CGFloat.greatestFiniteMagnitude,
             height: CGFloat.greatestFiniteMagnitude
         )
 
-        tv.autoresizingMask = [.height]
+        tv.minSize = NSSize(width: 0, height: 0)
+        tv.maxSize = NSSize(
+            width:  CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
 
-        let scroll = NSScrollView()
-        scroll.documentView = tv
-        scroll.hasVerticalScroller   = true
-        scroll.hasHorizontalScroller = true
+        tv.autoresizingMask = []   // remove .width / .height flags
+
+        let scroll = NSScrollView(frame: .zero)
+        scroll.documentView           = tv
+        scroll.hasVerticalScroller    = true
+        scroll.hasHorizontalScroller  = true
         scroll.horizontalScrollElasticity = .allowed
         scroll.verticalScrollElasticity   = .allowed
-        scroll.autohidesScrollers = false
-        scroll.drawsBackground       = false
+        scroll.autohidesScrollers     = false
+        scroll.drawsBackground        = false
+
         return scroll
     }
 
