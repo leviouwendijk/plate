@@ -88,7 +88,7 @@ public struct CodeEditor: NSViewRepresentable {
     public func makeNSView(context: Context) -> NSScrollView {
         let tv = NSTextView(frame: .zero)
         tv.delegate       = context.coordinator
-        tv.isRichText     = false              // plain text only
+        tv.isRichText     = false
         tv.font           = font
         tv.textColor      = textColor
         tv.backgroundColor = backgroundColor
@@ -108,7 +108,7 @@ public struct CodeEditor: NSViewRepresentable {
             height: CGFloat.greatestFiniteMagnitude
         )
 
-        tv.autoresizingMask = []   // remove .width / .height flags
+        tv.autoresizingMask = []
 
         let scroll = NSScrollView(frame: .zero)
         scroll.documentView           = tv
@@ -118,6 +118,9 @@ public struct CodeEditor: NSViewRepresentable {
         scroll.verticalScrollElasticity   = .allowed
         scroll.autohidesScrollers     = false
         scroll.drawsBackground        = false
+        scroll.wantsLayer = true
+        scroll.layer?.cornerRadius = 8
+        scroll.layer?.masksToBounds = true
 
         return scroll
     }
