@@ -25,7 +25,7 @@ public struct SelectableRow: View {
                 Text(title)
                     // .font(.headline)
                     // .foregroundColor(Color("NearBlack"))
-                    .foregroundColor(Color.black)
+                    .foregroundColor(Color.primary)
                     // .bold()
             } else {
                 Text(title)
