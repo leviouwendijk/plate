@@ -10,6 +10,7 @@ public struct StandardToggle: View {
     @Binding public var isOn: Bool
     public let title: String
     public let subtitle: String?
+    public let width: CGFloat
     public let animationDuration: TimeInterval
 
     private var backgroundColor: Color {
@@ -27,12 +28,14 @@ public struct StandardToggle: View {
         isOn: Binding<Bool>,
         title: String,
         subtitle: String? = nil,
+        width: CGFloat = 50,
         animationDuration: Double = 0.2
     ) {
         self.style = style
         self._isOn = isOn
         self.title = title
         self.subtitle = subtitle
+        self.width = width
         self.animationDuration = animationDuration
     }
 
@@ -86,6 +89,7 @@ public struct StandardToggle: View {
             .padding(.horizontal, 12)
             .background(backgroundColor)
             .cornerRadius(8)
+            .frame(minWidth: width)
             .animation(.easeInOut(duration: animationDuration), value: isOn)
         }
     }
