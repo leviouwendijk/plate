@@ -47,7 +47,6 @@ public struct MailerAPIRequestContent<Variables: Encodable>: Encodable {
     public let from:        MailerAPIEmailFrom?
     public let to:          MailerAPIEmailTo?
     public let subject:     String?
-    // public let body:        String? // should be in Template vars?
     public let template:    MailerAPITemplate<Variables>?
     public let headers:     [String:String]
     public let replyTo:     [String]?
@@ -61,7 +60,6 @@ public struct MailerAPIRequestContent<Variables: Encodable>: Encodable {
         from:        MailerAPIEmailFrom? = nil,
         to:          MailerAPIEmailTo? = nil,
         subject:     String? = nil,
-        // body:        String? = nil,
         template:    MailerAPITemplate<Variables>? = nil,
         headers:     [String:String] = [:],
         replyTo:     [String]? = nil,
@@ -70,7 +68,6 @@ public struct MailerAPIRequestContent<Variables: Encodable>: Encodable {
         self.from        = from
         self.to          = to
         self.subject     = subject
-        // self.body        = body
         self.template    = template
         self.headers     = headers
         self.replyTo     = replyTo
