@@ -13,9 +13,6 @@ public struct CustomPayload: MailerAPIPayload {
     public init(
             endpoint:     MailerAPIEndpoint = .messageSend,
             variables:    MailerAPICustomVariables,
-            // subject:      String,
-            // body:         String,
-            // availability: MailerAPIAvailabilityContent? = nil,
             customFrom:   MailerAPIEmailFrom? = nil,
             emailsTo:     [String],
             emailsCC:     [String] = [],
@@ -27,11 +24,6 @@ public struct CustomPayload: MailerAPIPayload {
             includeInvoice: Bool = false,
     ) throws {
         self.endpoint = endpoint
-
-        // let variables = MailerAPICustomVariables(
-        //     body: body,
-        //     time_range: availability?.time_range()
-        // )
 
         let template = MailerAPITemplate(
             variables: variables

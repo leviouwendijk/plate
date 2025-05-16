@@ -10,9 +10,6 @@ public struct LeadPayload: MailerAPIPayload {
     public init(
             endpoint:     MailerAPIEndpoint,
             variables:    MailerAPILeadVariables,
-            // client:       String,
-            // dog:          String,
-            // availability: MailerAPIAvailabilityContent? = nil,
             customFrom:   MailerAPIEmailFrom? = nil,
             emailsTo:     [String],
             emailsCC:     [String] = [],
@@ -22,12 +19,6 @@ public struct LeadPayload: MailerAPIPayload {
             addHeaders:   [String: String] = [:]
     ) throws {
         self.endpoint = endpoint
-
-        // let variables = MailerAPILeadVariables(
-        //     name:       client,
-        //     dog:        dog,
-        //     time_range: availability?.time_range()
-        // )
 
         let template = MailerAPITemplate(
             variables: variables

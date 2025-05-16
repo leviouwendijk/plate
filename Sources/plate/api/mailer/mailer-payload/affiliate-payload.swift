@@ -10,8 +10,6 @@ public struct AffiliatePayload: MailerAPIPayload {
     public init(
             endpoint:     MailerAPIEndpoint = .food,
             variables:    MailerAPIAffiliateVariables,
-            // client:       String,
-            // dog:          String,
             customFrom:   MailerAPIEmailFrom? = nil,
             emailsTo:     [String],
             emailsCC:     [String] = [],
@@ -21,11 +19,6 @@ public struct AffiliatePayload: MailerAPIPayload {
             addHeaders:   [String: String] = [:]
     ) throws {
         self.endpoint = endpoint
-
-        // let variables = MailerAPIAffiliateVariables(
-        //     name: client,
-        //     dog: dog
-        // )
 
         let template = MailerAPITemplate(
             variables: variables

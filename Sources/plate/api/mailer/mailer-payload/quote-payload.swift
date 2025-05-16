@@ -12,8 +12,6 @@ public struct QuotePayload: MailerAPIPayload {
     public init(
             endpoint:     MailerAPIEndpoint,
             variables:    MailerAPIQuoteVariables,
-            // client:       String,
-            // dog:          String,
             customFrom:   MailerAPIEmailFrom? = nil,
             emailsTo:     [String],
             emailsCC:     [String] = [],
@@ -23,11 +21,6 @@ public struct QuotePayload: MailerAPIPayload {
             addHeaders:   [String: String] = [:]
     ) throws {
         self.endpoint = endpoint
-
-        // let variables = MailerAPIQuoteVariables(
-        //     name:       client,
-        //     dog:        dog
-        // )
 
         let template = MailerAPITemplate(
             variables: variables

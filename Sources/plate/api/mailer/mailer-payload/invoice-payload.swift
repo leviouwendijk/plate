@@ -3,7 +3,7 @@ import Foundation
 public struct InvoicePayload: MailerAPIPayload {
     public typealias Variables = MailerAPIInvoiceVariables
 
-    public let route:     MailerAPIRoute     = .custom
+    public let route:     MailerAPIRoute     = .invoice
     public let endpoint:  MailerAPIEndpoint
     public let content:   MailerAPIRequestContent<Variables>
 
@@ -11,11 +11,8 @@ public struct InvoicePayload: MailerAPIPayload {
     public let invoicePath: String = MailerAPIRequestDefaults.defaultInvoicePath()
 
     public init(
-            endpoint:     MailerAPIEndpoint = .messageSend,
+            endpoint:     MailerAPIEndpoint,
             variables:    MailerAPIInvoiceVariables,
-            // subject:      String,
-            // body:         String,
-            // availability: MailerAPIAvailabilityContent? = nil,
             customFrom:   MailerAPIEmailFrom? = nil,
             emailsTo:     [String],
             emailsCC:     [String] = [],
@@ -27,11 +24,6 @@ public struct InvoicePayload: MailerAPIPayload {
             includeInvoice: Bool = false,
     ) throws {
         self.endpoint = endpoint
-
-        // let variables = MailerAPIVariables(
-        //     body: body,
-        //     time_range: availability?.time_range()
-        // )
 
         let template = MailerAPITemplate(
             variables: variables
