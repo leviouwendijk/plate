@@ -20,8 +20,8 @@ public struct MailerAPILeadVariables: Encodable {
     public let name:       String
     public let dog:        String
 
-    public let time_range: [String:[String:String]]?
-    // public let time_range: MailerAPIAvailabilityContent?
+    // public let time_range: [String:[String:String]]?
+    public let time_range: MailerAPIAvailabilityContent?
 }
 
 // quote -- /issue, /follow
@@ -48,13 +48,18 @@ public struct MailerAPIResolutionVariables: Encodable {
     public let dog:        String
 }
 
-// // custom -- /template/fetch, /message/send
-// public struct MailerAPICustomVariables: Encodable {
-//     public let category:       String? // for template/fetch
-//     public let file:        String? // template/fetch
-//     public let body:        String? // message/send
-// }
-// note: we can handle this in their payload initializers?
+// custom -- /message/send
+public struct MailerAPICustomVariables: Encodable {
+    public let body:       String
+    // public let time_range: [String:[String:String]]?
+    public let time_range: MailerAPIAvailabilityContent?
+}
+
+// custom -- /template/fetch
+public struct MailerAPITemplateVariables: Encodable {
+    public let category:    String
+    public let file:        String
+}
 
 
 // appointment -- /confirmation
@@ -76,12 +81,6 @@ public struct MailerAPIAppointmentContent: Encodable {
     public let number:   String
     public let area:     String
     public let location: String
-}
-
-// time range slot
-public struct MailerAPIDayAvailabilityContent: Codable {
-    public let start: String
-    public let end:   String
 }
 
 // output full time_range dictionary
@@ -114,6 +113,17 @@ public struct MailerAPIAvailabilityContent: Encodable {
             ]
         }
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(time_range())
+    }
+}
+
+// time range slot
+public struct MailerAPIDayAvailabilityContent: Codable {
+    public let start: String
+    public let end:   String
 }
 
 public enum MailerAPIWeekday: String, RawRepresentable, CaseIterable, Identifiable, Encodable {

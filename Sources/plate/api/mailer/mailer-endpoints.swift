@@ -1,5 +1,26 @@
 import Foundation
 
+public enum MailerAPIAlias: String, CaseIterable, RawRepresentable, Sendable {
+    case betalingen
+    case bevestigingen
+    case offertes
+    case relaties
+    case support
+    case intern
+
+    fileprivate static let routeMap: [MailerAPIRoute: MailerAPIAlias] = [
+        .invoice:     .betalingen,
+        .appointment: .bevestigingen,
+        .quote:       .offertes,
+        .lead:        .relaties,
+        .service:     .relaties,
+        .resolution:  .relaties,
+        .affiliate:   .relaties,
+        .custom:      .relaties,
+        .template:    .intern
+    ]
+}
+
 public enum MailerAPIRoute: String, CaseIterable, RawRepresentable, Sendable {
     case quote
     case lead
@@ -9,26 +30,11 @@ public enum MailerAPIRoute: String, CaseIterable, RawRepresentable, Sendable {
     case invoice
     case resolution
     case custom
+    case template
 
     public func alias() -> String {
-        switch self {
-            case .invoice:
-                return "betalingen"
-            case .appointment:
-                return "bevestigingen"
-            case .quote:
-                return "offertes"
-            case .lead:
-                return "relaties"
-            case .service:
-                return "relaties"
-            case .resolution:
-                return "relaties"
-            case .affiliate:
-                return "relaties"
-            case .custom:
-                return "relaties"
-        }
+        MailerAPIAlias
+        .routeMap[self]?.rawValue ?? "relaties"
     }
 }
 
@@ -42,13 +48,24 @@ public enum MailerAPIEndpoint: String, CaseIterable, RawRepresentable, Sendable 
     case review
     case check
     case food
-    case templateFetch  = "template/fetch"
+    case fetch
+    // case templateFetch  = "template/fetch"
     case messageSend    = "message/send"
 }
 
 public struct MailerAPIPath {
     public let route:    MailerAPIRoute
     public let endpoint: MailerAPIEndpoint
+
+    public static let defaultBaseURLString: String = MailerAPIRequestDefaults.defaultBaseURL()
+
+    public static var defaultBaseURL: URL {
+        let base = MailerAPIRequestDefaults.defaultBaseURL()
+        guard let url = URL(string: base) else {
+            fatalError("Invalid default base URL: “\(base)”")
+        }
+        return url
+    }
 
     private static let validMap: [MailerAPIRoute:Set<MailerAPIEndpoint>] = [
         .invoice:    [.issue, .expired, .issueSimple],
@@ -57,7 +74,8 @@ public struct MailerAPIPath {
         .service:    [.onboarding, .follow],
         .resolution: [.review, .follow],
         .affiliate:  [.food],
-        .custom:     [.templateFetch, .messageSend]
+        .custom:     [.messageSend],
+        .template:   [.fetch]
     ]
 
     public init(
@@ -74,7 +92,7 @@ public struct MailerAPIPath {
         self.endpoint = endpoint
     }
 
-    public func url(baseURL: URL) throws -> URL {
+    public func url(baseURL: URL = defaultBaseURL) throws -> URL {
         let str = "\(baseURL.absoluteString)/\(route.rawValue)/\(endpoint.rawValue)"
         guard let url = URL(string: str) else {
             throw MailerAPIError.invalidURL(str)
@@ -82,7 +100,7 @@ public struct MailerAPIPath {
         return url
     }
 
-    public func string(baseURL: String = MailerAPIEnvironmentKey.apiURL.rawValue) -> String {
+    public func string(baseURL: String = defaultBaseURLString) -> String {
         return "\(baseURL)/\(route.rawValue)/\(endpoint.rawValue)"
     }
 

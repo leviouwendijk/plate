@@ -15,6 +15,14 @@ public struct MailerAPIRequestDefaults: Encodable {
         return environment(MailerAPIEnvironmentKey.quotePath.rawValue)
     }
 
+    public static func defaultInvoicePath() -> String {
+        return environment(MailerAPIEnvironmentKey.invoicePDF.rawValue)
+    }
+
+    public static func defaultBaseURL() -> String {
+        return environment(MailerAPIEnvironmentKey.apiURL.rawValue)
+    }
+
     public static func defaultBCC() -> [String] {
         let email = automationsEmail()
         return [email]
@@ -36,13 +44,13 @@ public struct MailerAPIRequestDefaults: Encodable {
 }
 
 public struct MailerAPIRequestContent<Variables: Encodable>: Encodable {
-    public let from:        MailerAPIEmailFrom
-    public let to:          MailerAPIEmailTo
+    public let from:        MailerAPIEmailFrom?
+    public let to:          MailerAPIEmailTo?
     public let subject:     String?
-    public let body:        String?
+    // public let body:        String? // should be in Template vars?
     public let template:    MailerAPITemplate<Variables>?
     public let headers:     [String:String]
-    public let replyTo:     [String]
+    public let replyTo:     [String]?
     public let attachments: MailerAPIEmailAttachmentsArray
 
     private enum CodingKeys: String, CodingKey {
@@ -50,19 +58,19 @@ public struct MailerAPIRequestContent<Variables: Encodable>: Encodable {
     }
 
     public init(
-        from:        MailerAPIEmailFrom,
-        to:          MailerAPIEmailTo,
+        from:        MailerAPIEmailFrom? = nil,
+        to:          MailerAPIEmailTo? = nil,
         subject:     String? = nil,
-        body:        String? = nil,
+        // body:        String? = nil,
         template:    MailerAPITemplate<Variables>? = nil,
         headers:     [String:String] = [:],
-        replyTo:     [String],
+        replyTo:     [String]? = nil,
         attachments: MailerAPIEmailAttachmentsArray
     ) {
         self.from        = from
         self.to          = to
         self.subject     = subject
-        self.body        = body
+        // self.body        = body
         self.template    = template
         self.headers     = headers
         self.replyTo     = replyTo
@@ -72,26 +80,32 @@ public struct MailerAPIRequestContent<Variables: Encodable>: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(from, forKey: .from)
+        // Only emit “from” if it’s non‐nil
+        try container.encodeIfPresent(from, forKey: .from)
 
-        // break up the MailerAPIEmailTo struct into top level key:value pairs (as /mailer/v1 expects)
-        try container.encode(to.to, forKey: .to)
-        try container.encode(to.cc, forKey: .cc)
-        try container.encode(to.bcc, forKey: .bcc)
+        // Only emit to/cc/bcc if “to” is non‐nil
+        if let to = to {
+            try container.encode(to.to, forKey: .to)
+            try container.encode(to.cc, forKey: .cc)
+            try container.encode(to.bcc, forKey: .bcc)
+        }
 
-        try container.encode(replyTo,    forKey: .replyTo)
-        try container.encodeIfPresent(subject, forKey: .subject)
-        try container.encodeIfPresent(body,    forKey: .body)
-        try container.encodeIfPresent(template,forKey: .template)
-        try container.encode(headers,     forKey: .headers)
-        try container.encode(attachments,  forKey: .attachments)
+        // Same for replyTo
+        try container.encodeIfPresent(replyTo, forKey: .replyTo)
+
+        // The rest can stay encodeIfPresent or encode (for non‐optionals)
+        try container.encodeIfPresent(subject,  forKey: .subject)
+        // try container.encodeIfPresent(body,     forKey: .body)
+        try container.encodeIfPresent(template, forKey: .template)
+        try container.encode(headers,            forKey: .headers)
+        try container.encode(attachments,       forKey: .attachments)
     }
 }
 
 public struct MailerAPITemplate<Variables: Encodable>: Encodable {
-    let category: String? = nil
-    let file:     String? = nil
-    let variables: Variables
+    public let category:  String? = nil
+    public let file:      String? = nil
+    public let variables: Variables
 }
 
 // public struct MailerAPITemplate: Encodable {
