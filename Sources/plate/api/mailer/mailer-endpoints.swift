@@ -57,12 +57,14 @@ public struct MailerAPIPath {
     public let route:    MailerAPIRoute
     public let endpoint: MailerAPIEndpoint
 
-    public static let defaultBaseURLString: String = MailerAPIRequestDefaults.defaultBaseURL()
+    public static func defaultBaseURLString() throws -> String {
+        try MailerAPIRequestDefaults.defaultBaseURL()
+    }
 
-    public static var defaultBaseURL: URL {
-        let base = MailerAPIRequestDefaults.defaultBaseURL()
+    public static func defaultBaseURL() throws -> URL {
+        let base = try defaultBaseURLString()
         guard let url = URL(string: base) else {
-            fatalError("Invalid default base URL: “\(base)”")
+            throw MailerAPIError.invalidURL(base)
         }
         return url
     }
@@ -92,7 +94,7 @@ public struct MailerAPIPath {
         self.endpoint = endpoint
     }
 
-    public func url(baseURL: URL = defaultBaseURL) throws -> URL {
+    public func url(baseURL: URL) throws -> URL {
         let str = "\(baseURL.absoluteString)/\(route.rawValue)/\(endpoint.rawValue)"
         guard let url = URL(string: str) else {
             throw MailerAPIError.invalidURL(str)
@@ -100,8 +102,17 @@ public struct MailerAPIPath {
         return url
     }
 
-    public func string(baseURL: String = defaultBaseURLString) -> String {
-        return "\(baseURL)/\(route.rawValue)/\(endpoint.rawValue)"
+    public func url() throws -> URL {
+        try url(baseURL: Self.defaultBaseURL())
+    }
+
+    public func string(baseURL: String) -> String {
+        "\(baseURL)/\(route.rawValue)/\(endpoint.rawValue)"
+    }
+
+    public func string() throws -> String {
+        let base = try Self.defaultBaseURLString()
+        return string(baseURL: base)
     }
 
     public static func endpoints(for route: MailerAPIRoute) -> [MailerAPIEndpoint] {

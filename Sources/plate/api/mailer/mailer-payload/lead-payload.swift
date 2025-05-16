@@ -13,8 +13,8 @@ public struct LeadPayload: MailerAPIPayload {
             customFrom:   MailerAPIEmailFrom? = nil,
             emailsTo:     [String],
             emailsCC:     [String] = [],
-            emailsBCC:    [String] = MailerAPIRequestDefaults.defaultBCC(),
-            replyTo:      [String] = MailerAPIRequestDefaults.defaultReplyTo(),
+            emailsBCC:    [String]? = nil,
+            emailsReplyTo:[String]? = nil,
             attachments:  [MailerAPIEmailAttachment]? = nil,
             addHeaders:   [String: String] = [:]
     ) throws {
@@ -26,13 +26,22 @@ public struct LeadPayload: MailerAPIPayload {
 
         let attach = MailerAPIEmailAttachmentsArray(attachments: attachments)
 
-        let from = customFrom ?? MailerAPIRequestDefaults.defaultFrom(for: route)
+        let from: MailerAPIEmailFrom
+        if let override = customFrom {
+            from = override
+        } else {
+            from = try MailerAPIRequestDefaults.defaultFrom(for: route)
+        }
+
+        let bccList   = try emailsBCC ?? MailerAPIRequestDefaults.defaultBCC()
 
         let to = MailerAPIEmailTo(
-            to:  emailsTo,
-            cc:  emailsCC,
-            bcc: emailsBCC,
+            to: emailsTo, 
+            cc: emailsCC, 
+            bcc: bccList
         )
+
+        let replyTo = try emailsReplyTo   ?? MailerAPIRequestDefaults.defaultReplyTo()
 
         self.content = MailerAPIRequestContent(
             from:        from,

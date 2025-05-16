@@ -7,16 +7,14 @@ public struct QuotePayload: MailerAPIPayload {
     public let endpoint:  MailerAPIEndpoint
     public let content:   MailerAPIRequestContent<Variables>
 
-    public let quotePath: String = MailerAPIRequestDefaults.defaultQuotePath()
-
     public init(
             endpoint:     MailerAPIEndpoint,
             variables:    MailerAPIQuoteVariables,
             customFrom:   MailerAPIEmailFrom? = nil,
             emailsTo:     [String],
             emailsCC:     [String] = [],
-            emailsBCC:    [String] = MailerAPIRequestDefaults.defaultBCC(),
-            replyTo:      [String] = MailerAPIRequestDefaults.defaultReplyTo(),
+            emailsBCC:    [String]? = nil,
+            emailsReplyTo:[String]? = nil,
             attachments:  [MailerAPIEmailAttachment]? = nil,
             addHeaders:   [String: String] = [:]
     ) throws {
@@ -28,19 +26,29 @@ public struct QuotePayload: MailerAPIPayload {
 
         var attach = MailerAPIEmailAttachmentsArray(attachments: attachments)
 
+        let quotePath = try MailerAPIEnvironment.require(.quotePath)
         let quote = try MailerAPIEmailAttachment(path: quotePath)
 
         if attachments == nil {
             attach.add(quote)
         }
 
-        let from = customFrom ?? MailerAPIRequestDefaults.defaultFrom(for: route)
+        let from: MailerAPIEmailFrom
+        if let override = customFrom {
+            from = override
+        } else {
+            from = try MailerAPIRequestDefaults.defaultFrom(for: route)
+        }
+
+        let bccList   = try emailsBCC ?? MailerAPIRequestDefaults.defaultBCC()
 
         let to = MailerAPIEmailTo(
-            to:  emailsTo,
-            cc:  emailsCC,
-            bcc: emailsBCC,
+            to: emailsTo, 
+            cc: emailsCC, 
+            bcc: bccList
         )
+
+        let replyTo = try emailsReplyTo   ?? MailerAPIRequestDefaults.defaultReplyTo()
 
         self.content = MailerAPIRequestContent(
             from:        from,

@@ -3,43 +3,46 @@ import Foundation
 public struct MailerAPIRequestDefaults: Encodable {
     public init() {}
 
-    public static func automationsEmail() -> String {
-        return environment(MailerAPIEnvironmentKey.automationsEmail.rawValue)
+    public static func automationsEmail() throws -> String {
+        try MailerAPIEnvironment.require(.automationsEmail)
     }
 
-    public static func supportEmail() -> String {
-        return environment(MailerAPIEnvironmentKey.replyTo.rawValue)
+    public static func supportEmail() throws -> String {
+        try MailerAPIEnvironment.require(.replyTo)
     }
 
-    public static func defaultQuotePath() -> String {
-        return environment(MailerAPIEnvironmentKey.quotePath.rawValue)
+    public static func defaultQuotePath() throws -> String {
+        try MailerAPIEnvironment.require(.quotePath)
     }
 
-    public static func defaultInvoicePath() -> String {
-        return environment(MailerAPIEnvironmentKey.invoicePDF.rawValue)
+    public static func defaultInvoicePath() throws -> String {
+        try MailerAPIEnvironment.require(.invoicePDF)
     }
 
-    public static func defaultBaseURL() -> String {
-        return environment(MailerAPIEnvironmentKey.apiURL.rawValue)
+    public static func defaultBaseURL() throws -> String {
+        try MailerAPIEnvironment.require(.apiURL)
     }
 
-    public static func defaultBCC() -> [String] {
-        let email = automationsEmail()
+    public static func defaultBCC() throws -> [String] {
+        let email = try automationsEmail()
         return [email]
     }
 
-    public static func defaultReplyTo() -> [String] {
-        let email = supportEmail()
+    public static func defaultReplyTo() throws -> [String] {
+        let email = try supportEmail()
         return [email]
     }
 
-    public static func defaultFrom(for route: MailerAPIRoute) -> MailerAPIEmailFrom {
-        let from = MailerAPIEmailFrom(
-            name:  environment(MailerAPIEnvironmentKey.from.rawValue),
-            alias: route.alias(),
-            domain: environment(MailerAPIEnvironmentKey.domain.rawValue)
+    public static func defaultFrom(for route: MailerAPIRoute) throws -> MailerAPIEmailFrom {
+        let name   = try MailerAPIEnvironment.require(.from)
+        let domain = try MailerAPIEnvironment.require(.domain)
+        let alias  = route.alias()
+        
+        return MailerAPIEmailFrom(
+            name: name,
+            alias: alias,
+            domain: domain
         )
-        return from
     }
 }
 

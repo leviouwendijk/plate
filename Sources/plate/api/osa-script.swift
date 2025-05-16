@@ -1,6 +1,6 @@
 import Foundation
 
-public func OsaScriptApplicationActivate(_ application: String) -> String {
+public func osaScriptApplicationActivate(_ application: String) -> String {
     return """
     tell application "\(application)"
         activate
