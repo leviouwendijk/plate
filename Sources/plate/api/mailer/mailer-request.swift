@@ -103,27 +103,18 @@ public struct MailerAPITemplate<Variables: Encodable>: Encodable {
     public let category:  String? = nil
     public let file:      String? = nil
     public let variables: Variables
+    
+    private enum CodingKeys: String, CodingKey {
+        case category, file, variables
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(category, forKey: .category)
+        try c.encodeIfPresent(file,     forKey: .file)
+        try c.encode(variables,         forKey: .variables)
+    }
 }
-
-// public struct MailerAPITemplate: Encodable {
-//     public let category: String
-//     public let file: String
-//     public let variables: [String: Any]
-
-//     public init(category: String, file: String, variables: [String: Any]) {
-//         self.category = category
-//         self.file = file
-//         self.variables = variables
-//     }
-
-//     public func dictionary() -> [String: Any] {
-//         return [
-//             "category": category,
-//             "file": file,
-//             "variables": variables
-//         ]
-//     }
-// }
 
 public struct MailerAPIEmailFrom: Encodable {
     public let name: String
@@ -202,7 +193,6 @@ public struct MailerAPIEmailAttachment: Encodable {
         ]
     }
 
-    // emit only these
     private enum CodingKeys: String, CodingKey {
         case type, value, name
     }

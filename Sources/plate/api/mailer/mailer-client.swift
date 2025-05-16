@@ -1,5 +1,13 @@
 import Foundation
 
+public protocol MailerAPIPayload {
+    associatedtype Variables: Encodable
+
+    var route:     MailerAPIRoute { get }
+    var endpoint:  MailerAPIEndpoint { get }
+    var content:   MailerAPIRequestContent<Variables> { get }
+}
+
 public struct MailerAPIClient {
     public let apiKey: String
     public let baseURL: URL
@@ -44,7 +52,6 @@ public struct MailerAPIClient {
             var allHeaders = headers
             allHeaders["Content-Type"] = "application/json"
 
-            // 5️⃣ Fire the network request
             let request = NetworkRequest(
                 url: url,
                 method: .post,
@@ -74,12 +81,4 @@ public struct MailerAPIClient {
             completion(.failure(.network(error)))
         }
     }
-}
-
-public protocol MailerAPIPayload {
-    associatedtype Variables: Encodable
-
-    var route:     MailerAPIRoute { get }
-    var endpoint:  MailerAPIEndpoint { get }
-    var content:   MailerAPIRequestContent<Variables> { get }
 }
