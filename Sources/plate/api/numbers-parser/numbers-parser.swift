@@ -26,7 +26,8 @@ public struct NumbersParser {
         reparsedJsonPath: String? = nil,
 
         // pdf filter args
-        invoiceOut: String? = nil
+        invoiceOut: String? = nil,
+        openAfterwards: Bool = false
     ) throws {
         self.exporter = try NumbersParserExporter(
             source: source,
@@ -50,7 +51,8 @@ public struct NumbersParser {
 
         self.pdfFilter = try NumbersParserInvoicePDF(
             invoiceRaw: invoiceRaw,
-            invoiceOut: invoiceOut
+            invoiceOut: invoiceOut,
+            openAfterwards: openAfterwards
         )
     }
 

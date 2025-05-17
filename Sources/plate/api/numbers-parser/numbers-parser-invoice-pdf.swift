@@ -1,16 +1,23 @@
 import Foundation
 import PDFKit
 
+
 public struct NumbersParserInvoicePDF {
     public let invoiceRaw: String
     public let invoiceOut: String
+    public let openAfterwards: Bool
+    public let pathOpener: PathOpener?
 
     public init(
         invoiceRaw: String? = nil,
         invoiceOut: String? = nil,
+        openAfterwards: Bool = false,
+        pathOpener: PathOpener? = nil
     ) throws {
         self.invoiceRaw      = try invoiceRaw      ?? NumbersParserEnvironment.require(.invoiceRaw)
         self.invoiceOut      = try invoiceOut      ?? NumbersParserEnvironment.require(.invoice)
+        self.openAfterwards  = openAfterwards
+        self.pathOpener      = try pathOpener ?? PathOpener(path: self.invoiceOut, method: .inParentDirectory)
     }
 
     public func convertRawNumbersPdfToInvoice(selectedPages: [Int] = [12, 13]) throws {
@@ -36,6 +43,10 @@ public struct NumbersParserInvoicePDF {
 
         do {
             try outputData.write(to: URL(fileURLWithPath: invoiceOut))
+
+            if openAfterwards {
+                try pathOpener?.open()
+            }
         } catch {
             throw NumbersParserError.writeFailed(file: invoiceOut, underlying: error)
         }
