@@ -7,17 +7,22 @@ public struct NumbersParserInvoicePDF {
     public let invoiceOut: String
     public let openAfterwards: Bool
     public let pathOpener: PathOpener?
+    public let openingMethod: PathOpenerOpeningMethod?
 
     public init(
         invoiceRaw: String? = nil,
         invoiceOut: String? = nil,
         openAfterwards: Bool = false,
-        pathOpener: PathOpener? = nil
+        pathOpener: PathOpener? = nil,
+        openingMethod: PathOpenerOpeningMethod? = nil
     ) throws {
         self.invoiceRaw      = try invoiceRaw      ?? NumbersParserEnvironment.require(.invoiceRaw)
         self.invoiceOut      = try invoiceOut      ?? NumbersParserEnvironment.require(.invoice)
         self.openAfterwards  = openAfterwards
-        self.pathOpener      = try pathOpener ?? PathOpener(path: self.invoiceOut, method: .inParentDirectory)
+
+        let method           = openingMethod ?? PathOpenerOpeningMethod.inParentDirectory
+        self.openingMethod   = method
+        self.pathOpener      = try pathOpener ?? PathOpener(path: self.invoiceOut, method: method)
     }
 
     public func convertRawNumbersPdfToInvoice(selectedPages: [Int] = [12, 13]) throws {

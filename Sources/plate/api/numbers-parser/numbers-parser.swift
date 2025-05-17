@@ -27,7 +27,8 @@ public struct NumbersParser {
 
         // pdf filter args
         invoiceOut: String? = nil,
-        openAfterwards: Bool = false
+        openAfterwards: Bool = false,
+        openingMethod: PathOpenerOpeningMethod?,
     ) throws {
         self.exporter = try NumbersParserExporter(
             source: source,
@@ -52,7 +53,8 @@ public struct NumbersParser {
         self.pdfFilter = try NumbersParserInvoicePDF(
             invoiceRaw: invoiceRaw,
             invoiceOut: invoiceOut,
-            openAfterwards: openAfterwards
+            openAfterwards: openAfterwards,
+            openingMethod: openingMethod,
         )
     }
 
