@@ -65,7 +65,8 @@ public struct NumbersParser {
     }
 }
 
-// example call:
+// example calls:
+
 // do {
 //     // uses env defaults for anything you omit
 //     let parser = try NumbersParser(
@@ -83,4 +84,18 @@ public struct NumbersParser {
 //     print("Render failed:", error)
 // }
 
+// specifying openingMethod
+// func run() throws {
+//     do {
+//         let parser = try NumbersParser(
+//             value: "469",
+//             openAfterwards: true,
+//             openingMethod: .direct
+//         )
 
+//         try parser.renderInvoice()
+//         print("Success")
+//     } catch {
+//         print("Render failed:", error)
+//     }
+// }
