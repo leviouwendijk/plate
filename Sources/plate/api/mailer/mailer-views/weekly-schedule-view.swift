@@ -18,30 +18,32 @@ public struct WeeklyScheduleView: View {
         VStack(alignment: .leading, spacing: 8) {
             SectionTitle(title: "Availability", width: 150)
 
-            ForEach(MailerAPIWeekday.allCases) { day in
-                HStack(spacing: 12) {
-                    StandardToggle(
-                        style: .switch,
-                        isOn: Binding(
-                            get:  { viewModel.schedules[day]?.enabled ?? false },
-                            set: { viewModel.schedules[day]?.enabled = $0 }
-                        ),
-                        title: day.dutch,
-                    )
-                    .frame(width: labelWidth, alignment: .leading)
-
-                    if viewModel.schedules[day]?.enabled == true {
-                        StandardTimeRow(
-                            // title: day.dutch,
-                            start: Binding(
-                                get:  { viewModel.schedules[day]?.start ?? Date() },
-                                set: { viewModel.schedules[day]?.start = $0 }
+            VStack {
+                ForEach(MailerAPIWeekday.allCases) { day in
+                    HStack(spacing: 12) {
+                        StandardToggle(
+                            style: .switch,
+                            isOn: Binding(
+                                get:  { viewModel.schedules[day]?.enabled ?? false },
+                                set: { viewModel.schedules[day]?.enabled = $0 }
                             ),
-                            end: Binding(
-                                get:  { viewModel.schedules[day]?.end ?? Date() },
-                                set: { viewModel.schedules[day]?.end = $0 }
-                            )
+                            title: day.dutch,
                         )
+                        .frame(width: labelWidth, alignment: .leading)
+
+                        if viewModel.schedules[day]?.enabled == true {
+                            StandardTimeRow(
+                                // title: day.dutch,
+                                start: Binding(
+                                    get:  { viewModel.schedules[day]?.start ?? Date() },
+                                    set: { viewModel.schedules[day]?.start = $0 }
+                                ),
+                                end: Binding(
+                                    get:  { viewModel.schedules[day]?.end ?? Date() },
+                                    set: { viewModel.schedules[day]?.end = $0 }
+                                )
+                            )
+                        }
                     }
                 }
             }
