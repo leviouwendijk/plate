@@ -76,22 +76,50 @@ public enum EmptyQueryBehavior {
     case all
 }
 
+// extension Array where Element == CNContact {
+//     public func filteredClientContacts(
+//         matching query: String,
+//         uponEmptyReturn: EmptyQueryBehavior = .all
+//     ) -> [CNContact] {
+
+//         guard !query.isEmpty else {
+//             return (uponEmptyReturn == .all) ? self : []
+//         }
+        
+//         let normalizedQuery = query.normalizedForClientDogSearch
+//         return self.filter {
+//             $0.givenName.normalizedForClientDogSearch.contains(normalizedQuery)
+//             || $0.familyName.normalizedForClientDogSearch.contains(normalizedQuery)
+//             || ((($0.emailAddresses.first?.value as String?)?
+//                     .normalizedForClientDogSearch.contains(normalizedQuery)) ?? false)
+//         }
+//     }
+// }
+
 extension Array where Element == CNContact {
     public func filteredClientContacts(
         matching query: String,
         uponEmptyReturn: EmptyQueryBehavior = .all
     ) -> [CNContact] {
-
-        guard !query.isEmpty else {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
             return (uponEmptyReturn == .all) ? self : []
         }
-        
-        let normalizedQuery = query.normalizedForClientDogSearch
-        return self.filter {
-            $0.givenName.normalizedForClientDogSearch.contains(normalizedQuery)
-            || $0.familyName.normalizedForClientDogSearch.contains(normalizedQuery)
-            || ((($0.emailAddresses.first?.value as String?)?
-                    .normalizedForClientDogSearch.contains(normalizedQuery)) ?? false)
+
+        let tokens = trimmed
+            .normalizedForClientDogSearch
+            .components(separatedBy: CharacterSet.whitespaces)
+            .filter { !$0.isEmpty }
+
+        return self.filter { contact in
+            let fullName = "\(contact.givenName) \(contact.familyName)"
+                .normalizedForClientDogSearch
+            let email = (contact.emailAddresses.first?.value as String? ?? "")
+                .normalizedForClientDogSearch
+
+            let haystack = fullName + " " + email
+
+            return tokens.allSatisfy { haystack.contains($0) }
         }
     }
 }
