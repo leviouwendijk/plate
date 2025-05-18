@@ -81,28 +81,27 @@ extension String {
         if m == 0 { return n }
         if n == 0 { return m }
 
-        var dp = Array(
-            repeating: Array(repeating: 0, count: n + 1),
-            count: m + 1
-        )
-
-        for i in 0...m { dp[i][0] = i }
-        for j in 0...n { dp[0][j] = j }
+        // self[0..<i-1] and target[0..<j]
+        var prev = Array(0...n)
+        var curr = [Int](repeating: 0, count: n + 1)
 
         for i in 1...m {
+            curr[0] = i
             for j in 1...n {
-                if s[i - 1] == t[j - 1] {
-                    dp[i][j] = dp[i - 1][j - 1]
-                } else {
-                    dp[i][j] = Swift.min(
-                        dp[i - 1][j] + 1,      // deletion
-                        dp[i][j - 1] + 1,      // insertion
-                        dp[i - 1][j - 1] + 1    // substitution
-                    )
-                }
+                let cost = (s[i-1] == t[j-1]) ? 0 : 1
+                // deletion:   prev[j] + 1
+                // insertion:  curr[j-1] + 1
+                // substitution: prev[j-1] + cost
+                curr[j] = Swift.min(
+                    prev[j]     + 1,
+                    curr[j-1]   + 1,
+                    prev[j-1]   + cost
+                )
             }
+            // roll the rows
+            (prev, curr) = (curr, prev)
         }
-        return dp[m][n]
+        return prev[n]
     }
 
     public var clientDogTokens: [String] {
