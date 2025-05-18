@@ -1,7 +1,10 @@
 import Foundation
+import Combine
+import SwiftUI
 
 // invoice - /issue, /expired, /issue/simple
 public struct MailerAPIInvoiceVariables: Encodable {
+    public let name:          String
     public let client_name:   String
     public let email:         String
     public let invoice_id:    String
@@ -27,6 +30,7 @@ public struct MailerAPIInvoiceVariables: Encodable {
         termsTotal:    String,
         termsCurrent:  String
     ) {
+        self.name           = clientName
         self.client_name    = clientName
         self.email          = email
         self.invoice_id     = invoiceId

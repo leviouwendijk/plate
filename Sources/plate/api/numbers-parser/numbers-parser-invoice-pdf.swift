@@ -1,7 +1,6 @@
 import Foundation
 import PDFKit
 
-
 public struct NumbersParserInvoicePDF {
     public let invoiceRaw: String
     public let invoiceOut: String

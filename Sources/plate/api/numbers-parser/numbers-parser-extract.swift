@@ -15,6 +15,25 @@ public struct NumbersParserExtractor {
         self.reparsedJsonPath = try reparsedJsonPath ?? NumbersParserEnvironment.require(.reparsed)
     }
 
+    public func extractInvoiceData() throws -> [String: [String: String]] {
+        print("Extracting data from CSV file: \(csvPath)")
+
+        let rows = try parseRawCSV(filePath: csvPath)
+        guard !rows.isEmpty else {
+            throw NumbersParserError.noRows(file: csvPath)
+        }
+
+        try saveJSON(data: rows, to: rawJsonPath)
+        print("Parsed data saved to \(rawJsonPath)")
+
+        let restructured = try reparseJSON(filePath: rawJsonPath)
+
+        try saveReparsedJSON(data: restructured, to: reparsedJsonPath)
+        print("Reparsed data saved to \(reparsedJsonPath)")
+
+        return restructured
+    }
+
     public func extractInvoice() throws {
         print("Extracting data from CSV file: \(csvPath)")
 

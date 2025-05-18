@@ -63,6 +63,12 @@ public struct NumbersParser {
         try extractor.extractInvoice()
         try pdfFilter.convertRawNumbersPdfToInvoice()
     }
+
+    public func renderInvoiceData() throws {
+        try exporter.runAppleScriptExport()
+        try extractor.extractInvoice()
+        try pdfFilter.convertRawNumbersPdfToInvoice()
+    }
 }
 
 // example calls:

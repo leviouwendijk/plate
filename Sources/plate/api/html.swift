@@ -1,5 +1,30 @@
 import Foundation
 
+public enum HTMLDocumentError: Error {
+    case missingEnv(String)
+    case invalidURL(String)
+    case invalidFormat(original: String)
+}
+
+public enum HTMLDocumentEnvironmentKey: String {
+    case h_logo = "HONDENMEESTERS_H_LOGO"
+}
+
+public struct HTMLDocumentEnvironment {
+    public static func require(_ key: HTMLDocumentEnvironmentKey) throws -> String {
+        guard let raw = ProcessInfo.processInfo.environment[key.rawValue],
+            !raw.isEmpty
+        else {
+            throw HTMLDocumentError.missingEnv(key.rawValue)
+        }
+        return raw
+    }
+
+    public static func optional(_ key: HTMLDocumentEnvironmentKey) -> String? {
+        ProcessInfo.processInfo.environment[key.rawValue]
+    }
+}
+
 // setup for converting NSAttributedString -> Template content, etc
 // make generic string -> HTML
 public struct HTMLDocument {
