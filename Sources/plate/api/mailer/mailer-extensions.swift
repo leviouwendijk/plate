@@ -73,6 +73,36 @@ extension String {
 }
 
 extension String {
+    public var asciiSearchNormalized: String {
+        var s = self
+            .applyingTransform(.toLatin, reverse: false)?
+            .applyingTransform(.stripCombiningMarks, reverse: false)
+            ?? self
+
+        let ligatures: [String: String] = [
+            "ß": "ss", "Æ": "AE", "æ": "ae",
+            "Œ": "OE", "œ": "oe"
+        ]
+
+        for (special, plain) in ligatures {
+            s = s.replacingOccurrences(of: special, with: plain)
+        }
+
+        let dashChars = CharacterSet(charactersIn: "–—−-") // en, em, minus, non-break
+        s = s.components(separatedBy: dashChars).joined(separator: "-")
+
+        let punct = CharacterSet.punctuationCharacters
+        s = s.components(separatedBy: punct).joined(separator: " ")
+
+        let comps = s
+            .components(separatedBy: CharacterSet.whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+        return comps.joined(separator: " ").lowercased()
+    }
+}
+
+
+extension String {
     func levenshteinDistance(to target: String) -> Int {
         let s = Array(self)
         let t = Array(target)
@@ -137,26 +167,6 @@ public enum EmptyQueryBehavior {
     case none
     case all
 }
-
-// extension Array where Element == CNContact {
-//     public func filteredClientContacts(
-//         matching query: String,
-//         uponEmptyReturn: EmptyQueryBehavior = .all
-//     ) -> [CNContact] {
-
-//         guard !query.isEmpty else {
-//             return (uponEmptyReturn == .all) ? self : []
-//         }
-        
-//         let normalizedQuery = query.normalizedForClientDogSearch
-//         return self.filter {
-//             $0.givenName.normalizedForClientDogSearch.contains(normalizedQuery)
-//             || $0.familyName.normalizedForClientDogSearch.contains(normalizedQuery)
-//             || ((($0.emailAddresses.first?.value as String?)?
-//                     .normalizedForClientDogSearch.contains(normalizedQuery)) ?? false)
-//         }
-//     }
-// }
 
 extension Array where Element == CNContact {
     public func filteredClientContacts(
