@@ -32,7 +32,7 @@ public struct WeeklyScheduleView: View {
                         )
                         .frame(width: labelWidth, alignment: .leading)
 
-                        Spacer()
+                        Spacer(minLength: 10)
 
                         if viewModel.schedules[day]?.enabled == true {
                             StandardTimeRow(
