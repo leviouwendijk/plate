@@ -53,6 +53,7 @@ extension String {
         return self.range(of: pattern, options: .regularExpression) != nil
     }
 
+    @MainActor
     public func filteredClientContacts(uponEmptyReturn: EmptyQueryBehavior = .all) async throws -> [CNContact] {
         let allContacts = try await loadContacts()
         

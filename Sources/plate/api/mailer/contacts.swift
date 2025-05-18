@@ -52,6 +52,7 @@ public func fetchContacts() throws -> [CNContact] {
     }
 }
 
+@MainActor
 public func loadContacts() async throws -> [CNContact] {
     try await requestContactsAccess()
     return try fetchContacts()
