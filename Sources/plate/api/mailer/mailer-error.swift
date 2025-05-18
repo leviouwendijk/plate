@@ -5,4 +5,5 @@ public enum MailerAPIError: Error {
     case invalidURL(String)
     case network(Error)
     case invalidEndpoint(route: MailerAPIRoute, endpoint: MailerAPIEndpoint)
+    case invalidFormat(original: String)
 }

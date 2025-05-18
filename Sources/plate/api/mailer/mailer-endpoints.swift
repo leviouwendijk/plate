@@ -36,6 +36,18 @@ public enum MailerAPIRoute: String, CaseIterable, RawRepresentable, Sendable {
         MailerAPIAlias
         .routeMap[self]?.rawValue ?? "relaties"
     }
+
+    public var filesRequiringAvailability: Set<MailerAPIEndpoint> {
+        switch self {
+            case .lead:       return [.confirmation, .check, .follow]
+            case .service:    return [.follow]
+            default:          return []
+        }
+    }
+
+    public var validEndpoints: [MailerAPIEndpoint] {
+        MailerAPIPath.endpoints(for: self)
+    }
 }
 
 public enum MailerAPIEndpoint: String, CaseIterable, RawRepresentable, Sendable {
@@ -117,6 +129,10 @@ public struct MailerAPIPath {
 
     public static func endpoints(for route: MailerAPIRoute) -> [MailerAPIEndpoint] {
         return Array(validMap[route] ?? [])
+    }
+
+    public static func isValid(endpoint: MailerAPIEndpoint, for route: MailerAPIRoute) -> Bool {
+        validMap[route]?.contains(endpoint) ?? false
     }
 }
 
