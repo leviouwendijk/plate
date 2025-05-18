@@ -32,6 +32,8 @@ public struct WeeklyScheduleView: View {
                         )
                         .frame(width: labelWidth, alignment: .leading)
 
+                        Spacer()
+
                         if viewModel.schedules[day]?.enabled == true {
                             StandardTimeRow(
                                 // title: day.dutch,
