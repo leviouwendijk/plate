@@ -48,8 +48,8 @@ public struct WeeklyScheduleView: View {
                     }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .center)
         }
-        .frame(maxWidth: .infinity, alignment: .center)
         .padding()
         // .background(
         //     RoundedRectangle(cornerRadius: 8)
