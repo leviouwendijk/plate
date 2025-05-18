@@ -20,11 +20,18 @@ public struct WeeklyScheduleView: View {
 
             ForEach(MailerAPIWeekday.allCases) { day in
                 HStack(spacing: 12) {
-                    Toggle(day.dutch, isOn: Binding(
+                    // Toggle(day.dutch, isOn: Binding(
+                    //     get:  { viewModel.schedules[day]?.enabled ?? false },
+                    //     set: { viewModel.schedules[day]?.enabled = $0 }
+                    // ))
+
+                    StandardToggle(isOn: Binding(
                         get:  { viewModel.schedules[day]?.enabled ?? false },
                         set: { viewModel.schedules[day]?.enabled = $0 }
-                    ))
-                    .toggleStyle(SwitchToggleStyle())
+                        ),
+                        title: day.dutch
+                    )
+                    // .toggleStyle(SwitchToggleStyle())
                     .frame(width: labelWidth, alignment: .leading)
 
                     if viewModel.schedules[day]?.enabled == true {
