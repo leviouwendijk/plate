@@ -32,7 +32,7 @@ public struct WeeklyScheduleView: View {
 
                     if viewModel.schedules[day]?.enabled == true {
                         StandardTimeRow(
-                            title: day.dutch,
+                            // title: day.dutch,
                             start: Binding(
                                 get:  { viewModel.schedules[day]?.start ?? Date() },
                                 set: { viewModel.schedules[day]?.start = $0 }
