@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Contacts
 
 enum ContactsError: LocalizedError {

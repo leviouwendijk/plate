@@ -48,16 +48,21 @@ public struct ContactsListView: View {
                         do {
                             try onSelect(contact)
                         } catch {
-                            print(error)
+                            print("Selection error:", error)
                         }
                     } label: {
-                        HStack {
-                            Text("\(contact.givenName) \(contact.familyName)")
-                            Spacer()
-                            Text(contact.emailAddresses
-                                    .first?.value as String? ?? "")
-                                .foregroundColor(.gray)
+                        VStack(alignment: .leading, spacing: 4) {
+                            let tokens = viewModel.searchQuery.clientDogTokens
+                            let fullName = "\(contact.givenName) \(contact.familyName)"
+                            Text(fullName.highlighted(tokens))
+                            
+                            if let email = (contact.emailAddresses.first?.value as String?) {
+                                Text(email.highlighted(tokens))
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
                         }
+                        .padding(.vertical, 4)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }

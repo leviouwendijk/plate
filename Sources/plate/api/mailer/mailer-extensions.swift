@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Contacts
 
 extension String {
@@ -71,6 +72,58 @@ extension String {
     }
 }
 
+extension String {
+    public func levenshteinDistance(to target: String) -> Int {
+        let s = Array(self), t = Array(target)
+        let m = s.count, n = t.count
+        var dp = Array(repeating: Array(repeating: 0, count: n + 1), count: m + 1)
+        for i in 0...m { dp[i][0] = i }
+        for j in 0...n { dp[0][j] = j }
+        for i in 1...m {
+            for j in 1...n {
+                if s[i-1] == t[j-1] {
+                    dp[i][j] = dp[i-1][j-1]
+                } else {
+                    dp[i][j] = Swift.min(
+                        dp[i-1][j] + 1,    // deletion
+                        dp[i][j-1] + 1,    // insertion
+                        dp[i-1][j-1] + 1   // substitution
+                    )
+                }
+            }
+        }
+        return dp[m][n]
+    }
+
+    public var clientDogTokens: [String] {
+        normalizedForClientDogSearch
+            .components(separatedBy: CharacterSet.whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+    }
+
+    public func highlighted(
+        _ tokens: [String], 
+        highlightColor: Color = .accentColor,
+        baseFont: Font = .body
+    ) -> AttributedString {
+        var attr = AttributedString(self)
+        let lower = self.lowercased()
+        for token in tokens {
+            var start = lower.startIndex
+            while let range = lower[start...].range(of: token) {
+                let nsRange = NSRange(range, in: self)
+                if let swiftRange = Range(nsRange, in: attr) {
+                    attr[swiftRange].foregroundColor = highlightColor
+                    attr[swiftRange].font = baseFont.bold()
+                }
+                start = range.upperBound
+            }
+        }
+        return attr
+    }
+}
+
+
 public enum EmptyQueryBehavior {
     case none
     case all
@@ -99,27 +152,33 @@ public enum EmptyQueryBehavior {
 extension Array where Element == CNContact {
     public func filteredClientContacts(
         matching query: String,
-        uponEmptyReturn: EmptyQueryBehavior = .all
+        uponEmptyReturn: EmptyQueryBehavior = .all,
+        fuzzyTolerance: Int = 1
     ) -> [CNContact] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             return (uponEmptyReturn == .all) ? self : []
         }
 
-        let tokens = trimmed
-            .normalizedForClientDogSearch
-            .components(separatedBy: CharacterSet.whitespaces)
-            .filter { !$0.isEmpty }
+        let tokens = trimmed.clientDogTokens
 
         return self.filter { contact in
+            // build one searchable string
             let fullName = "\(contact.givenName) \(contact.familyName)"
                 .normalizedForClientDogSearch
             let email = (contact.emailAddresses.first?.value as String? ?? "")
                 .normalizedForClientDogSearch
+            let haystack = (fullName + " " + email)
+                .components(separatedBy: CharacterSet.whitespacesAndNewlines)
 
-            let haystack = fullName + " " + email
-
-            return tokens.allSatisfy { haystack.contains($0) }
+            // each token must either be a substring OR within fuzzyTolerance of some haystack word
+            return tokens.allSatisfy { token in
+                haystack.contains(where: { word in
+                    if word.contains(token) { return true }
+                    return word.levenshteinDistance(to: token) <= fuzzyTolerance
+                })
+            }
         }
     }
 }
+
