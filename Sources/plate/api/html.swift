@@ -2,7 +2,6 @@ import Foundation
 
 // setup for converting NSAttributedString -> Template content, etc
 // make generic string -> HTML
-// make possible to pass HTML to be p
 public struct HTMLDocument {
     public let content: String
     public let placeInBody: Bool

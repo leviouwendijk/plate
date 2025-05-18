@@ -54,42 +54,47 @@ public enum CustomTimeZone: String {
 
 public enum DateConversionError: Error {
     case invalidDateComponents
-    case invalidStringPassed
+    case invalidStringFormat
 }
 
-func defaultDate() -> Date {
-    let calendar = Calendar(identifier: .gregorian)
-    let defaultComponents = DateComponents(year: 1, month: 1, day: 1, hour: 0, minute: 0, second: 0)
-    let defaultDate = calendar.date(from: defaultComponents)!
-    return defaultDate
+public enum DateFormattingError: Error {
+  case unsupportedStyle
 }
+
+// func defaultDate() -> Date {
+//     let calendar = Calendar(identifier: .gregorian)
+//     let defaultComponents = DateComponents(year: 1, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+//     let defaultDate = calendar.date(from: defaultComponents)!
+//     return defaultDate
+// }
 
 // DateComponents -> Date
 public protocol DateConvertible {
-    func toDate(using calendar: Calendar,_ timezone: CustomTimeZone) -> Date
+    func toDate(using calendar: Calendar,_ timezone: CustomTimeZone) throws -> Date
 }
 
-extension DateComponents: DateConvertible {
-    public func toDate(using calendar: Calendar = .current,_ timezone: CustomTimeZone = .amsterdam) -> Date {
-        var calendar = calendar
-        calendar.timeZone = timezone.set
-
-        if let date = calendar.date(from: self) {
-            return date
-        } else {
-            return defaultDate()
-        }
+extension DateComponents: DateConvertible { 
+    public func toDate(
+            using calendar: Calendar = .current,
+            _ timezone: CustomTimeZone = .amsterdam
+        ) throws -> Date {
+            var cal = calendar
+            cal.timeZone = timezone.set
+            guard let date = cal.date(from: self) else {
+                throw DateConversionError.invalidDateComponents
+            }
+        return date
     }
 }
 
 // String -> DateComponents
 public protocol DateRetrievable {
-    func date(_ timezone: CustomTimeZone) -> Date
+    func date(_ timezone: CustomTimeZone, separator: String) throws -> Date
 }
 
-extension String {
-    public func date(_ timezone: CustomTimeZone = .amsterdam) -> Date {
-        let components = self.split(separator: "-")
+extension String: DateRetrievable {
+    public func date(_ timezone: CustomTimeZone = .amsterdam, separator: String = "-") throws -> Date {
+        let components = self.split(separator: separator)
 
         guard components.count == 3,
             components[0].count == 4,
@@ -98,7 +103,7 @@ extension String {
             let year = Int(components[0]), 
             let month = Int(components[1]), 
             let day = Int(components[2]) else {
-            return defaultDate()
+            throw DateConversionError.invalidStringFormat
         }
         
         var dateComponents = DateComponents()
@@ -106,13 +111,13 @@ extension String {
         dateComponents.month = month
         dateComponents.day = day
 
-        return dateComponents.toDate(timezone) // will either return date from inputs or defaultDate() value
+        return try dateComponents.toDate(using: .current, timezone)
     }
 }
 
 // Formatted date with correct timezone display
-public protocol Formattable {
-    func format(to timezone: CustomTimeZone,_ style: DateStyle) -> String
+public protocol DateTimeFormattable {
+    func format(to timezone: CustomTimeZone,_ style: DateStyle) throws -> String
 }
 
 public enum DateStyle {
@@ -120,18 +125,22 @@ public enum DateStyle {
     case dateTime
 }
 
-extension Date: Formattable {
-    public func format(to timezone: CustomTimeZone = .amsterdam,_ style: DateStyle = .dateTime) -> String {
+
+extension Date: DateTimeFormattable {
+    public func format(
+        to timezone: CustomTimeZone = .amsterdam,
+        _ style: DateStyle = .dateTime
+    ) throws -> String {
         let formatter = DateFormatter()
         formatter.timeZone = timezone.set
-        
+
         switch style {
-            case .date: 
+          case .date:
             formatter.dateFormat = "yyyy-MM-dd"
-            case .dateTime: 
+          case .dateTime:
             formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
         }
+
         return formatter.string(from: self)
     }
 }
-
