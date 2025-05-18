@@ -50,6 +50,7 @@ public struct WeeklyScheduleView: View {
                     }
                 }
             }
+            .padding(12)
             .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding()
