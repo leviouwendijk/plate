@@ -14,7 +14,7 @@ public class ContactsListViewModel: ObservableObject {
         contacts
         .filteredClientContacts(
             matching: searchQuery.normalizedForClientDogSearch, 
-            fuzzyTolerance: 5
+            fuzzyTolerance: 3
         )
     }
 
