@@ -17,7 +17,7 @@ public struct WeeklyScheduleView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             SectionTitle(title: "Availability", width: labelWidth)
-            .frame(alignment: .center)
+            .frame(maxWidth: .infinity, alignment: .center)
 
             VStack {
                 ForEach(MailerAPIWeekday.allCases) { day in
