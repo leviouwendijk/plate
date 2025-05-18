@@ -23,24 +23,24 @@ public struct ContactsListView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
 
-            Menu {
-                Picker("Match strictness", selection: $viewModel.searchStrictness) {
-                    ForEach(SearchStrictness.allCases) { level in
-                        Label(level.title, systemImage: {
-                            switch level {
-                            case .exact:  return "0.circle"
-                            case .strict: return "1.circle"
-                            case .loose:  return "3.circle"
-                            }
-                        }())
-                        .tag(level)
-                    }
+            HStack(spacing: 4) {
+                ForEach(SearchStrictness.allCases) { level in
+                    Text(level.title)
+                        .font(.caption2)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .background(
+                            viewModel.strictness == level
+                                ? Color.accentColor.opacity(0.2)
+                                : Color.secondary.opacity(0.1)
+                        )
+                        .cornerRadius(4)
+                        .onTapGesture {
+                            viewModel.strictness = level
+                        }
                 }
-            } label: {
-                Image(systemName: "slider.horizontal.3")
-                    .imageScale(.medium)
-                    .padding(.trailing, 8)
             }
+            .fixedSize()
 
             if let msg = viewModel.errorMessage {
                 HStack {
