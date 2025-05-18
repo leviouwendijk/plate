@@ -23,6 +23,25 @@ public struct ContactsListView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
 
+            Menu {
+                Picker("Match strictness", selection: $viewModel.strictness) {
+                    ForEach(SearchStrictness.allCases) { level in
+                        Label(level.title, systemImage: {
+                            switch level {
+                            case .exact:  return "0.circle"
+                            case .strict: return "1.circle"
+                            case .loose:  return "3.circle"
+                            }
+                        }())
+                        .tag(level)
+                    }
+                }
+            } label: {
+                Image(systemName: "slider.horizontal.3")
+                    .imageScale(.medium)
+                    .padding(.trailing, 8)
+            }
+
             if let msg = viewModel.errorMessage {
                 HStack {
                     Image(systemName: "exclamationmark.triangle.fill")

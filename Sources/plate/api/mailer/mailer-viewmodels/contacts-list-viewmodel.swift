@@ -9,12 +9,13 @@ public class ContactsListViewModel: ObservableObject {
     @Published public var searchQuery: String = ""
     @Published public var isLoading = false
     @Published public var errorMessage: String?
+    @Published public var searchStrictness: SearchStrictness = .strict
 
     public var filteredContacts: [CNContact] {
         contacts
         .filteredClientContacts(
             matching: searchQuery.normalizedForClientDogSearch, 
-            fuzzyTolerance: 3
+            fuzzyTolerance: searchStrictness.tolerance
         )
     }
 
@@ -33,4 +34,21 @@ public class ContactsListViewModel: ObservableObject {
         }
         isLoading = false
     }
+}
+
+public enum SearchStrictness: Int, CaseIterable, Identifiable {
+    case exact = 0
+    case strict = 1
+    case loose  = 3
+
+    public var id: Self { self }
+    public var title: String {
+        switch self {
+        case .exact:  return "Exact"
+        case .strict: return "Strict"
+        case .loose:  return "Loose"
+        }
+    }
+
+    public var tolerance: Int { rawValue }
 }
