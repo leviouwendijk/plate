@@ -24,7 +24,7 @@ public struct ContactsListView: View {
                 .padding(.horizontal)
 
             Menu {
-                Picker("Match strictness", selection: $viewModel.strictness) {
+                Picker("Match strictness", selection: $viewModel.searchstrictness) {
                     ForEach(SearchStrictness.allCases) { level in
                         Label(level.title, systemImage: {
                             switch level {
