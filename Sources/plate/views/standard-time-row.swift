@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct StandardTimeRow: View {
-    let title: String
+    let title: String?
     @Binding var start: Date
     @Binding var end: Date
 
@@ -15,19 +15,31 @@ public struct StandardTimeRow: View {
         #endif
     }
 
+    public init(
+        title: String? = nil,
+        start: Binding<Date>,
+        end: Binding<Date>
+    ) {
+        self.title = title
+        self._start = start
+        self._end = end
+    }
+
     public var body: some View {
-        VStack(spacing: 8) {
-            Text(title)
-                .font(.subheadline)
-                .bold()
-                .frame(maxWidth: .infinity, alignment: .leading)
+        VStack() {
+            if let t = title {
+                Text(t)
+                    .font(.subheadline)
+                    .bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
 
             HStack(spacing: 12) {
                 TimePickerBinding(date: $start)
                 TimePickerBinding(date: $end)
             }
         }
-        .padding(12)
+        .padding(4)
         .background(backgroundColor)
         .cornerRadius(8)
         .overlay(
