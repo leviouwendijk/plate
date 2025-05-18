@@ -11,7 +11,11 @@ public class ContactsListViewModel: ObservableObject {
     @Published public var errorMessage: String?
 
     public var filteredContacts: [CNContact] {
-        contacts.filteredClientContacts(matching: searchQuery.normalizedForClientDogSearch)
+        contacts
+        .filteredClientContacts(
+            matching: searchQuery.normalizedForClientDogSearch, 
+            fuzzyTolerance: 5
+        )
     }
 
     public init() {
