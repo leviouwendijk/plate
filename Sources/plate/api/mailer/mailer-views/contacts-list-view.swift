@@ -10,7 +10,7 @@ public struct ContactsListView: View {
     public init(
         viewModel: ContactsListViewModel,
         maxListHeight: CGFloat = 200,
-        onSelect: @escaping (CNContact) -> Void
+        onSelect: @escaping (CNContact) throws -> Void
     ) {
         self.viewModel = viewModel
         self.maxListHeight = maxListHeight
@@ -45,7 +45,11 @@ public struct ContactsListView: View {
             } else {
                 List(viewModel.filteredContacts, id: \.identifier) { contact in
                     Button {
-                        onSelect(contact)
+                        do {
+                            try onSelect(contact)
+                        } catch {
+                            print(error)
+                        }
                     } label: {
                         HStack {
                             Text("\(contact.givenName) \(contact.familyName)")
