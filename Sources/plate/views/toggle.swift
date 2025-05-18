@@ -72,7 +72,7 @@ public struct StandardToggle: View {
             .cornerRadius(8)
 
         case .switch:
-            Toggle(isOn: $isOn) {
+            HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.subheadline)
@@ -83,14 +83,39 @@ public struct StandardToggle: View {
                             .foregroundColor(.secondary)
                     }
                 }
+
+                Spacer()
+
+                Toggle("", isOn: $isOn)
+                    .labelsHidden()
+                    .toggleStyle(SwitchToggleStyle(tint: .accentColor))
             }
-            .toggleStyle(SwitchToggleStyle(tint: .accentColor))
             .padding(.vertical, 8)
             .padding(.horizontal, 12)
             .background(backgroundColor)
             .cornerRadius(8)
             .frame(minWidth: width)
             .animation(.easeInOut(duration: animationDuration), value: isOn)
+
+            // Toggle(isOn: $isOn) {
+            //     VStack(alignment: .leading, spacing: 2) {
+            //         Text(title)
+            //             .font(.subheadline)
+            //             .bold()
+            //         if let subtitle = subtitle {
+            //             Text(subtitle)
+            //                 .font(.caption)
+            //                 .foregroundColor(.secondary)
+            //         }
+            //     }
+            // }
+            // .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+            // .padding(.vertical, 8)
+            // .padding(.horizontal, 12)
+            // .background(backgroundColor)
+            // .cornerRadius(8)
+            // .frame(minWidth: width)
+            // .animation(.easeInOut(duration: animationDuration), value: isOn)
         }
     }
 }
