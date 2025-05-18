@@ -208,11 +208,11 @@ public struct MailerAPIEmailAttachment: Encodable {
     }
 }
 
-extension URL {
-    public func base64() throws -> String {
-        try Data(contentsOf: self).base64EncodedString()
-    }
-}
+// extension URL {
+//     public func base64() throws -> String {
+//         try Data(contentsOf: self).base64EncodedString()
+//     }
+// }
 
 public struct MailerAPIEmailAttachmentsArray: Encodable {
     private(set) var attachments: [MailerAPIEmailAttachment] = []
