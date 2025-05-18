@@ -5,7 +5,7 @@ import Contacts
 public struct ContactsListView: View {
     @ObservedObject public var viewModel: ContactsListViewModel
     public let maxListHeight: CGFloat
-    public let onSelect: (CNContact) -> Void
+    public let onSelect: (CNContact) throws -> Void
 
     public init(
         viewModel: ContactsListViewModel,
