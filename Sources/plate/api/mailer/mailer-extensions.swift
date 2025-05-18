@@ -73,21 +73,31 @@ extension String {
 }
 
 extension String {
-    public func levenshteinDistance(to target: String) -> Int {
-        let s = Array(self), t = Array(target)
+    func levenshteinDistance(to target: String) -> Int {
+        let s = Array(self)
+        let t = Array(target)
         let m = s.count, n = t.count
-        var dp = Array(repeating: Array(repeating: 0, count: n + 1), count: m + 1)
+
+        if m == 0 { return n }
+        if n == 0 { return m }
+
+        var dp = Array(
+            repeating: Array(repeating: 0, count: n + 1),
+            count: m + 1
+        )
+
         for i in 0...m { dp[i][0] = i }
         for j in 0...n { dp[0][j] = j }
+
         for i in 1...m {
             for j in 1...n {
-                if s[i-1] == t[j-1] {
-                    dp[i][j] = dp[i-1][j-1]
+                if s[i - 1] == t[j - 1] {
+                    dp[i][j] = dp[i - 1][j - 1]
                 } else {
                     dp[i][j] = Swift.min(
-                        dp[i-1][j] + 1,    // deletion
-                        dp[i][j-1] + 1,    // insertion
-                        dp[i-1][j-1] + 1   // substitution
+                        dp[i - 1][j] + 1,      // deletion
+                        dp[i][j - 1] + 1,      // insertion
+                        dp[i - 1][j - 1] + 1    // substitution
                     )
                 }
             }
