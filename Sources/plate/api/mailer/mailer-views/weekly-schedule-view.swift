@@ -4,11 +4,11 @@ import Combine
 /// A reusable weekly schedule view that binds to a shared ViewModel
 public struct WeeklyScheduleView: View {
     @ObservedObject public var viewModel: WeeklyScheduleViewModel
-    public var labelWidth: CGFloat = 50
+    public var labelWidth: CGFloat
 
     public init(
         viewModel: WeeklyScheduleViewModel,
-        labelWidth: CGFloat = 50
+        labelWidth: CGFloat = 150
     ) {
         self.viewModel = viewModel
         self.labelWidth = labelWidth
