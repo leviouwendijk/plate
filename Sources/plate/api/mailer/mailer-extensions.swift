@@ -54,20 +54,56 @@ extension String {
         return self.range(of: pattern, options: .regularExpression) != nil
     }
 
-    @MainActor
-    public func filteredClientContacts(uponEmptyReturn: EmptyQueryBehavior = .all) async throws -> [CNContact] {
-        let allContacts = try await loadContacts()
+    // @MainActor
+    // public func filteredClientContacts(uponEmptyReturn: EmptyQueryBehavior = .all) async throws -> [CNContact] {
+    //     let allContacts = try await loadContacts()
         
-        guard !self.isEmpty else {
+    //     guard !self.isEmpty else {
+    //         return (uponEmptyReturn == .all) ? allContacts : []
+    //     }
+        
+    //     let normalizedQuery = self.normalizedForClientDogSearch
+    //     return allContacts.filter {
+    //         $0.givenName.normalizedForClientDogSearch.contains(normalizedQuery)
+    //         || $0.familyName.normalizedForClientDogSearch.contains(normalizedQuery)
+    //         || ((($0.emailAddresses.first?.value as String?)?
+    //                 .normalizedForClientDogSearch.contains(normalizedQuery)) ?? false)
+    //     }
+    // }
+
+    @MainActor
+    public func filteredClientContacts(
+        uponEmptyReturn: EmptyQueryBehavior = .all,
+        fuzzyTolerance: Int = 2
+    ) async throws -> [CNContact] {
+        let allContacts = try await loadContacts()
+
+        let trimmed = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
             return (uponEmptyReturn == .all) ? allContacts : []
         }
-        
-        let normalizedQuery = self.normalizedForClientDogSearch
-        return allContacts.filter {
-            $0.givenName.normalizedForClientDogSearch.contains(normalizedQuery)
-            || $0.familyName.normalizedForClientDogSearch.contains(normalizedQuery)
-            || ((($0.emailAddresses.first?.value as String?)?
-                    .normalizedForClientDogSearch.contains(normalizedQuery)) ?? false)
+
+        let tokens = trimmed
+            .normalizedForClientDogSearch
+            .components(separatedBy: .whitespaces)
+            .filter { !$0.isEmpty }
+
+        return allContacts.filter { contact in
+            let fullName = "\(contact.givenName) \(contact.familyName)"
+                .normalizedForClientDogSearch
+            let email = (contact.emailAddresses.first?.value as String? ?? "")
+                .normalizedForClientDogSearch
+
+            let haystackWords = (fullName + " " + email)
+                .components(separatedBy: .whitespacesAndNewlines)
+                .filter { !$0.isEmpty }
+
+            return tokens.allSatisfy { token in
+                haystackWords.contains(where: { word in
+                    if word.contains(token) { return true }
+                    return word.levenshteinDistance(to: token) <= fuzzyTolerance
+                })
+            }
         }
     }
 }
@@ -172,7 +208,7 @@ extension Array where Element == CNContact {
     public func filteredClientContacts(
         matching query: String,
         uponEmptyReturn: EmptyQueryBehavior = .all,
-        fuzzyTolerance: Int = 1
+        fuzzyTolerance: Int = 2
     ) -> [CNContact] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
