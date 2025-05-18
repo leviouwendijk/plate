@@ -20,12 +20,6 @@ public struct WeeklyScheduleView: View {
 
             ForEach(MailerAPIWeekday.allCases) { day in
                 HStack(spacing: 12) {
-
-                    // Toggle(day.dutch, isOn: Binding(
-                    //     get:  { viewModel.schedules[day]?.enabled ?? false },
-                    //     set: { viewModel.schedules[day]?.enabled = $0 }
-                    // ))
-
                     StandardToggle(
                         style: .switch,
                         isOn: Binding(
@@ -34,31 +28,20 @@ public struct WeeklyScheduleView: View {
                         ),
                         title: day.dutch,
                     )
-                    // .toggleStyle(SwitchToggleStyle())
                     .frame(width: labelWidth, alignment: .leading)
 
                     if viewModel.schedules[day]?.enabled == true {
-                        DatePicker(
-                            "",
-                            selection: Binding(
+                        StandardTimeRow(
+                            title: day.dutch,
+                            start: Binding(
                                 get:  { viewModel.schedules[day]?.start ?? Date() },
                                 set: { viewModel.schedules[day]?.start = $0 }
                             ),
-                            displayedComponents: .hourAndMinute
-                        )
-                        .labelsHidden()
-                        .datePickerStyle(CompactDatePickerStyle())
-
-                        DatePicker(
-                            "",
-                            selection: Binding(
+                            end: Binding(
                                 get:  { viewModel.schedules[day]?.end ?? Date() },
                                 set: { viewModel.schedules[day]?.end = $0 }
-                            ),
-                            displayedComponents: .hourAndMinute
+                            )
                         )
-                        .labelsHidden()
-                        .datePickerStyle(CompactDatePickerStyle())
                     }
                 }
             }
