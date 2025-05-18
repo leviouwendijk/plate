@@ -162,7 +162,7 @@ extension Array where Element == CNContact {
     public func filteredClientContacts(
         matching query: String,
         uponEmptyReturn: EmptyQueryBehavior = .all,
-        fuzzyTolerance: Int = 0
+        fuzzyTolerance: Int = 1
     ) -> [CNContact] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
