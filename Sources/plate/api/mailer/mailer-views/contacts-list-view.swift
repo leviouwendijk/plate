@@ -22,7 +22,7 @@ public struct ContactsListView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            FuzzySearchFieldView(
+            FuzzySearchField(
                 title: "Search contacts",
                 searchQuery: $viewModel.searchQuery,
                 searchStrictness:  $viewModel.searchStrictness
