@@ -41,7 +41,7 @@ public struct MailerAPIPathSelectionView: View {
                         .padding(.vertical, 8)
                     }
                 }
-                .frame(width: 150)
+                .frame(width: 200)
 
                 // ─── ENDPOINTS COLUMN ───────────────────────────
                 VStack {
@@ -68,7 +68,7 @@ public struct MailerAPIPathSelectionView: View {
                         .padding(.vertical, 8)
                     }
                 }
-                .frame(width: 150)
+                .frame(width: 200)
             }
 
             if disabledFileSelected {
