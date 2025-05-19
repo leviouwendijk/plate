@@ -70,6 +70,10 @@ public struct ContactsListView: View {
                                     } else {
                                         viewModel.selectedContactId = contact.identifier
 
+                                        if showWarning {
+                                            showWarning = false
+                                        }
+
                                         do {
                                             try onSelect(contact)
                                         } catch {
@@ -77,11 +81,6 @@ public struct ContactsListView: View {
 
                                             withAnimation {
                                                 showWarning = true
-                                            }
-
-                                            if newSelectionTriggered {
-                                                newSelectionTriggered = false
-                                                showWarning = false
                                             }
                                             
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -156,9 +155,9 @@ public struct ContactsListView: View {
                         .zIndex(1)
                     }
                 }
-                .onChange(of: viewModel.selectedContactId) { newId in
-                    newSelectionTriggered = true
-                }
+                // .onChange(of: viewModel.selectedContactId) { newId in
+                //     newSelectionTriggered = true
+                // }
             }
         }
     }
