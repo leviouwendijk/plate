@@ -23,7 +23,8 @@ public struct MailerAPIPathSelectionView: View {
                         VStack(spacing: 5) {
                             ForEach(MailerAPIRoute.allCases, id: \.self) { route in
                                 SelectableRow(
-                                    title: route.rawValue.capitalized,
+                                    // title: route.rawValue.capitalized,
+                                    title: route.rawValue,
                                     isSelected: viewModel.selectedRoute == route,
                                     animationDuration: 0.3
                                 ) {
@@ -50,7 +51,8 @@ public struct MailerAPIPathSelectionView: View {
                         VStack(spacing: 5) {
                             ForEach(viewModel.validEndpoints, id: \.self) { endpoint in
                                 SelectableRow(
-                                    title: endpoint.rawValue.capitalized,
+                                    // title: endpoint.rawValue.capitalized,
+                                    title: endpoint.rawValue,
                                     isSelected: viewModel.selectedEndpoint == endpoint
                                 ) {
                                     if viewModel.selectedEndpoint == endpoint {
