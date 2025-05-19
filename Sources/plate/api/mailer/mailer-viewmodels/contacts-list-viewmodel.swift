@@ -13,12 +13,26 @@ public class ContactsListViewModel: ObservableObject {
 
     @Published public var selectedContactId: String? = nil
 
+    // public var filteredContacts: [CNContact] {
+    //     contacts
+    //     .filteredClientContacts(
+    //         matching: searchQuery.normalizedForClientDogSearch, 
+    //         fuzzyTolerance: searchStrictness.tolerance
+    //     )
+    // }
+
     public var filteredContacts: [CNContact] {
-        contacts
-        .filteredClientContacts(
-            matching: searchQuery.normalizedForClientDogSearch, 
+        let query  = searchQuery.normalizedForClientDogSearch
+        let tokens = query.clientDogTokens
+
+        let matches = contacts.filteredClientContacts(
+            matching: query,
             fuzzyTolerance: searchStrictness.tolerance
         )
+
+        return matches.sorted {
+
+        }
     }
 
     public init() {
