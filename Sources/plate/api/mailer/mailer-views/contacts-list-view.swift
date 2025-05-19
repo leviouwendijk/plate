@@ -6,15 +6,18 @@ public struct ContactsListView: View {
     @ObservedObject public var viewModel: ContactsListViewModel
     public let maxListHeight: CGFloat
     public let onSelect: (CNContact) throws -> Void
+    public let onDeselect: () -> Void
 
     public init(
         viewModel: ContactsListViewModel,
         maxListHeight: CGFloat = 200,
-        onSelect: @escaping (CNContact) throws -> Void
+        onSelect: @escaping (CNContact) throws -> Void,
+        onDeselect: @escaping () -> Void = {}
     ) {
         self.viewModel = viewModel
         self.maxListHeight = maxListHeight
         self.onSelect = onSelect
+        self.onDeselect = onDeselect
     }
 
     public var body: some View {
@@ -52,6 +55,7 @@ public struct ContactsListView: View {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             if viewModel.selectedContactId == contact.identifier {
                                 viewModel.selectedContactId = nil
+                                onDeselect()
                             } else {
                                 viewModel.selectedContactId = contact.identifier
                             }
@@ -60,7 +64,7 @@ public struct ContactsListView: View {
                         do {
                             try onSelect(contact)
                         } catch {
-                            print("Selection error:", error)
+                            print("onSelect action error:", error)
                         }
                     } label: {
                         HStack {
