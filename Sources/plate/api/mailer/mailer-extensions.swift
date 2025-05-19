@@ -54,23 +54,6 @@ extension String {
         return self.range(of: pattern, options: .regularExpression) != nil
     }
 
-    // @MainActor
-    // public func filteredClientContacts(uponEmptyReturn: EmptyQueryBehavior = .all) async throws -> [CNContact] {
-    //     let allContacts = try await loadContacts()
-        
-    //     guard !self.isEmpty else {
-    //         return (uponEmptyReturn == .all) ? allContacts : []
-    //     }
-        
-    //     let normalizedQuery = self.normalizedForClientDogSearch
-    //     return allContacts.filter {
-    //         $0.givenName.normalizedForClientDogSearch.contains(normalizedQuery)
-    //         || $0.familyName.normalizedForClientDogSearch.contains(normalizedQuery)
-    //         || ((($0.emailAddresses.first?.value as String?)?
-    //                 .normalizedForClientDogSearch.contains(normalizedQuery)) ?? false)
-    //     }
-    // }
-
     @MainActor
     public func filteredClientContacts(
         uponEmptyReturn: EmptyQueryBehavior = .all,

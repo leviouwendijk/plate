@@ -40,7 +40,7 @@ public enum MailerAPIRoute: String, CaseIterable, RawRepresentable, Sendable {
     public var filesRequiringAvailability: Set<MailerAPIEndpoint> {
         switch self {
             case .lead:       return [.confirmation, .check, .follow]
-            case .service:    return [.follow]
+            // case .service:    return [.follow]
             default:          return []
         }
     }
@@ -135,22 +135,3 @@ public struct MailerAPIPath {
         validMap[route]?.contains(endpoint) ?? false
     }
 }
-
-// public struct MailerAPIRequestURL {
-//     public let route: MailerAPIRoute
-//     public let endpoint: MailerAPIEndpoint
-
-//     public init(route: MailerAPIRoute, endpoint: MailerAPIEndpoint) {
-//         self.route = route
-//         self.endpoint = endpoint
-//     }
-
-//     public func url(baseURL: String = MailerAPIEnvironmentKey.apiURL.rawValue) -> URL {
-//         let urlString = "\(baseURL)/\(route.rawValue)/\(endpoint.rawValue)"
-//         return URL(string: urlString)!
-//     }
-
-//     public func string(baseURL: String = MailerAPIEnvironmentKey.apiURL.rawValue) -> String {
-//         return "\(baseURL)/\(route.rawValue)/\(endpoint.rawValue)"
-//     }
-// }
