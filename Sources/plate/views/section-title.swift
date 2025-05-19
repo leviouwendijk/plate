@@ -9,7 +9,7 @@ public struct SectionTitle: View {
     public init(
         title: String,
         width: CGFloat = 350,
-        fontSize: CGFloat = 20
+        fontSize: CGFloat = 16
     ) {
         self.title = title
         self.width = width
