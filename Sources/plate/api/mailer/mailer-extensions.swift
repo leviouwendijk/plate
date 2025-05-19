@@ -8,6 +8,11 @@ extension String {
             .replacingOccurrences(of: "\n", with: "")
             .replacingOccurrences(of: "\"", with: "\\\"")
     }
+
+    public func viewableEndpointString() -> String {
+        return "/\(self)"
+        .replacingOccurrences(of: "/", with: " / ")
+    }
 }
 
 extension String {

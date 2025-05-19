@@ -48,6 +48,10 @@ public enum MailerAPIRoute: String, CaseIterable, RawRepresentable, Sendable {
     public var validEndpoints: [MailerAPIEndpoint] {
         MailerAPIPath.endpoints(for: self)
     }
+
+    public func viewableString() -> String {
+        return self.rawValue.viewableEndpointString()
+    }
 }
 
 public enum MailerAPIEndpoint: String, CaseIterable, RawRepresentable, Sendable {
@@ -63,6 +67,10 @@ public enum MailerAPIEndpoint: String, CaseIterable, RawRepresentable, Sendable 
     case fetch
     // case templateFetch  = "template/fetch"
     case messageSend    = "message/send"
+
+    public func viewableString() -> String {
+        return self.rawValue.viewableEndpointString()
+    }
 }
 
 public struct MailerAPIPath {
