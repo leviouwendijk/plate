@@ -50,8 +50,13 @@ public struct ContactsListView: View {
 
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            viewModel.selectedContactId = contact.identifier
+                            if viewModel.selectedContactId == contact.identifier {
+                                viewModel.selectedContactId = nil
+                            } else {
+                                viewModel.selectedContactId = contact.identifier
+                            }
                         }
+
                         do {
                             try onSelect(contact)
                         } catch {
