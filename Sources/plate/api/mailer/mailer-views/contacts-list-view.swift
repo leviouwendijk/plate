@@ -91,6 +91,7 @@ public struct ContactsListView: View {
                             )
                         )
                         .contentShape(RoundedRectangle(cornerRadius: 5))
+                        .frame(maxWidth: .infinity)
 
                     }
                     .buttonStyle(PlainButtonStyle())
