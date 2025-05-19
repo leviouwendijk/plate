@@ -20,7 +20,7 @@ public struct MailerAPIPathSelectionView: View {
                 HStack {
                     // ─── ROUTES COLUMN ─────────────────────────────
                     VStack {
-                        SectionTitle(title: "Route", width: 150)
+                        SectionTitle(title: "Route", width: 200)
 
                         ScrollView {
                             VStack(spacing: 5) {
@@ -48,7 +48,7 @@ public struct MailerAPIPathSelectionView: View {
 
                     // ─── ENDPOINTS COLUMN ───────────────────────────
                     VStack {
-                        SectionTitle(title: "Endpoint", width: 150)
+                        SectionTitle(title: "Endpoint", width: 200)
 
                         ScrollView {
                             VStack(spacing: 5) {
