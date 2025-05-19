@@ -74,7 +74,7 @@ public struct MailerAPIPathSelectionView: View {
                 }
             }
 
-            SectionTitle(title: viewModel.viewableURL().viewableURLString(), width: 400 fontSize: 10)
+            SectionTitle(title: viewModel.viewableURL().viewableURLString(), width: 400, fontSize: 10)
 
             if disabledFileSelected {
                 NotificationBanner(
