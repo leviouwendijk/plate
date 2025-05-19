@@ -63,6 +63,9 @@ public struct ContactsListView: View {
                                     if viewModel.selectedContactId == contact.identifier {
                                         viewModel.selectedContactId = nil
                                         onDeselect()
+                                        withAnimation {
+                                            showWarning = false
+                                        }
                                     } else {
                                         viewModel.selectedContactId = contact.identifier
 
