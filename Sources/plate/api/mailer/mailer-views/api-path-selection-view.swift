@@ -15,60 +15,65 @@ public struct MailerAPIPathSelectionView: View {
     public var body: some View {
         VStack {
             HStack {
-                // ─── ROUTES COLUMN ─────────────────────────────
+
                 VStack {
-                    SectionTitle(title: "Route", width: 150)
+                    SectionTitle(title: viewModel.viewableURL().viewableEndpointString())
 
-                    ScrollView {
-                        VStack(spacing: 5) {
-                            ForEach(MailerAPIRoute.allCases, id: \.self) { route in
-                                SelectableRow(
-                                    // title: route.rawValue.capitalized,
-                                    title: route.viewableString(),
-                                    isSelected: viewModel.selectedRoute == route,
-                                    animationDuration: 0.3
-                                ) {
-                                    if viewModel.selectedRoute == route {
-                                        viewModel.selectedRoute = nil
-                                    } else {
-                                        viewModel.selectedRoute = route
+                    // ─── ROUTES COLUMN ─────────────────────────────
+                    VStack {
+                        SectionTitle(title: "Route", width: 150)
+
+                        ScrollView {
+                            VStack(spacing: 5) {
+                                ForEach(MailerAPIRoute.allCases, id: \.self) { route in
+                                    SelectableRow(
+                                        // title: route.rawValue.capitalized,
+                                        title: route.viewableString(),
+                                        isSelected: viewModel.selectedRoute == route,
+                                        animationDuration: 0.3
+                                    ) {
+                                        if viewModel.selectedRoute == route {
+                                            viewModel.selectedRoute = nil
+                                        } else {
+                                            viewModel.selectedRoute = route
+                                        }
                                     }
+                                    .frame(maxWidth: .infinity)
                                 }
-                                .frame(maxWidth: .infinity)
                             }
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
                         }
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
                     }
-                }
-                .frame(width: 200)
+                    .frame(width: 200)
 
-                // ─── ENDPOINTS COLUMN ───────────────────────────
-                VStack {
-                    SectionTitle(title: "Endpoint", width: 150)
+                    // ─── ENDPOINTS COLUMN ───────────────────────────
+                    VStack {
+                        SectionTitle(title: "Endpoint", width: 150)
 
-                    ScrollView {
-                        VStack(spacing: 5) {
-                            ForEach(viewModel.validEndpoints, id: \.self) { endpoint in
-                                SelectableRow(
-                                    // title: endpoint.rawValue.capitalized,
-                                    title: endpoint.viewableString(),
-                                    isSelected: viewModel.selectedEndpoint == endpoint
-                                ) {
-                                    if viewModel.selectedEndpoint == endpoint {
-                                        viewModel.selectedEndpoint = nil
-                                    } else {
-                                        viewModel.selectedEndpoint = endpoint
+                        ScrollView {
+                            VStack(spacing: 5) {
+                                ForEach(viewModel.validEndpoints, id: \.self) { endpoint in
+                                    SelectableRow(
+                                        // title: endpoint.rawValue.capitalized,
+                                        title: endpoint.viewableString(),
+                                        isSelected: viewModel.selectedEndpoint == endpoint
+                                    ) {
+                                        if viewModel.selectedEndpoint == endpoint {
+                                            viewModel.selectedEndpoint = nil
+                                        } else {
+                                            viewModel.selectedEndpoint = endpoint
+                                        }
                                     }
+                                    .frame(maxWidth: .infinity)
                                 }
-                                .frame(maxWidth: .infinity)
                             }
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
                         }
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
                     }
+                    .frame(width: 200)
                 }
-                .frame(width: 200)
             }
 
             if disabledFileSelected {

@@ -34,6 +34,18 @@ public class MailerAPISelectionViewModel: ObservableObject {
         return try? MailerAPIPath(route: route, endpoint: endpoint)
     }
 
+    public func viewableURL() -> String {
+        var out = ""
+        do {
+            if let string = try apiPath?.string() {
+                out = string
+            }
+        } catch {
+            print(error)
+        }
+        return out
+    }
+
     public init(
         initialRoute: MailerAPIRoute? = nil,
         initialEndpoint: MailerAPIEndpoint? = nil
