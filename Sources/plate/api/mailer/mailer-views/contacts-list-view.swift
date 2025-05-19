@@ -83,11 +83,11 @@ public struct ContactsListView: View {
                                                 showWarning = true
                                             }
                                             
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                                withAnimation { 
-                                                    showWarning = false 
-                                                }
-                                            }
+                                            // DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                            //     withAnimation { 
+                                            //         showWarning = false 
+                                            //     }
+                                            // }
                                         }
                                     }
                                 }
