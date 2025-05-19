@@ -19,7 +19,7 @@ public struct MailerAPIPathSelectionView: View {
                 HStack {
                     // ─── ROUTES COLUMN ─────────────────────────────
                     VStack {
-                        SectionTitle(title: "Route", width: 200, fontSize: 14)
+                        SectionTitle(title: "Route", width: 200)
 
                         ScrollView {
                             VStack(spacing: 5) {
@@ -74,7 +74,7 @@ public struct MailerAPIPathSelectionView: View {
                 }
             }
 
-            SectionTitle(title: viewModel.viewableURL().viewableURLString())
+            SectionTitle(title: viewModel.viewableURL().viewableURLString(), fontSize: 12)
 
             if disabledFileSelected {
                 NotificationBanner(
