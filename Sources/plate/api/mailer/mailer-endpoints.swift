@@ -37,7 +37,7 @@ public enum MailerAPIRoute: String, CaseIterable, RawRepresentable, Sendable {
         .routeMap[self]?.rawValue ?? "relaties"
     }
 
-    public var filesRequiringAvailability: Set<MailerAPIEndpoint> {
+    public var endpointsRequiringAvailability: Set<MailerAPIEndpoint> {
         switch self {
             case .lead:       return [.confirmation, .check, .follow]
             // case .service:    return [.follow]
@@ -142,5 +142,9 @@ public struct MailerAPIPath {
 
     public static func isValid(endpoint: MailerAPIEndpoint, for route: MailerAPIRoute) -> Bool {
         validMap[route]?.contains(endpoint) ?? false
+    }
+
+    public var requiresAvailability: Bool {
+        route.endpointsRequiringAvailability.contains(endpoint)
     }
 }
