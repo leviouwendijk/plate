@@ -91,6 +91,7 @@ public struct MailerAPIPath {
 
     private static let validMap: [MailerAPIRoute:Set<MailerAPIEndpoint>] = [
         .invoice:    [.issue, .expired, .issueSimple],
+        .appointment:[.confirmation],
         .quote:      [.issue, .follow],
         .lead:       [.confirmation, .follow, .check],
         .service:    [.onboarding, .follow],
