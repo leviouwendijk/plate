@@ -78,6 +78,11 @@ public struct ContactsListView: View {
                                             withAnimation {
                                                 showWarning = true
                                             }
+
+                                            if newSelectionTriggered {
+                                                newSelectionTriggered = false
+                                                showWarning = false
+                                            }
                                             
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                                 withAnimation { 
@@ -152,9 +157,7 @@ public struct ContactsListView: View {
                     }
                 }
                 .onChange(of: viewModel.selectedContactId) { newId in
-                    withAnimation {
-                        showWarning = false
-                    }
+                    newSelectionTriggered = true
                 }
             }
         }
