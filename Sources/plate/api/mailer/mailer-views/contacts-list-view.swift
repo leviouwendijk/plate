@@ -14,7 +14,7 @@ public struct ContactsListView: View {
         maxListHeight: CGFloat = 200,
         onSelect: @escaping (CNContact) throws -> Void,
         onDeselect: @escaping () -> Void = {},
-        autoScrollToTop: Bool = false
+        autoScrollToTop: Bool = true
     ) {
         self.viewModel = viewModel
         self.maxListHeight = maxListHeight
