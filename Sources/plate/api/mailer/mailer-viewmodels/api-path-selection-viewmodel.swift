@@ -62,4 +62,8 @@ public class MailerAPISelectionViewModel: ObservableObject {
             self.selectedEndpoint = nil
         }
     }
+
+    public var isTemplateFetch: Bool {
+        return (selectedRoute == .template && selectedEndpoint == .fetch) 
+    }
 }
