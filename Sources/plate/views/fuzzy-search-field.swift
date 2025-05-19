@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct FuzzySearchFieldView: View {
+public struct FuzzySearchField: View {
     @Binding public var searchQuery: String
     @Binding public var searchStrictness: SearchStrictness
     public let title: String
