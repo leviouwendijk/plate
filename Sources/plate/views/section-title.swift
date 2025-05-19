@@ -4,19 +4,23 @@ import SwiftUI
 public struct SectionTitle: View {
     public let title: String
     public let width: CGFloat
+    public let fontSize: CGFloat
 
     public init(
         title: String,
         width: CGFloat = 350,
+        fontSize: CGFloat = 20
     ) {
         self.title = title
         self.width = width
+        self.fontSize = fontSize
     }
 
     public var body: some View {
         VStack(alignment: .center) {
             Text(title)
                 // .font(.system(.title3, design: .rounded))
+                .font(.system(size: fontSize, weight: .semibold, design: .rounded))
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .padding(.horizontal, 8)
