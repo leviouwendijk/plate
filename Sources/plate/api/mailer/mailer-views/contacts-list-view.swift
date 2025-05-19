@@ -52,21 +52,6 @@ public struct ContactsListView: View {
                     let isSelected = (viewModel.selectedContactId == contact.identifier)
 
                     Button {
-                        // withAnimation(.easeInOut(duration: 0.2)) {
-                        //     if viewModel.selectedContactId == contact.identifier {
-                        //         viewModel.selectedContactId = nil
-                        //         onDeselect()
-                        //     } else {
-                        //         viewModel.selectedContactId = contact.identifier
-                        //     }
-                        // }
-
-                        // do {
-                        //     try onSelect(contact)
-                        // } catch {
-                        //     print("onSelect action error:", error)
-                        // }
-
                         withAnimation(.easeInOut(duration: 0.2)) {
                             if viewModel.selectedContactId == contact.identifier {
                                 viewModel.selectedContactId = nil
