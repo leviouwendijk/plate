@@ -63,18 +63,24 @@ public struct ContactsListView: View {
                             print("Selection error:", error)
                         }
                     } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            let tokens = viewModel.searchQuery.clientDogTokens
-                            let fullName = "\(contact.givenName) \(contact.familyName)"
-                            Text(fullName.highlighted(tokens))
-                            
-                            if let email = (contact.emailAddresses.first?.value as String?) {
-                                Text(email.highlighted(tokens))
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                let tokens = viewModel.searchQuery.clientDogTokens
+                                let fullName = "\(contact.givenName) \(contact.familyName)"
+                                Text(fullName.highlighted(tokens))
+                                
+                                if let email = (contact.emailAddresses.first?.value as String?) {
+                                    Text(email.highlighted(tokens))
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
                             }
+
+                            Spacer()
                         }
                         .padding(.vertical, 4)
+
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                         .padding(12)
                         .background(isSelected
@@ -91,7 +97,6 @@ public struct ContactsListView: View {
                             )
                         )
                         .contentShape(RoundedRectangle(cornerRadius: 5))
-                        .frame(maxWidth: .infinity)
 
                     }
                     .buttonStyle(PlainButtonStyle())
