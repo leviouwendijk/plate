@@ -15,9 +15,13 @@ extension String {
     }
 
     public func viewableURLString() -> String {
-        return "\(self)"
+        let replacedSingles = "\(self)"
         .replacingOccurrences(of: "/", with: " / ")
+
+        let avoidedDoubles = replacedSingles
         .replacingOccurrences(of: "/ /", with: "//")
+
+        return avoidedDoubles
     }
 }
 
