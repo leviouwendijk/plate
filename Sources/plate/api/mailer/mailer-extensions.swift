@@ -13,6 +13,11 @@ extension String {
         return "/\(self)"
         .replacingOccurrences(of: "/", with: " / ")
     }
+
+    public func viewableURLString() -> String {
+        return "\(self)"
+        .replacingOccurrences(of: "/", with: " / ")
+    }
 }
 
 extension String {

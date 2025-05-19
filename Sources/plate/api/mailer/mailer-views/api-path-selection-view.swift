@@ -17,7 +17,7 @@ public struct MailerAPIPathSelectionView: View {
             HStack {
 
                 VStack {
-                    SectionTitle(title: viewModel.viewableURL().viewableEndpointString())
+                    SectionTitle(title: viewModel.viewableURL().viewableURLString())
 
                     // ─── ROUTES COLUMN ─────────────────────────────
                     VStack {
