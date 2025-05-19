@@ -68,4 +68,8 @@ public class MailerAPISelectionViewModel: ObservableObject {
             return false
         }
     }
+
+    public var routeOrEndpointIsNil: Bool {
+        return (selectedRoute == nil || selectedEndpoint == nil)
+    }
 }
