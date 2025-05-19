@@ -24,6 +24,7 @@ public struct ContactsListView: View {
     }
 
     @State private var showWarning: Bool = false
+    @State private var newSelectionTriggered: Bool = false
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -151,11 +152,9 @@ public struct ContactsListView: View {
                     }
                 }
                 .onChange(of: viewModel.selectedContactId) { newId in
-                    // if newId == nil {
-                        withAnimation {
-                            showWarning = false
-                        }
-                    // }
+                    withAnimation {
+                        showWarning = false
+                    }
                 }
             }
         }
