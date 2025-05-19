@@ -150,6 +150,13 @@ public struct ContactsListView: View {
                         .zIndex(1)
                     }
                 }
+                .onChange(of: viewModel.selectedContactId) { newId in
+                    // if newId == nil {
+                        withAnimation {
+                            showWarning = false
+                        }
+                    // }
+                }
             }
         }
     }
