@@ -119,7 +119,7 @@ public struct ContactsListView: View {
                         guard autoScrollToTop,
                               let firstID = viewModel.filteredContacts.first?.identifier
                         else { return }
-                        withAnimation {
+                        withAnimation(.linear(duration: 0.05)) {
                             proxy.scrollTo(firstID, anchor: .top)
                         }
                     }
