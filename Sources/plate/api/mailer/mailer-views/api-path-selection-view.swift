@@ -15,7 +15,7 @@ public struct MailerAPIPathSelectionView: View {
     public var body: some View {
         VStack {
             VStack {
-                SectionTitle(title: viewModel.viewableURL().viewableURLString(), width: 350)
+                SectionTitle(title: viewModel.viewableURL().viewableURLString())
 
                 HStack {
                     // ─── ROUTES COLUMN ─────────────────────────────
@@ -44,7 +44,7 @@ public struct MailerAPIPathSelectionView: View {
                             .padding(.vertical, 8)
                         }
                     }
-                    .frame(width: 200)
+                    .frame(width: 350)
 
                     // ─── ENDPOINTS COLUMN ───────────────────────────
                     VStack {
@@ -71,10 +71,9 @@ public struct MailerAPIPathSelectionView: View {
                             .padding(.vertical, 8)
                         }
                     }
-                    .frame(width: 200)
+                    .frame(width: 350)
                 }
             }
-            .frame(width: 400)
 
             if disabledFileSelected {
                 NotificationBanner(
