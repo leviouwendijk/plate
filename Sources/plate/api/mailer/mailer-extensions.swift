@@ -17,6 +17,7 @@ extension String {
     public func viewableURLString() -> String {
         return "\(self)"
         .replacingOccurrences(of: "/", with: " / ")
+        .replacingOccurrences(of: "/ /", with: "//")
     }
 }
 
