@@ -130,7 +130,7 @@ public struct StandardEscapableButton: View {
 
                 withAnimation(.easeInOut(duration: animationDuration)) {
                     isPressed = inside
-                    isCanceling != inside
+                    isCanceling = !inside
                 }
             }
             .onEnded { value in
