@@ -12,6 +12,7 @@ public struct StandardEscapableButton: View {
     @Environment(\.isEnabled) private var isEnabled: Bool
 
     @State private var buttonSize: CGSize = .zero
+    @State private var isCanceling: Bool = false
 
     public init(
         type: StandardButtonType,
@@ -28,46 +29,62 @@ public struct StandardEscapableButton: View {
     }
 
     private var buttonColor: Color {
-        switch type {
-        case .clear:
-            return Color.gray.opacity(0.2)
-        case .load, .copy:
-            return Color.gray
-        case .submit:
-            return Color.blue
-        case .execute:
-            return Color.orange
-        case .delete:
-            return Color.red
+        if isCanceling {
+            return Color.red.opacity(0.8)
+        } else {
+            switch type {
+            case .clear:
+                return Color.gray.opacity(0.2)
+            case .load, .copy:
+                return Color.gray
+            case .submit:
+                return Color.blue
+            case .execute:
+                return Color.orange
+            case .delete:
+                return Color.red
+            }
         }
     }
 
     private var foregroundColor: Color {
-        switch type {
-        case .clear, .load, .copy:
-            return Color.primary
-        case .execute:
-            return Color.black
-        case .submit, .delete:
+        if isCanceling {
             return Color.white
+        } else {
+            switch type {
+            case .clear, .load, .copy:
+                return Color.primary
+            case .execute:
+                return Color.black
+            case .submit, .delete:
+                return Color.white
+            }
         }
     }
 
     private var imageSystemName: String {
-        switch type {
-        case .copy:
-            return "document.on.document"
-        case .clear:
-            return "xmark.circle"
-        case .load:
-            return "square.and.arrow.down.on.square"
-        case .submit:
-            return "paperplane.fill"
-        case .execute:
-            return "apple.terminal"
-        case .delete:
-            return "trash.fill"
+        if isCanceling {
+            return "xmark.circle.fill"
+        } else {
+            switch type {
+            case .copy:
+                return "document.on.document"
+            case .clear:
+                return "xmark.circle"
+            case .load:
+                return "square.and.arrow.down.on.square"
+            case .submit:
+                return "paperplane.fill"
+            case .execute:
+                return "apple.terminal"
+            case .delete:
+                return "trash.fill"
+            }
         }
+    }
+
+    private var dynamicTitle: String {
+        isCanceling ? "Cancel \(title)" : title
     }
 
     public var body: some View {
@@ -77,7 +94,7 @@ public struct StandardEscapableButton: View {
                     .font(.headline)
                     .accessibilityHidden(true)
 
-                Text(title)
+                Text(dynamicTitle)
                     .font(.subheadline)
                     .bold()
             }
@@ -113,6 +130,7 @@ public struct StandardEscapableButton: View {
 
                 withAnimation(.easeInOut(duration: animationDuration)) {
                     isPressed = inside
+                    isCanceling != inside
                 }
             }
             .onEnded { value in
@@ -123,6 +141,7 @@ public struct StandardEscapableButton: View {
 
                 withAnimation(.easeInOut(duration: animationDuration)) {
                     isPressed = false
+                    isCanceling = false
                 }
 
                 if inside {
