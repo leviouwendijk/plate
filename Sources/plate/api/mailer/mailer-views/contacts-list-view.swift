@@ -19,28 +19,15 @@ public struct ContactsListView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            TextField("Search Contacts", text: $viewModel.searchQuery)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
+            // TextField("Search Contacts", text: $viewModel.searchQuery)
+            //     .textFieldStyle(RoundedBorderTextFieldStyle())
+            //     .padding(.horizontal)
 
-            HStack(spacing: 4) {
-                ForEach(SearchStrictness.allCases) { level in
-                    Text(level.title)
-                        .font(.caption2)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 6)
-                        .background(
-                            viewModel.strictness == level
-                                ? Color.accentColor.opacity(0.2)
-                                : Color.secondary.opacity(0.1)
-                        )
-                        .cornerRadius(4)
-                        .onTapGesture {
-                            viewModel.strictness = level
-                        }
-                }
-            }
-            .fixedSize()
+            FuzzySearchFieldView(
+                title: "Search contacts",
+                searchQuery: $viewModel.searchQuery,
+                searchStrictness:  $viewModel.searchStrictness
+            )
 
             if let msg = viewModel.errorMessage {
                 HStack {
