@@ -11,6 +11,8 @@ public class ContactsListViewModel: ObservableObject {
     @Published public var errorMessage: String?
     @Published public var searchStrictness: SearchStrictness = .strict
 
+    @Published public var selectedContactId: String? = nil
+
     public var filteredContacts: [CNContact] {
         contacts
         .filteredClientContacts(

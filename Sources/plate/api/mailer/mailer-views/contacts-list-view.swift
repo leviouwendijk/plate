@@ -19,10 +19,6 @@ public struct ContactsListView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // TextField("Search Contacts", text: $viewModel.searchQuery)
-            //     .textFieldStyle(RoundedBorderTextFieldStyle())
-            //     .padding(.horizontal)
-
             FuzzySearchFieldView(
                 title: "Search contacts",
                 searchQuery: $viewModel.searchQuery,
@@ -50,7 +46,12 @@ public struct ContactsListView: View {
                 .padding()
             } else {
                 List(viewModel.filteredContacts, id: \.identifier) { contact in
+                    let isSelected = (viewModel.selectedContactId == contact.identifier)
+
                     Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            viewModel.selectedContactId = contact.identifier
+                        }
                         do {
                             try onSelect(contact)
                         } catch {
@@ -69,8 +70,26 @@ public struct ContactsListView: View {
                             }
                         }
                         .padding(.vertical, 4)
+
+                        .padding(12)
+                        .background(isSelected
+                            ? Color.blue.opacity(0.3)
+                            : Color.clear
+                        )
+                        .cornerRadius(5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                            .stroke(isSelected
+                                ? Color.blue
+                                : Color.clear,
+                                lineWidth: 2
+                            )
+                        )
+                        .contentShape(RoundedRectangle(cornerRadius: 5))
+
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
                 }
                 .scrollContentBackground(.hidden)
                 .frame(maxHeight: maxListHeight)
