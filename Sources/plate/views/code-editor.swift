@@ -41,14 +41,12 @@ public struct CodeEditor: UIViewRepresentable {
     public var font: UIFont
     public var textColor: UIColor
     public var backgroundColor: UIColor
-    public var wrapLines: Bool
 
     public init(
         text: Binding<String>,
         font: UIFont = .monospacedSystemFont(ofSize: 14, weight: .regular),
         textColor: UIColor = .label,
         backgroundColor: UIColor = .systemBackground,
-        wrapLines: Bool = false
     ) {
         self._text = text
         self.font = font
@@ -65,27 +63,26 @@ public struct CodeEditor: UIViewRepresentable {
         tv.backgroundColor = backgroundColor
 
         // Enable horizontal scrolling & disable wrapping:
-        // tv.isScrollEnabled = true
-        // tv.alwaysBounceHorizontal = true
-        // tv.showsHorizontalScrollIndicator = true
-        // tv.textContainer.lineBreakMode = .byClipping
-        // tv.textContainer.widthTracksTextView = false
-
         tv.isScrollEnabled = true
-        tv.alwaysBounceHorizontal = !wrapLines
-        tv.showsHorizontalScrollIndicator = !wrapLines
-        tv.textContainer.lineBreakMode = wrapLines ? .byWordWrapping : .byClipping
-        tv.textContainer.widthTracksTextView = wrapLines
+        tv.alwaysBounceHorizontal = true
+        tv.showsHorizontalScrollIndicator = true
+        tv.textContainer.lineBreakMode = .byClipping
+        tv.textContainer.widthTracksTextView = false
+
+        // tv.isScrollEnabled = true
+        // tv.alwaysBounceHorizontal = !wrapLines
+        // tv.showsHorizontalScrollIndicator = !wrapLines
+        // tv.textContainer.lineBreakMode = wrapLines ? .byWordWrapping : .byClipping
+        // tv.textContainer.widthTracksTextView = wrapLines
 
         // setting containerwidth
-        let insets = tv.textContainerInset
-        let containerWidth = wrapLines
-        ? tv.bounds.width - insets.left - insets.right : CGFloat.greatestFiniteMagnitude
-        tv.textContainer.containerSize = CGSize(
-            width:  containerWidth,
-            height: CGFloat.greatestFiniteMagnitude
-        )
-
+        // let insets = tv.textContainerInset
+        // let containerWidth = wrapLines
+        // ? tv.bounds.width - insets.left - insets.right : CGFloat.greatestFiniteMagnitude
+        // tv.textContainer.containerSize = CGSize(
+        //     width:  containerWidth,
+        //     height: CGFloat.greatestFiniteMagnitude
+        // )
 
         // Optional tweaks for code editing:
         tv.autocapitalizationType    = .none
@@ -100,20 +97,19 @@ public struct CodeEditor: UIViewRepresentable {
         if uiView.text != text {
             uiView.text = text
         }
+        // uiView.textContainer.lineBreakMode       = wrapLines ? .byWordWrapping : .byClipping
+        // uiView.textContainer.widthTracksTextView = wrapLines
 
-        uiView.textContainer.lineBreakMode       = wrapLines ? .byWordWrapping : .byClipping
-        uiView.textContainer.widthTracksTextView = wrapLines
+        // let insets = uiView.textContainerInset
+        // let width = wrapLines ? uiView.bounds.width - insets.left - insets.right : CGFloat.greatestFiniteMagnitude
 
-        let insets = uiView.textContainerInset
-        let width = wrapLines ? uiView.bounds.width - insets.left - insets.right : CGFloat.greatestFiniteMagnitude
+        // uiView.textContainer.containerSize = CGSize(
+        //     width:  width,
+        //     height: CGFloat.greatestFiniteMagnitude
+        // )
 
-        uiView.textContainer.containerSize = CGSize(
-            width:  width,
-            height: CGFloat.greatestFiniteMagnitude
-        )
-
-        uiView.alwaysBounceHorizontal   = !wrapLines
-        uiView.showsHorizontalScrollIndicator = !wrapLines
+        // uiView.alwaysBounceHorizontal   = !wrapLines
+        // uiView.showsHorizontalScrollIndicator = !wrapLines
     }
 
     public func makeCoordinator() -> Coordinator {
@@ -315,7 +311,7 @@ public struct WrappedCodeEditor: NSViewRepresentable {
         // scroll.hasHorizontalScroller  = true
         // scroll.hasHorizontalScroller  = !wrapLines
         scroll.horizontalScrollElasticity = .allowed
-        // scroll.verticalScrollElasticity   = .allowed
+        scroll.verticalScrollElasticity   = .allowed
         scroll.autohidesScrollers     = false
         scroll.drawsBackground        = false
         scroll.wantsLayer = true
