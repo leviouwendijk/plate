@@ -16,7 +16,7 @@ public struct CodeEditorContainer: View {
         VStack {
             HStack {
                 // Spacer()
-                StandardToggle(style: .switch, isOn: $wrap, title: "Wrap Lines")
+                StandardToggle(style: .switch, isOn: $wrap, title: "Wrap Lines (Beta)")
             }
             .padding()
 
