@@ -21,10 +21,11 @@ public class WeeklyScheduleViewModel: ObservableObject {
     }
 
     // backwards compatibility for running through the mailer binary (until phased out)
-    public func availabilityJSON() throws -> String? {
+    public func availabilityJSON() throws -> String {
         let dict = availabilityContent.time_range()
         let data = try JSONSerialization.data(withJSONObject: dict)
-        let json = String(data: data, encoding: .utf8) ?? ""
-        return json.isEmpty ? nil : json
+        let jsonAsString = String(data: data, encoding: .utf8) ?? ""
+        return jsonAsString
+        // return json.isEmpty ? nil : json
     }
 }
