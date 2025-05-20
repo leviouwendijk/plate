@@ -51,6 +51,7 @@ public struct StandardTextField: View {
                     if text.isEmpty, let placeholder {
                         Text(placeholder)
                             .foregroundColor(.secondary)
+                            .padding(.leading, 20)
                     }
                     TextField("", text: $text)
                         .textFieldStyle(PlainTextFieldStyle())
