@@ -66,10 +66,10 @@ public struct StandardTextField: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(borderColor, lineWidth: 1)
-            )
+            // .background(
+            //     RoundedRectangle(cornerRadius: 8)
+            //         .stroke(borderColor, lineWidth: 1)
+            // )
 
             if let msg = validationMessage {
                 Text(msg)
