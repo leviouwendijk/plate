@@ -10,9 +10,11 @@ public class VariableStore: ObservableObject, Sendable {
     /// (e.g. "name", "dog", "client_name", "invoice_id", etc.)
     @Published public var values: [String: String] = [:]
 
-    private init() {
-      // Optionally pre-populate defaults here
-    }
+    public init() {}
+
+    // private init() {
+    //   // Optionally pre-populate defaults here
+    // }
 }
 
 @MainActor
