@@ -289,7 +289,7 @@ public struct WrappedCodeEditor: NSViewRepresentable {
 
         // tv.isHorizontallyResizable = true
         tv.isVerticallyResizable   = true
-        // tv.textContainer?.widthTracksTextView  = false
+        tv.textContainer?.widthTracksTextView  = false
         tv.textContainer?.heightTracksTextView = false
         tv.textContainer?.containerSize = NSSize(
             width:  CGFloat.greatestFiniteMagnitude,
