@@ -56,6 +56,17 @@ extension String {
         .joined(separator: " ")
     }
 
+    public func firstCapturedGroup(
+        pattern: String,
+        options: NSRegularExpression.Options = []
+    ) -> String? {
+        guard let re = try? NSRegularExpression(pattern: pattern, options: options) else { return nil }
+        let ns = self as NSString
+        let full = NSRange(location: 0, length: ns.length)
+        guard let m = re.firstMatch(in: self, options: [], range: full), m.numberOfRanges >= 2 else { return nil }
+        return ns.substring(with: m.range(at: 1))
+    }
+
     public var commaSeparatedValuesToList: [String] {
         self
         .split(separator: ",")
