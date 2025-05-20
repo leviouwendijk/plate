@@ -51,7 +51,7 @@ public struct StandardTextField: View {
                     if text.isEmpty, let placeholder {
                         Text(placeholder)
                             .foregroundColor(.secondary)
-                            .padding(.leading, 20)
+                            .padding(.leading, 12)
                     }
                     TextField("", text: $text)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -61,10 +61,16 @@ public struct StandardTextField: View {
                         }
                 }
 
-                if !text.isEmpty {
-                    Button { text = "" }
-                    label: { Image(systemName: "xmark.circle.fill") }
+                // if !text.isEmpty {
+                //     Button { text = "" }
+                //     label: { Image(systemName: "xmark.circle.fill") }
+                // }
+
+                Button(action: { text = "" }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .opacity(text.isEmpty ? 0 : 1)
                 }
+                .disabled(text.isEmpty)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
