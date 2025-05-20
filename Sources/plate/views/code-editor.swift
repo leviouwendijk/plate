@@ -20,11 +20,14 @@ public struct CodeEditorContainer: View {
             }
             .padding()
 
-            CodeEditor(
-                text: text,
-                wrapLines: wrap
-            )
-            // .frame(maxWidth: .infinity, maxHeight: .infinity)
+            GeometryReader { proxy in
+                CodeEditor(
+                    text: text,
+                    wrapLines: wrap,
+                    hostWidth: proxy.size.width
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
             // .frame(minHeight: 200)
         }
     }
@@ -136,19 +139,22 @@ public struct CodeEditor: NSViewRepresentable {
     public var textColor: NSColor
     public var backgroundColor: NSColor
     public var wrapLines: Bool
+    public let hostWidth: CGFloat
 
     public init(
         text: Binding<String>,
         font: NSFont = .monospacedSystemFont(ofSize: 14, weight: .regular),
         textColor: NSColor = .labelColor,
         backgroundColor: NSColor = .windowBackgroundColor,
-        wrapLines: Bool = false
+        wrapLines: Bool = false,
+        hostWidth: CGFloat
     ) {
         self._text = text
         self.font = font
         self.textColor = textColor
         self.backgroundColor = backgroundColor
         self.wrapLines = wrapLines
+        self.hostWidth = hostWidth
     }
 
     public func makeNSView(context: Context) -> NSScrollView {
@@ -237,6 +243,18 @@ public struct CodeEditor: NSViewRepresentable {
         //     forCharacterRange: NSRange(location: 0, length: tv.string.utf16.count),
         //     within: tv.textContainer!
         // )
+
+        DispatchQueue.main.async {
+            tv.textContainer?.containerSize = NSSize(
+                width:  containerWidth,
+                height: .greatestFiniteMagnitude
+            )
+            // tv.layoutManager?.ensureLayout(
+            //     forCharacterRange: NSRange(0..<tv.string.utf16.count),
+            //     within: tv.textContainer!
+            // )
+        }
+
     }
 
 
