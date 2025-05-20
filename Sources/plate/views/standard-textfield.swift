@@ -71,6 +71,7 @@ public struct StandardTextField: View {
                         .opacity(text.isEmpty ? 0 : 1)
                 }
                 .disabled(text.isEmpty)
+                .opacity(text.isEmpty ? 0 : 1)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
