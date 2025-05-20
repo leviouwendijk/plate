@@ -4,6 +4,7 @@ import SwiftUI
 public struct StandardEscapableButton: View {
     public let type: StandardButtonType
     public let title: String
+    public let cancelTitle: String?
     public let subtitle: String
     public let action: () -> Void
     public let animationDuration: TimeInterval
@@ -17,12 +18,14 @@ public struct StandardEscapableButton: View {
     public init(
         type: StandardButtonType,
         title: String,
+        cancelTitle: String? = nil,
         subtitle: String = "",
         animationDuration: Double = 0.2,
         action: @escaping () -> Void
     ) {
         self.type = type
         self.title = title
+        self.cancelTitle = cancelTitle
         self.subtitle = subtitle
         self.animationDuration = animationDuration
         self.action = action
@@ -84,7 +87,7 @@ public struct StandardEscapableButton: View {
     }
 
     private var dynamicTitle: String {
-        isCanceling ? "Cancel \(title)" : title
+        isCanceling ? ( cancelTitle ?? "Cancel \(title)" ) : title
     }
 
     public var body: some View {
