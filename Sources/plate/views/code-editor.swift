@@ -24,6 +24,7 @@ public struct CodeEditorContainer: View {
                 text: text,
                 wrapLines: wrap
             )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             // .frame(minHeight: 200)
         }
     }
