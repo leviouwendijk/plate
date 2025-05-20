@@ -194,8 +194,7 @@ public struct CodeEditor: NSViewRepresentable {
         let scroll = NSScrollView(frame: .zero)
         scroll.documentView           = tv
         scroll.hasVerticalScroller    = true
-        // scroll.hasHorizontalScroller  = true
-        scroll.hasHorizontalScroller  = !wrapLines
+        scroll.hasHorizontalScroller  = true
         scroll.horizontalScrollElasticity = .allowed
         scroll.verticalScrollElasticity   = .allowed
         scroll.autohidesScrollers     = false
