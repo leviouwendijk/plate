@@ -150,9 +150,11 @@ public struct CodeEditor: NSViewRepresentable {
 
         // wrap toggling
         tv.isHorizontallyResizable   = !wrapLines
-        tv.isVerticallyResizable     = true
+        // tv.isVerticallyResizable     = true
+        tv.isVerticallyResizable = false
         tv.textContainer?.widthTracksTextView  = wrapLines
-        tv.textContainer?.heightTracksTextView = true
+        // tv.textContainer?.heightTracksTextView = true
+        tv.textContainer?.heightTracksTextView = false
         if !wrapLines {
             // allow infinite width so horizontal scrolling works
             tv.textContainer?.containerSize = NSSize(
