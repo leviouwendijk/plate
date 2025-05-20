@@ -15,6 +15,13 @@ public struct NumbersParserExtractor {
         self.reparsedJsonPath = try reparsedJsonPath ?? NumbersParserEnvironment.require(.reparsed)
     }
 
+    public func getCurrentRender() throws -> [String: [String: String]] {
+        let data = try Data(contentsOf: URL(fileURLWithPath: reparsedJsonPath))
+        let decoder = JSONDecoder()
+        let parsedData = try decoder.decode([String: [String: String]].self, from: data)
+        return parsedData
+    }
+
     public func extractInvoiceData() throws -> [String: [String: String]] {
         print("Extracting data from CSV file: \(csvPath)")
 
