@@ -19,4 +19,13 @@ public class WeeklyScheduleViewModel: ObservableObject {
     public var availabilityContent: MailerAPIAvailabilityContent {
         MailerAPIAvailabilityContent(from: schedules)
     }
+
+    // backwards compatibility for running through the mailer binary (until phased out)
+    public var availabilityJSON: String? {
+        guard !availabilityContent.time_range().isEmpty,
+              let data = try? JSONSerialization.data(withJSONObject: availabilityContent),
+              let json = String(data: data, encoding: .utf8)
+        else { return nil }
+        return json
+    }
 }
