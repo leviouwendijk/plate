@@ -4,18 +4,18 @@ import SwiftUI
 
 // invoice - /issue, /expired, /issue/simple
 public struct MailerAPIInvoiceVariables: Encodable {
-    public let name:          String
-    public let client_name:   String
-    public let email:         String
-    public let invoice_id:    String
-    public let due_date:      String
-    public let product_line:  String
-    public let amount:        String
-    public let vat_percentage:String
-    public let vat_amount:    String
-    public let total:         String
-    public let terms_total:   String
-    public let terms_current: String
+    public var name:          String
+    public var client_name:   String
+    public var email:         String
+    public var invoice_id:    String
+    public var due_date:      String
+    public var product_line:  String
+    public var amount:        String
+    public var vat_percentage:String
+    public var vat_amount:    String
+    public var total:         String
+    public var terms_total:   String
+    public var terms_current: String
 
     public init(
         clientName:    String,
@@ -42,6 +42,22 @@ public struct MailerAPIInvoiceVariables: Encodable {
         self.total          = total
         self.terms_total    = termsTotal
         self.terms_current  = termsCurrent
+    }
+
+    // init with blank defaults
+    public init() {
+        self.name           = ""
+        self.client_name    = ""
+        self.email          = ""
+        self.invoice_id     = ""
+        self.due_date       = ""
+        self.product_line   = ""
+        self.amount         = ""
+        self.vat_percentage = ""
+        self.vat_amount     = ""
+        self.total          = ""
+        self.terms_total    = ""
+        self.terms_current  = ""
     }
 }
 
