@@ -15,8 +15,7 @@ public struct CodeEditorContainer: View {
     public var body: some View {
         VStack {
             HStack {
-                Spacer()
-
+                // Spacer()
                 StandardToggle(style: .switch, isOn: $wrap, title: "Wrap Lines")
             }
             .padding()
@@ -224,7 +223,19 @@ public struct CodeEditor: NSViewRepresentable {
         tv.isHorizontallyResizable   = !wrapLines
         tv.textContainer?.widthTracksTextView = wrapLines
         nsView.hasHorizontalScroller  = !wrapLines
+
+        let containerWidth: CGFloat = wrapLines ? nsView.contentSize.width : .greatestFiniteMagnitude
+        tv.textContainer?.containerSize = NSSize(
+            width:  containerWidth,
+            height: .greatestFiniteMagnitude
+        )
+
+        // tv.layoutManager?.ensureLayout(
+        //     forCharacterRange: NSRange(location: 0, length: tv.string.utf16.count),
+        //     within: tv.textContainer!
+        // )
     }
+
 
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
