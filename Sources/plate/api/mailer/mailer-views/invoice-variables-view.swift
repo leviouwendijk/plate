@@ -30,5 +30,6 @@ public struct MailerAPIInvoiceVariablesView: View {
             StandardTextField("Terms Total",   text: $viewModel.invoiceVariables.terms_total,   placeholder: "e.g. 30 days")
             StandardTextField("Terms Current", text: $viewModel.invoiceVariables.terms_current, placeholder: "e.g. 0 days past")
         }
+        .scrollContentBackground(.hidden)
     }
 }
