@@ -19,16 +19,16 @@ public struct CodeEditorContainer: View {
                 StandardToggle(style: .switch, isOn: $wrap, title: "Wrap Lines (Beta)")
             }
             .padding()
-
-            GeometryReader { proxy in
-                CodeEditor(
-                    text: text,
-                    wrapLines: wrap,
-                    hostWidth: proxy.size.width
+            
+            if wrap {
+                WrappedCodeEditor(
+                    text: text
                 )
-                // .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                CodeEditor(
+                    text: text
+                )
             }
-            // .frame(minHeight: 200)
         }
     }
 }
@@ -138,23 +138,17 @@ public struct CodeEditor: NSViewRepresentable {
     public var font: NSFont
     public var textColor: NSColor
     public var backgroundColor: NSColor
-    public var wrapLines: Bool
-    public let hostWidth: CGFloat
 
     public init(
         text: Binding<String>,
         font: NSFont = .monospacedSystemFont(ofSize: 14, weight: .regular),
         textColor: NSColor = .labelColor,
         backgroundColor: NSColor = .windowBackgroundColor,
-        wrapLines: Bool = false,
-        hostWidth: CGFloat
     ) {
         self._text = text
         self.font = font
         self.textColor = textColor
         self.backgroundColor = backgroundColor
-        self.wrapLines = wrapLines
-        self.hostWidth = hostWidth
     }
 
     public func makeNSView(context: Context) -> NSScrollView {
@@ -165,28 +159,28 @@ public struct CodeEditor: NSViewRepresentable {
         tv.textColor      = textColor
         tv.backgroundColor = backgroundColor
 
-        // tv.isHorizontallyResizable = true
-        // tv.isVerticallyResizable   = true
-        // tv.textContainer?.widthTracksTextView  = false
-        // tv.textContainer?.heightTracksTextView = false
-        // tv.textContainer?.containerSize = NSSize(
-        //     width:  CGFloat.greatestFiniteMagnitude,
-        //     height: CGFloat.greatestFiniteMagnitude
-        // )
-
-        // wrap toggling
-        tv.isHorizontallyResizable   = !wrapLines
-        tv.isVerticallyResizable     = true
-        tv.textContainer?.widthTracksTextView  = wrapLines
-        // tv.textContainer?.heightTracksTextView = true
+        tv.isHorizontallyResizable = true
+        tv.isVerticallyResizable   = true
+        tv.textContainer?.widthTracksTextView  = false
         tv.textContainer?.heightTracksTextView = false
-        if !wrapLines {
-            // allow infinite width so horizontal scrolling works
-            tv.textContainer?.containerSize = NSSize(
-                width:  CGFloat.greatestFiniteMagnitude,
-                height: CGFloat.greatestFiniteMagnitude
-            )
-        }
+        tv.textContainer?.containerSize = NSSize(
+            width:  CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+
+        // // wrap toggling
+        // tv.ishorizontallyresizable   = !wraplines
+        // tv.isverticallyresizable     = true
+        // tv.textcontainer?.widthtrackstextview  = wraplines
+        // // tv.textcontainer?.heighttrackstextview = true
+        // tv.textcontainer?.heighttrackstextview = false
+        // if !wraplines {
+        //     // allow infinite width so horizontal scrolling works
+        //     tv.textcontainer?.containersize = nssize(
+        //         width:  cgfloat.greatestfinitemagnitude,
+        //         height: cgfloat.greatestfinitemagnitude
+        //     )
+        // }
 
         // unchanged
         tv.minSize = NSSize(width: 0, height: 0)
@@ -214,49 +208,46 @@ public struct CodeEditor: NSViewRepresentable {
     }
 
     public func updateNSView(_ nsView: NSScrollView, context: Context) {
-        // if
-        //     let tv = nsView.documentView as? NSTextView,
-        //     tv.string != text
-        // {
+        if
+            let tv = nsView.documentView as? NSTextView,
+            tv.string != text
+        {
+            tv.string = text
+        }
+        // guard let tv = nsView.documentView as? NSTextView else { return }
+
+        // if tv.string != text {
         //     tv.string = text
         // }
 
-        guard let tv = nsView.documentView as? NSTextView else { return }
+        // tv.isHorizontallyResizable   = !wrapLines
+        // tv.textContainer?.widthTracksTextView = wrapLines
+        // nsView.hasHorizontalScroller  = !wrapLines
 
-        if tv.string != text {
-            tv.string = text
-        }
-
-        tv.isHorizontallyResizable   = !wrapLines
-        tv.textContainer?.widthTracksTextView = wrapLines
-        nsView.hasHorizontalScroller  = !wrapLines
-
-        // let contentWidth = nsView.contentSize.width
-        let clipWidth = nsView.contentView.bounds.width
-        let containerWidth: CGFloat = wrapLines ? clipWidth : .greatestFiniteMagnitude
-        tv.textContainer?.containerSize = NSSize(
-            width:  containerWidth,
-            height: .greatestFiniteMagnitude
-        )
-
-        // tv.layoutManager?.ensureLayout(
-        //     forCharacterRange: NSRange(location: 0, length: tv.string.utf16.count),
-        //     within: tv.textContainer!
+        // // let contentWidth = nsView.contentSize.width
+        // let clipWidth = nsView.contentView.bounds.width
+        // let containerWidth: CGFloat = wrapLines ? clipWidth : .greatestFiniteMagnitude
+        // tv.textContainer?.containerSize = NSSize(
+        //     width:  containerWidth,
+        //     height: .greatestFiniteMagnitude
         // )
 
-        DispatchQueue.main.async {
-            tv.textContainer?.containerSize = NSSize(
-                width:  containerWidth,
-                height: .greatestFiniteMagnitude
-            )
-            // tv.layoutManager?.ensureLayout(
-            //     forCharacterRange: NSRange(0..<tv.string.utf16.count),
-            //     within: tv.textContainer!
-            // )
-        }
+        // // tv.layoutManager?.ensureLayout(
+        // //     forCharacterRange: NSRange(location: 0, length: tv.string.utf16.count),
+        // //     within: tv.textContainer!
+        // // )
 
+        // DispatchQueue.main.async {
+        //     tv.textContainer?.containerSize = NSSize(
+        //         width:  containerWidth,
+        //         height: .greatestFiniteMagnitude
+        //     )
+        //     // tv.layoutManager?.ensureLayout(
+        //     //     forCharacterRange: NSRange(0..<tv.string.utf16.count),
+        //     //     within: tv.textContainer!
+        //     // )
+        // }
     }
-
 
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -265,6 +256,92 @@ public struct CodeEditor: NSViewRepresentable {
     public class Coordinator: NSObject, NSTextViewDelegate {
         var parent: CodeEditor
         init(_ parent: CodeEditor) { self.parent = parent }
+
+        public func textDidChange(_ notification: Notification) {
+            guard
+                let tv = notification.object as? NSTextView
+            else { return }
+            parent.text = tv.string
+        }
+    }
+}
+
+public struct WrappedCodeEditor: NSViewRepresentable {
+    @Binding public var text: String
+    public var font: NSFont
+    public var textColor: NSColor
+    public var backgroundColor: NSColor
+
+    public init(
+        text: Binding<String>,
+        font: NSFont = .monospacedSystemFont(ofSize: 14, weight: .regular),
+        textColor: NSColor = .labelColor,
+        backgroundColor: NSColor = .windowBackgroundColor,
+    ) {
+        self._text = text
+        self.font = font
+        self.textColor = textColor
+        self.backgroundColor = backgroundColor
+    }
+
+    public func makeNSView(context: Context) -> NSScrollView {
+        let tv = NSTextView(frame: .zero)
+        tv.delegate       = context.coordinator
+        tv.isRichText     = false
+        tv.font           = font
+        tv.textColor      = textColor
+        tv.backgroundColor = backgroundColor
+
+        // tv.isHorizontallyResizable = true
+        // tv.isVerticallyResizable   = true
+        // tv.textContainer?.widthTracksTextView  = false
+        // tv.textContainer?.heightTracksTextView = false
+        // tv.textContainer?.containerSize = NSSize(
+        //     width:  CGFloat.greatestFiniteMagnitude,
+        //     height: CGFloat.greatestFiniteMagnitude
+        // )
+
+        // unchanged
+        tv.minSize = NSSize(width: 0, height: 0)
+        tv.maxSize = NSSize(
+            width:  CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+
+        tv.autoresizingMask = []
+
+        let scroll = NSScrollView(frame: .zero)
+        scroll.documentView           = tv
+        scroll.hasVerticalScroller    = true
+        // scroll.hasHorizontalScroller  = true
+        // scroll.hasHorizontalScroller  = !wrapLines
+        scroll.horizontalScrollElasticity = .allowed
+        // scroll.verticalScrollElasticity   = .allowed
+        scroll.autohidesScrollers     = false
+        scroll.drawsBackground        = false
+        scroll.wantsLayer = true
+        scroll.layer?.cornerRadius = 8
+        scroll.layer?.masksToBounds = true
+
+        return scroll
+    }
+
+    public func updateNSView(_ nsView: NSScrollView, context: Context) {
+        if
+            let tv = nsView.documentView as? NSTextView,
+            tv.string != text
+        {
+            tv.string = text
+        }
+    }
+
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    public class Coordinator: NSObject, NSTextViewDelegate {
+        var parent: WrappedCodeEditor
+        init(_ parent: WrappedCodeEditor) { self.parent = parent }
 
         public func textDidChange(_ notification: Notification) {
             guard
