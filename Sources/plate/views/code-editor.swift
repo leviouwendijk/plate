@@ -287,7 +287,7 @@ public struct WrappedCodeEditor: NSViewRepresentable {
         tv.textColor      = textColor
         tv.backgroundColor = backgroundColor
 
-        // tv.isHorizontallyResizable = true
+        tv.isHorizontallyResizable = true
         tv.isVerticallyResizable   = true
         tv.textContainer?.widthTracksTextView  = false
         tv.textContainer?.heightTracksTextView = false
