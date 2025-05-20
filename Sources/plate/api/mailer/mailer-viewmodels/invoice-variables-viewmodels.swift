@@ -33,9 +33,9 @@ public class MailerAPIInvoiceVariablesViewModel: ObservableObject {
         )
     }
 
-    public func renderDataFromInvoiceId(invoiceId: String) throws {
+    public func renderDataFromInvoiceId() throws {
         let parser = try NumbersParser(
-            value: invoiceId,
+            value: invoiceVariables.invoice_id,
             close: false,
             openAfterwards: false,
             openingMethod: .direct
