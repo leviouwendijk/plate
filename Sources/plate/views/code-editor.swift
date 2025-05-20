@@ -74,6 +74,16 @@ public struct CodeEditor: UIViewRepresentable {
         tv.textContainer.lineBreakMode = wrapLines ? .byWordWrapping : .byClipping
         tv.textContainer.widthTracksTextView = wrapLines
 
+        // setting containerwidth
+        let insets = tv.textContainerInset
+        let containerWidth = wrapLines
+        ? tv.bounds.width - insets.left - insets.right : CGFloat.greatestFiniteMagnitude
+        tv.textContainer.containerSize = CGSize(
+            width:  containerWidth,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+
+
         // Optional tweaks for code editing:
         tv.autocapitalizationType    = .none
         tv.autocorrectionType        = .no
@@ -87,9 +97,19 @@ public struct CodeEditor: UIViewRepresentable {
         if uiView.text != text {
             uiView.text = text
         }
-        uiView.textContainer.lineBreakMode = wrapLines ? .byWordWrapping : .byClipping
+
+        uiView.textContainer.lineBreakMode       = wrapLines ? .byWordWrapping : .byClipping
         uiView.textContainer.widthTracksTextView = wrapLines
-        uiView.alwaysBounceHorizontal = !wrapLines
+
+        let insets = uiView.textContainerInset
+        let width = wrapLines ? uiView.bounds.width - insets.left - insets.right : CGFloat.greatestFiniteMagnitude
+
+        uiView.textContainer.containerSize = CGSize(
+            width:  width,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+
+        uiView.alwaysBounceHorizontal   = !wrapLines
         uiView.showsHorizontalScrollIndicator = !wrapLines
     }
 
