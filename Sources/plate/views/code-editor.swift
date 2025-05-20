@@ -26,7 +26,7 @@ public struct CodeEditorContainer: View {
                     wrapLines: wrap,
                     hostWidth: proxy.size.width
                 )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             // .frame(minHeight: 200)
         }
