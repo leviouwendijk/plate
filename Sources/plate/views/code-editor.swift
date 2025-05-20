@@ -25,7 +25,7 @@ public struct CodeEditorContainer: View {
                 text: text,
                 wrapLines: wrap
             )
-            .frame(minHeight: 200)
+            // .frame(minHeight: 200)
         }
     }
 }
