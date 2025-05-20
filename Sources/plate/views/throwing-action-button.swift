@@ -164,7 +164,7 @@ public struct ThrowingEscapableButton: View {
 
                         withAnimation {
                             showActionResult = true
-                            actionSuccess = false
+                            actionSuccess = true
                             actionMessage = "Success"
                         }
                     } catch {
