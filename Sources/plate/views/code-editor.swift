@@ -24,7 +24,7 @@ public struct CodeEditorContainer: View {
                 text: text,
                 wrapLines: wrap
             )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // .frame(maxWidth: .infinity, maxHeight: .infinity)
             // .frame(minHeight: 200)
         }
     }
@@ -225,7 +225,9 @@ public struct CodeEditor: NSViewRepresentable {
         tv.textContainer?.widthTracksTextView = wrapLines
         nsView.hasHorizontalScroller  = !wrapLines
 
-        let containerWidth: CGFloat = wrapLines ? nsView.contentSize.width : .greatestFiniteMagnitude
+        // let contentWidth = nsView.contentSize.width
+        let clipWidth = nsView.contentView.bounds.width
+        let containerWidth: CGFloat = wrapLines ? clipWidth : .greatestFiniteMagnitude
         tv.textContainer?.containerSize = NSSize(
             width:  containerWidth,
             height: .greatestFiniteMagnitude
