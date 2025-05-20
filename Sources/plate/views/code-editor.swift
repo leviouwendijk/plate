@@ -150,8 +150,7 @@ public struct CodeEditor: NSViewRepresentable {
 
         // wrap toggling
         tv.isHorizontallyResizable   = !wrapLines
-        // tv.isVerticallyResizable     = true
-        tv.isVerticallyResizable = false
+        tv.isVerticallyResizable     = true
         tv.textContainer?.widthTracksTextView  = wrapLines
         // tv.textContainer?.heightTracksTextView = true
         tv.textContainer?.heightTracksTextView = false
