@@ -53,6 +53,7 @@ public struct StandardTextField: View {
                             .foregroundColor(.secondary)
                     }
                     TextField("", text: $text)
+                        .textFieldStyle(PlainTextFieldStyle())
                         .focused($isFocused)
                         .onChange(of: text) { newValue in
                             validate(newValue)
@@ -66,10 +67,10 @@ public struct StandardTextField: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            // .background(
-            //     RoundedRectangle(cornerRadius: 8)
-            //         .stroke(borderColor, lineWidth: 1)
-            // )
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(borderColor, lineWidth: 1)
+            )
 
             if let msg = validationMessage {
                 Text(msg)
