@@ -24,10 +24,10 @@ public class MailerAPIInvoiceVariablesViewModel: ObservableObject {
             invoiceId     : invoices["invoice_id"]      ?? "",
             dueDate       : invoices["due_date"]        ?? "",
             productLine   : invoices["product_line"]    ?? "",
-            amount         : invoices["amount"]          ?? "",
+            amount         : invoices["revenue_amount"]          ?? "", // note: amount = ["revenue_amount"]
             vatPercentage : invoices["vat_percentage"]  ?? "",
             vatAmount     : invoices["vat_amount"]      ?? "",
-            total          : invoices["total"]           ?? "",
+            total          : invoices["amount"]           ?? "", // note: total = ["amount"]
             termsTotal    : invoices["terms_total"]     ?? "",
             termsCurrent  : invoices["terms_current"]   ?? ""
         )
