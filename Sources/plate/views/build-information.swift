@@ -141,9 +141,11 @@ public struct BuildInformationSwitch: View {
                     if alignment == .leading { Spacer() }
                 }
                 .id(current)
-                .transition(.asymmetric(                                         
-                    insertion: .move(edge: .bottom),
+                .transition(.asymmetric(
+                    insertion: .move(edge: .bottom)
+                                 .combined(with: .opacity),
                     removal:   .move(edge: .top)
+                                 .combined(with: .opacity)
                 ))
             }
 
