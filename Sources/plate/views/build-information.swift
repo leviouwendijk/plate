@@ -32,7 +32,7 @@ public struct BuildInformation: View {
             }
         }
         .padding(.horizontal)
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
         .background(Color(NSColor.windowBackgroundColor).opacity(0.1))
     }
 }
