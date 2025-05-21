@@ -116,29 +116,38 @@ public struct BuildInformationSwitch: View {
                 current = (current + 1) % display.count
             }
         }) {
-            HStack {
-                if alignment == .trailing { Spacer() }
-                VStack {
-                    if display[current].contains(.name) {
-                        Text(specification.name)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                    }
+            ZStack {
+                HStack {
+                    if alignment == .trailing { Spacer() }
+                    VStack {
+                        if display[current].contains(.name) {
+                            Text(specification.name)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
 
-                    if display[current].contains(.version) {
-                        Text(finalVersionString)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                    }
+                        if display[current].contains(.version) {
+                            Text(finalVersionString)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
 
-                    if display[current].contains(.author) {
-                        Text(specification.author)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
+                        if display[current].contains(.author) {
+                            Text(specification.author)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
                     }
+                    if alignment == .leading { Spacer() }
                 }
-                if alignment == .leading { Spacer() }
+                .id(current)
+                .transition(.asymmetric(                                         
+                    insertion: .move(edge: .bottom),
+                    removal:   .move(edge: .top)
+                ))
             }
+
+
             .padding(.horizontal)
             .padding(.vertical, 8)
             .background(Color(NSColor.windowBackgroundColor).opacity(0.1))
