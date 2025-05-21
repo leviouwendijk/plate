@@ -39,7 +39,7 @@ public struct BuildInformation: View {
 
     public var finalVersionString: String {
         var v = ""
-        let prefix = prefixStyle == .short ? "v" : "version "
+        let prefix = prefixStyle == .short ? "v " : "version "
         if display.contains(.versionPrefix) { 
             v.append(prefix)
         }
