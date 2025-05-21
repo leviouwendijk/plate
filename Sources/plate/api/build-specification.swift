@@ -37,4 +37,8 @@ public struct BuildSpecification {
     public func versionString() -> String {
         return "\(version.major).\(version.minor).\(version.patch)"
     }
+
+    public func appAndVersionString() -> String {
+        return "\(name) \(version.major).\(version.minor).\(version.patch)"
+    }
 }
