@@ -148,8 +148,6 @@ public struct BuildInformationSwitch: View {
                                  .combined(with: .opacity)
                 ))
             }
-
-
             .padding(.horizontal)
             .padding(.vertical, 8)
             .background(Color(NSColor.windowBackgroundColor).opacity(0.1))
