@@ -91,7 +91,7 @@ public struct BuildInformationSwitch: View {
     public init(
         specification: BuildSpecification,
         alignment: AlignmentStyle = .center,
-        display: [[BuildInformationDisplayComponents]] = [[.version], [.name], [.author]],
+        display: [[BuildInformationDisplayComponents]] = [[.version, .versionPrefix], [.name], [.author]],
         prefixStyle: VersionPrefixDisplayStyle = .short
     ) {
         self.specification = specification
@@ -112,7 +112,9 @@ public struct BuildInformationSwitch: View {
     
     public var body: some View {
         Button(action: {
-            current = (current + 1) % display.count
+            withAnimation(.easeInOut) {
+                current = (current + 1) % display.count
+            }
         }) {
             HStack {
                 if alignment == .trailing { Spacer() }
