@@ -11,21 +11,40 @@ public enum BuildInformationDisplayComponents {
     case name
     case author
     case description
+    case versionPrefix
+}
+
+public enum VersionPrefixDisplayStyle {
+    case short
+    case long
 }
 
 public struct BuildInformation: View {
     public let specification: BuildSpecification
     public let alignment: AlignmentStyle
     public let display: [BuildInformationDisplayComponents]
+    public let prefixStyle: VersionPrefixDisplayStyle
 
     public init(
         specification: BuildSpecification,
         alignment: AlignmentStyle = .center,
-        display: [BuildInformationDisplayComponents] = [.version]
+        display: [BuildInformationDisplayComponents] = [.version],
+        prefixStyle: VersionPrefixDisplayStyle = .short
     ) {
         self.specification = specification
         self.alignment = alignment
         self.display = display
+        self.prefixStyle = prefixStyle
+    }
+
+    public var finalVersionString: String {
+        var v = ""
+        let prefix = prefixStyle == .short ? "v" : "version "
+        if display.contains(.versionPrefix) { 
+            v.append(prefix)
+        }
+        v.append(specification.versionString())
+        return v
     }
     
     public var body: some View {
@@ -41,7 +60,7 @@ public struct BuildInformation: View {
                 }
                 
                 if display.contains(.version) {
-                    Text(specification.versionString())
+                    Text(finalVersionString)
                     .font(.footnote).foregroundColor(.secondary)
                 }
 
