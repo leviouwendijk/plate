@@ -67,6 +67,7 @@ public enum MailerAPIEndpoint: String, CaseIterable, RawRepresentable, Sendable 
     case fetch
     // case templateFetch  = "template/fetch"
     case messageSend    = "message/send"
+    case demo
 
     public func viewableString() -> String {
         return self.rawValue.viewableEndpointString()
@@ -94,7 +95,7 @@ public struct MailerAPIPath {
         .appointment:[.confirmation],
         .quote:      [.issue, .follow],
         .lead:       [.confirmation, .follow, .check],
-        .service:    [.onboarding, .follow],
+        .service:    [.onboarding, .follow, .demo],
         .resolution: [.review, .follow],
         .affiliate:  [.food],
         .custom:     [.messageSend],
