@@ -201,7 +201,7 @@ public struct ContactsListView: View {
                                     RoundedRectangle(cornerRadius: 6)
                                     .fill(Color(NSColor.windowBackgroundColor))
                                 )
-                            } else if !(viewModel.searchQuery.isEmpty) && viewModel.filteredContacts.isEmpty {
+                            } else if !(viewModel.searchQuery.isEmpty) && !(viewModel.isFuzzyFiltering) && viewModel.filteredContacts.isEmpty {
                                 VStack {
                                     HStack {
                                         Text("No results for")
