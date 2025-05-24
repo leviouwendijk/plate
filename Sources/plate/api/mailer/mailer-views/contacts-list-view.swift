@@ -53,6 +53,19 @@ public struct ContactsListView: View {
                     Spacer()
                 }
                 .padding()
+            } else if viewModel.isFuzzyFiltering {
+                HStack {
+                    Spacer()
+
+                    Text("Searching for “\(viewModel.searchQuery)”…")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                    .transition(.opacity)
+                    
+                    Spacer()
+                }
+                .padding()
             } else {
                 VStack {
                     ScrollViewReader { proxy in
