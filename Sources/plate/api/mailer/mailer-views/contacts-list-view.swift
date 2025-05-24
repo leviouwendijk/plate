@@ -203,15 +203,23 @@ public struct ContactsListView: View {
                                 )
                             } else if !(viewModel.searchQuery.isEmpty) && viewModel.filteredContacts.isEmpty {
                                 VStack {
-                                    Text("No results for “\(viewModel.searchQuery)”")
-                                    .font(.title2)
-                                    .foregroundColor(Color.secondary)
-                                    .padding(.vertical, 6)
-                                    .padding(.horizontal)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 6)
-                                        .fill(Color(NSColor.windowBackgroundColor))
-                                    )
+                                    HStack {
+                                        Text("No results for ")
+                                        .font(.title2)
+                                        .foregroundColor(Color.secondary)
+                                        .padding(.vertical, 6)
+                                        .padding(.horizontal)
+
+                                        Text("“\(viewModel.searchQuery)”")
+                                        .font(.title2)
+                                        .foregroundColor(Color.secondary)
+                                        .padding(.vertical, 6)
+                                        .padding(.horizontal)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color(NSColor.windowBackgroundColor))
+                                        )
+                                    }
 
                                     Text("Adjust your query or loosen the strictness level")
                                     .font(.caption)
