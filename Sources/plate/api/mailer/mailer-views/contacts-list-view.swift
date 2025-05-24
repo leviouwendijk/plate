@@ -179,7 +179,6 @@ public struct ContactsListView: View {
                     //     )
                     // }
 
-
                     .overlay(
                         Group {
                             if viewModel.isFuzzyFiltering {
@@ -202,10 +201,20 @@ public struct ContactsListView: View {
                                     RoundedRectangle(cornerRadius: 6)
                                     .fill(Color(NSColor.windowBackgroundColor))
                                 )
+                            } else if viewModel.filteredContacts.isEmpty {
+                                Text("No results for “\(viewModel.searchQuery)”")
+                                .font(.title2)
+                                .foregroundColor(Color.secondary)
+                                .padding(.vertical, 6)
+                                .padding(.horizontal)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color(NSColor.windowBackgroundColor))
+                                )
+
                             }
                         }
                     )
-
                 }
                 .animation(.easeInOut(duration: 0.35), value: viewModel.isFuzzyFiltering)
             }
