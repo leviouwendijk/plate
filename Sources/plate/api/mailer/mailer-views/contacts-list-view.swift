@@ -204,7 +204,7 @@ public struct ContactsListView: View {
                             } else if !(viewModel.searchQuery.isEmpty) && viewModel.filteredContacts.isEmpty {
                                 VStack {
                                     HStack {
-                                        Text("No results for ")
+                                        Text("No results for")
                                         .font(.title2)
                                         .foregroundColor(Color.secondary)
                                         .padding(.vertical, 6)
