@@ -13,7 +13,6 @@ public class ContactsListViewModel: ObservableObject {
 
     @Published public var selectedContactId: String? = nil
 
-
     // public var filteredContacts: [CNContact] {
     //     contacts
     //     .filteredClientContacts(
@@ -22,12 +21,12 @@ public class ContactsListViewModel: ObservableObject {
     //     )
     // }
 
-
     @Published public private(set) var filteredContacts: [CNContact] = []
+    @Published public var isFuzzyFiltering = false
 
     public init() {
         Task { await loadAllContacts() }
-        setupFilterListener()
+        fuzzyFilterListener()
     }
 
     func loadAllContacts() async {
@@ -45,14 +44,16 @@ public class ContactsListViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private func setupFilterListener() {
+    private func fuzzyFilterListener() {
         Publishers
         .CombineLatest3($contacts, $searchQuery, $searchStrictness)
-
-        // wait 200ms of “quiet” before firing
         .debounce(for: .milliseconds(200), scheduler: DispatchQueue.main)
         .sink { [weak self] allContacts, query, strictness in
-            self?.applyFilter(
+            guard let self = self else { return }
+
+            self.isFuzzyFiltering = true
+
+            self.applyFuzzyFilter(
                 to: allContacts,
                 query: query,
                 tolerance: strictness.tolerance
@@ -61,7 +62,7 @@ public class ContactsListViewModel: ObservableObject {
         .store(in: &cancellables)
     }
 
-    private func applyFilter(
+    private func applyFuzzyFilter(
         to allContacts: [CNContact],
         query: String,
         tolerance: Int
@@ -77,6 +78,7 @@ public class ContactsListViewModel: ObservableObject {
 
             DispatchQueue.main.async {
                 self.filteredContacts = results
+                self.isFuzzyFiltering = false
             }
         }
     }

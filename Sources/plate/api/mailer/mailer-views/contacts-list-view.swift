@@ -30,7 +30,8 @@ public struct ContactsListView: View {
             FuzzySearchField(
                 title: "Search contacts",
                 searchQuery: $viewModel.searchQuery,
-                searchStrictness:  $viewModel.searchStrictness
+                searchStrictness:  $viewModel.searchStrictness,
+                isFiltering: $viewModel.isFuzzyFiltering
             )
 
             if let msg = viewModel.errorMessage {
