@@ -160,10 +160,10 @@ public struct ContactsListView: View {
                     .opacity(viewModel.isFuzzyFiltering ? 0 : 1)
 
                     if viewModel.isFuzzyFiltering {
-                        Color(NSColor.windowBackgroundColor)
-                        .opacity(0.95)
-                        .edgesIgnoringSafeArea(.all)
-                        .zIndex(0)
+                        // Color(NSColor.windowBackgroundColor)
+                        // .opacity(0.95)
+                        // // .edgesIgnoringSafeArea(.all)
+                        // .zIndex(0)
 
                         Text("“\(viewModel.searchQuery)”…")
                         .font(.title2)
@@ -173,6 +173,10 @@ public struct ContactsListView: View {
                         .cornerRadius(6)
                         .padding(.horizontal)
                         .zIndex(1)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                            .fill(Color(NSColor.windowBackgroundColor))
+                        )
                     }
                 }
                 .animation(.easeInOut(duration: 0.35), value: viewModel.isFuzzyFiltering)
