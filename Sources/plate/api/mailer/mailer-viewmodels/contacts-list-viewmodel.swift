@@ -51,8 +51,10 @@ public class ContactsListViewModel: ObservableObject {
         .sink { [weak self] allContacts, query, strictness in
             guard let self = self else { return }
 
-            withAnimation(.easeInOut(duration: 0.25)) {
-                self.isFuzzyFiltering = true
+            if !(self.isLoading) {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    self.isFuzzyFiltering = true
+                }
             }
 
             self.applyFuzzyFilter(
