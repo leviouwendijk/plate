@@ -51,7 +51,7 @@ public class ContactsListViewModel: ObservableObject {
         .sink { [weak self] allContacts, query, strictness in
             guard let self = self else { return }
 
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(.easeInOut(duration: 0.25)) {
                 self.isFuzzyFiltering = true
             }
 
@@ -79,7 +79,7 @@ public class ContactsListViewModel: ObservableObject {
             )
 
             DispatchQueue.main.async {
-                withAnimation(.easeInOut(duration: 0.2)) {
+                withAnimation(.easeInOut(duration: 0.25)) {
                     self.filteredContacts = results
                     self.isFuzzyFiltering = false
                 }
