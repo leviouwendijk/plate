@@ -191,7 +191,7 @@ public struct ContactsListView: View {
 
                     .overlay(
                         Group {
-                            if viewModel.isFuzzyFiltering {
+                            if !(viewModel.searchQuery.isEmpty) && viewModel.isFuzzyFiltering {
                                 Text("“\(viewModel.searchQuery)”…")
                                 .font(.title2)
                                 .foregroundColor(.blue)
