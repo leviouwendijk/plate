@@ -159,25 +159,53 @@ public struct ContactsListView: View {
                     }
                     .opacity(viewModel.isFuzzyFiltering ? 0 : 1)
 
-                    if viewModel.isFuzzyFiltering {
-                        // Color(NSColor.windowBackgroundColor)
-                        // .opacity(0.95)
-                        // // .edgesIgnoringSafeArea(.all)
-                        // .zIndex(0)
+                    // if viewModel.isFuzzyFiltering {
+                    //     // Color(NSColor.windowBackgroundColor)
+                    //     // .opacity(0.95)
+                    //     // // .edgesIgnoringSafeArea(.all)
+                    //     // .zIndex(0)
 
-                        Text("“\(viewModel.searchQuery)”…")
-                        .font(.title2)
-                        .foregroundColor(Color.blue)
-                        .padding(.vertical, 6)
-                        .padding(.horizontal)
-                        .cornerRadius(6)
-                        .padding(.horizontal)
-                        .zIndex(1)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(NSColor.windowBackgroundColor))
-                        )
-                    }
+                    //     Text("“\(viewModel.searchQuery)”…")
+                    //     .font(.title2)
+                    //     .foregroundColor(Color.blue)
+                    //     .padding(.vertical, 6)
+                    //     .padding(.horizontal)
+                    //     .cornerRadius(6)
+                    //     .padding(.horizontal)
+                    //     .zIndex(1)
+                    //     .background(
+                    //         RoundedRectangle(cornerRadius: 6)
+                    //         .fill(Color(NSColor.windowBackgroundColor))
+                    //     )
+                    // }
+
+
+                    .overlay(
+                        Group {
+                            if viewModel.isFuzzyFiltering {
+                                Color(UIColor.systemBackground)
+                                .opacity(0.9)
+                                .cornerRadius(6)
+                            }
+                        }
+                    )
+
+                    .overlay(
+                        Group {
+                            if viewModel.isFuzzyFiltering {
+                                Text("“\(viewModel.searchQuery)”…")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                                .padding(.vertical, 6)
+                                .padding(.horizontal)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color(UIColor.systemBackground))
+                                )
+                            }
+                        }
+                    )
+
                 }
                 .animation(.easeInOut(duration: 0.35), value: viewModel.isFuzzyFiltering)
             }
