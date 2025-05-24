@@ -159,7 +159,7 @@ public struct ContactsListView: View {
                     }
 
                     if viewModel.isFuzzyFiltering {
-                        Text("Searching for “\(viewModel.searchQuery)”…")
+                        Text("“\(viewModel.searchQuery)”…")
                         .font(.title)
                         .foregroundColor(Color.blue)
                         .fontWeight(.semibold)
@@ -171,7 +171,7 @@ public struct ContactsListView: View {
                         .zIndex(1)
                     }
                 }
-                .animation(.easeInOut(duration: 0.15), value: viewModel.isFuzzyFiltering)
+                // .animation(.easeInOut(duration: 0.15), value: viewModel.isFuzzyFiltering)
             }
         }
     }
