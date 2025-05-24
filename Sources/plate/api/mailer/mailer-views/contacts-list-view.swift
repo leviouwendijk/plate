@@ -183,7 +183,7 @@ public struct ContactsListView: View {
                     .overlay(
                         Group {
                             if viewModel.isFuzzyFiltering {
-                                Color(UIColor.systemBackground)
+                                Color(NSColor.windowBackgroundColor)
                                 .opacity(0.9)
                                 .cornerRadius(6)
                             }
@@ -200,7 +200,7 @@ public struct ContactsListView: View {
                                 .padding(.horizontal)
                                 .background(
                                     RoundedRectangle(cornerRadius: 6)
-                                    .fill(Color(UIColor.systemBackground))
+                                    .fill(Color(NSColor.windowBackgroundColor))
                                 )
                             }
                         }
