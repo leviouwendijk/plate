@@ -208,13 +208,15 @@ public struct ContactsListView: View {
                                         .font(.title2)
                                         .foregroundColor(Color.secondary)
                                         .padding(.vertical, 6)
-                                        .padding(.horizontal)
+                                        // .padding(.horizontal)
+                                        .padding(.leading)
 
                                         Text("“\(viewModel.searchQuery)”")
                                         .font(.title2)
                                         .foregroundColor(Color.secondary)
                                         .padding(.vertical, 6)
-                                        .padding(.horizontal)
+                                        // .padding(.horizontal)
+                                        .padding(.trailing)
                                         .background(
                                             RoundedRectangle(cornerRadius: 6)
                                             .fill(Color(NSColor.windowBackgroundColor))
