@@ -52,108 +52,113 @@ public struct ContactsListView: View {
                     Spacer()
                 }
                 .padding()
-            } else if viewModel.isFuzzyFiltering {
-                HStack {
-                    Text("Searching for “\(viewModel.searchQuery)”…")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
-                    .transition(.opacity)
-                }
-                .padding()
             } else {
                 VStack {
-                    ScrollViewReader { proxy in
-                        List(viewModel.filteredContacts, id: \.identifier) { contact in
-                            let isSelected = (viewModel.selectedContactId == contact.identifier)
 
-                            Button {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    if viewModel.selectedContactId == contact.identifier {
-                                        viewModel.selectedContactId = nil
-                                        onDeselect()
-                                        withAnimation {
-                                            showWarning = false
-                                        }
-                                    } else {
-                                        viewModel.selectedContactId = contact.identifier
+                    if viewModel.isFuzzyFiltering {
+                        HStack {
+                            Text("Searching for “\(viewModel.searchQuery)”…")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal)
+                            .transition(.opacity)
+                        }
+                        .padding()
+                    } else {
 
-                                        if showWarning {
+                        ScrollViewReader { proxy in
+                            List(viewModel.filteredContacts, id: \.identifier) { contact in
+                                let isSelected = (viewModel.selectedContactId == contact.identifier)
+
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        if viewModel.selectedContactId == contact.identifier {
+                                            viewModel.selectedContactId = nil
+                                            onDeselect()
                                             withAnimation {
                                                 showWarning = false
                                             }
-                                        }
+                                        } else {
+                                            viewModel.selectedContactId = contact.identifier
 
-                                        do {
-                                            try onSelect(contact)
-                                        } catch {
-                                            print("onSelect action error:", error)
-
-                                            withAnimation {
-                                                showWarning = true
+                                            if showWarning {
+                                                withAnimation {
+                                                    showWarning = false
+                                                }
                                             }
+
+                                            do {
+                                                try onSelect(contact)
+                                            } catch {
+                                                print("onSelect action error:", error)
+
+                                                withAnimation {
+                                                    showWarning = true
+                                                }
+                                                
+                                                // DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                                //     withAnimation { 
+                                                //         showWarning = false 
+                                                //     }
+                                                // }
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            let tokens = viewModel.searchQuery.clientDogTokens
+                                            let fullName = "\(contact.givenName) \(contact.familyName)"
+                                            Text(fullName.highlighted(tokens))
                                             
-                                            // DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                            //     withAnimation { 
-                                            //         showWarning = false 
-                                            //     }
-                                            // }
+                                            if let email = (contact.emailAddresses.first?.value as String?) {
+                                                Text(email.highlighted(tokens))
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                            }
                                         }
+
+                                        Spacer()
                                     }
-                                }
-                            } label: {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        let tokens = viewModel.searchQuery.clientDogTokens
-                                        let fullName = "\(contact.givenName) \(contact.familyName)"
-                                        Text(fullName.highlighted(tokens))
-                                        
-                                        if let email = (contact.emailAddresses.first?.value as String?) {
-                                            Text(email.highlighted(tokens))
-                                                .font(.caption)
-                                                .foregroundColor(.gray)
-                                        }
-                                    }
+                                    // .padding(.vertical, 4)
 
-                                    Spacer()
-                                }
-                                // .padding(.vertical, 4)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                                .padding(12)
-                                .background(isSelected
-                                    ? Color.blue.opacity(0.3)
-                                    : Color.clear
-                                )
-                                .cornerRadius(5)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 5)
-                                    .stroke(isSelected
-                                        ? Color.blue
-                                        : Color.clear,
-                                        lineWidth: 2
+                                    .padding(12)
+                                    .background(isSelected
+                                        ? Color.blue.opacity(0.3)
+                                        : Color.clear
                                     )
-                                )
-                                .contentShape(RoundedRectangle(cornerRadius: 5))
+                                    .cornerRadius(5)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 5)
+                                        .stroke(isSelected
+                                            ? Color.blue
+                                            : Color.clear,
+                                            lineWidth: 2
+                                        )
+                                    )
+                                    .contentShape(RoundedRectangle(cornerRadius: 5))
 
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .animation(.easeInOut(duration: 0.2), value: isSelected)
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .animation(.easeInOut(duration: 0.2), value: isSelected)
-                        }
-                        .scrollContentBackground(.hidden)
-                        .frame(maxHeight: maxListHeight)
-                        .padding(.horizontal)
+                            .scrollContentBackground(.hidden)
+                            .frame(maxHeight: maxListHeight)
+                            .padding(.horizontal)
 
-                        // auto-scroll
-                        .onChange(of: viewModel.searchQuery) { _ in
-                            guard autoScrollToTop,
-                                  let firstID = viewModel.filteredContacts.first?.identifier
-                            else { return }
-                            withAnimation(.linear(duration: 0.05)) {
-                                proxy.scrollTo(firstID, anchor: .top)
+                            // auto-scroll
+                            .onChange(of: viewModel.searchQuery) { _ in
+                                guard autoScrollToTop,
+                                      let firstID = viewModel.filteredContacts.first?.identifier
+                                else { return }
+                                withAnimation(.linear(duration: 0.05)) {
+                                    proxy.scrollTo(firstID, anchor: .top)
+                                }
                             }
                         }
+
                     }
 
                     if showWarning {
