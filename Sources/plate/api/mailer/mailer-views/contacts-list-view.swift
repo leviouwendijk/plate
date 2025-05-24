@@ -157,6 +157,8 @@ public struct ContactsListView: View {
                             .zIndex(1)
                         }
                     }
+                    .opacity(viewModel.isFuzzyFiltering ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.15), value: viewModel.isFuzzyFiltering)
 
                     if viewModel.isFuzzyFiltering {
                         Text("“\(viewModel.searchQuery)”…")
@@ -171,7 +173,7 @@ public struct ContactsListView: View {
                         .zIndex(1)
                     }
                 }
-                // .animation(.easeInOut(duration: 0.15), value: viewModel.isFuzzyFiltering)
+                .animation(.easeInOut(duration: 0.15), value: viewModel.isFuzzyFiltering)
             }
         }
     }
