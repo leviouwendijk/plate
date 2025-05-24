@@ -160,6 +160,11 @@ public struct ContactsListView: View {
                     .opacity(viewModel.isFuzzyFiltering ? 0 : 1)
 
                     if viewModel.isFuzzyFiltering {
+                        Color(NSColor.windowBackgroundColor)
+                        .opacity(0.95)
+                        .edgesIgnoringSafeArea(.all)
+                        .zIndex(0)
+
                         Text("“\(viewModel.searchQuery)”…")
                         .font(.title2)
                         .foregroundColor(Color.blue)
