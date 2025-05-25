@@ -1,5 +1,22 @@
 import Foundation
 
+public enum VersionPrefixStyle {
+    case short
+    case long
+    case none
+
+    public func prefix() -> String {
+        switch self {
+            case .short:
+                return "v"
+            case .long:
+                return "version"
+            case .none:
+                return ""
+        }
+    }
+}
+
 public enum ExecutableObjectType: String, RawRepresentable, Codable, Sendable {
     case binary
     case application
@@ -23,8 +40,14 @@ public struct ObjectVersion: Codable, Comparable, Sendable {
         self.patch = patch
     }
 
-    public func string() -> String {
-        return "\(self.major).\(self.minor).\(self.patch)"
+    public func string(prefixStyle: VersionPrefixStyle = .long) -> String {
+        let versionPrefix = prefixStyle.prefix()
+        var str = ""
+        if !(prefixStyle == .none) {
+            str.append(versionPrefix)
+        }
+        str.append("\(self.major).\(self.minor).\(self.patch)")
+        return str
     }
 
     public mutating func increment(_ type: ObjectVersionLevel) {

@@ -11,19 +11,20 @@ public enum BuildInformationDisplayComponents {
     case name
     case author
     case description
-    case versionPrefix
+    // case versionPrefix
+    case latestVersion
 }
 
-public enum VersionPrefixDisplayStyle {
-    case short
-    case long
-}
+// public enum VersionPrefixDisplayStyle {
+//     case short
+//     case long
+// }
 
 public struct BuildInformationStatic: View {
     public let specification: BuildSpecification
     public let alignment: AlignmentStyle
     public let display: [BuildInformationDisplayComponents]
-    public let prefixStyle: VersionPrefixDisplayStyle
+    public let prefixStyle: VersionPrefixStyle
 
     @State private var isUpdateAvailable: Bool = false
 
@@ -34,7 +35,7 @@ public struct BuildInformationStatic: View {
         specification: BuildSpecification,
         alignment: AlignmentStyle = .center,
         display: [BuildInformationDisplayComponents] = [.version],
-        prefixStyle: VersionPrefixDisplayStyle = .short
+        prefixStyle: VersionPrefixStyle = .short
     ) {
         self.specification = specification
         self.alignment = alignment
@@ -42,15 +43,15 @@ public struct BuildInformationStatic: View {
         self.prefixStyle = prefixStyle
     }
 
-    public var finalVersionString: String {
-        var v = ""
-        let prefix = prefixStyle == .short ? "v " : "version "
-        if display.contains(.versionPrefix) { 
-            v.append(prefix)
-        }
-        v.append(specification.versionString())
-        return v
-    }
+    // public var finalVersionString: String {
+    //     var v = ""
+    //     let prefix = prefixStyle == .short ? "v " : "version "
+    //     if display.contains(.versionPrefix) { 
+    //         v.append(prefix)
+    //     }
+    //     v.append(specification.versionString())
+    //     return v
+    // }
     
     public var body: some View {
         HStack {
@@ -65,7 +66,7 @@ public struct BuildInformationStatic: View {
                 }
                 
                 if display.contains(.version) {
-                    Text(finalVersionString)
+                    Text("deprecated")
                     .font(.footnote).foregroundColor(.secondary)
                 }
 
@@ -90,7 +91,7 @@ public struct BuildInformationSwitch: View {
     public let localBuild: BuildObjectConfiguration
     public let alignment: AlignmentStyle
     public let display: [[BuildInformationDisplayComponents]]
-    public let prefixStyle: VersionPrefixDisplayStyle
+    public let prefixStyle: VersionPrefixStyle
 
     @State public var current: Int = 0
 
@@ -103,8 +104,8 @@ public struct BuildInformationSwitch: View {
         // specification: BuildSpecification = defaultBuildObject(),
         localBuild: BuildObjectConfiguration = defaultBuildObject(),
         alignment: AlignmentStyle = .center,
-        display: [[BuildInformationDisplayComponents]] = [[.version, .versionPrefix], [.name], [.author]],
-        prefixStyle: VersionPrefixDisplayStyle = .short
+        display: [[BuildInformationDisplayComponents]] = [[.version], [.latestVersion], [.name], [.author]],
+        prefixStyle: VersionPrefixStyle = .long
     ) {
         // self.specification = specification
         self.localBuild = localBuild
@@ -112,17 +113,6 @@ public struct BuildInformationSwitch: View {
         self.alignment = alignment
         self.display = display
         self.prefixStyle = prefixStyle
-    }
-
-    public var finalVersionString: String {
-        var v = ""
-        let prefix = prefixStyle == .short ? "v " : "version "
-        if display[current].contains(.versionPrefix) { 
-            v.append(prefix)
-        }
-        // v.append(specification.versionString())
-        v.append(localBuild.version.string())
-        return v
     }
     
     public var body: some View {
@@ -151,13 +141,37 @@ public struct BuildInformationSwitch: View {
                                 }
 
                                 HStack {
-                                    Text(finalVersionString)
+                                    Text(localBuild.version.string(prefixStyle: prefixStyle))
                                         .font(.footnote)
                                         .foregroundColor(.secondary)
                                         .strikethrough(isUpdateAvailable)
 
                                     if isUpdateAvailable {
-                                        Text("update available (\(remoteBuild.version.string()))")
+                                        Text("update available (\(remoteBuild.version.string(prefixStyle: prefixStyle)))")
+                                        .font(.footnote)
+                                        // .fontWeight(.semibold)
+                                        .foregroundColor(Color.orange)
+                                    }
+                                }
+                            }
+                        }
+
+                        if display[current].contains(.latestVersion) {
+                            VStack {
+                                if !(updateError.isEmpty) {
+                                    NotificationBanner(
+                                        type: .error,
+                                        message: updateError
+                                    )
+                                }
+
+                                HStack {
+                                    Text(remoteBuild.version.string(prefixStyle: prefixStyle))
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+
+                                    if isUpdateAvailable {
+                                        Text("update available")
                                         .font(.footnote)
                                         // .fontWeight(.semibold)
                                         .foregroundColor(Color.orange)
