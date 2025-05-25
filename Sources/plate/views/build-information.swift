@@ -169,24 +169,7 @@ public struct BuildInformationSwitch: View {
         }
         .buttonStyle(.plain)
         .task {
-            do {
-                let localURL = URL(fileURLWithPath: "build-object.pkl")
-                let cfg = try BuildObjectConfiguration.parse(from: localURL)
-                let updateString = cfg.update
-
-                guard let remoteURL = URL(string: updateString)
-                else {
-                    print("No valid update URL in PKL")
-                    return
-                }
-
-                isUpdateAvailable = try await isRepoAheadOfBuild(
-                    localURL: localURL,
-                    remoteURL: remoteURL
-                )
-            } catch {
-                print("Update-check failed:", error)
-            }
+            isUpdateAvailable = await checkForUpdate()
         }
     }
 }
@@ -205,21 +188,40 @@ public func defaultBuildObject() -> BuildSpecification {
     }
 }
 
-public func isRepoAheadOfBuild(
-    localURL: URL = URL(fileURLWithPath: "build-object.pkl"),
-    remoteURL: URL
-) async throws -> Bool {
-    let localCfg = try BuildObjectConfiguration.parse(from: localURL)
+public func checkForUpdate(localBuildObjectPkl localURL: URL = URL(fileURLWithPath: "build-object.pkl")) async -> Bool {
+    do {
+        let localCfg = try BuildObjectConfiguration.parse(from: localURL)
+        print("Local version:", localCfg.version.string())
 
-    let (data, response) = try await URLSession.shared.data(from: remoteURL)
-    guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-        throw URLError(.badServerResponse)
+        let updateString = localCfg.update
+
+        guard
+            let remoteURL = URL(string: updateString)
+        else {
+            print("No valid update URL in PKL: \(localCfg.update)")
+            return false
+        }
+
+        print("Fetching remote PKL from:", remoteURL)
+
+        let (data, response) = try await URLSession.shared.data(from: remoteURL)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            print("HTTP error when fetching remote PKL:", response)
+            return false
+        }
+        guard let text = String(data: data, encoding: .utf8) else {
+            print("Couldn't decode remote PKL as UTF-8")
+            return false
+        }
+        let remoteCfg = try PklParser(text).parseBuildObject()
+        print("Remote version:", remoteCfg.version.string())
+
+        let ahead = remoteCfg.version > localCfg.version
+        print(ahead ? "Update available!" : "Up to date.")
+        return ahead
+
+    } catch {
+        print("Update-check failed:", error)
+        return false
     }
-    guard let text = String(data: data, encoding: .utf8) else {
-        throw PklParserError.ioError("Invalid text encoding")
-    }
-
-    let remoteCfg = try PklParser(text).parseBuildObject()
-
-    return remoteCfg.version > localCfg.version
 }
