@@ -86,22 +86,29 @@ public struct BuildInformationStatic: View {
 }
 
 public struct BuildInformationSwitch: View {
-    public let specification: BuildSpecification
+    // public let specification: BuildSpecification
+    public let localBuild: BuildObjectConfiguration
     public let alignment: AlignmentStyle
     public let display: [[BuildInformationDisplayComponents]]
     public let prefixStyle: VersionPrefixDisplayStyle
 
     @State public var current: Int = 0
+
+    @State public var remoteBuild: BuildObjectConfiguration
+
     @State private var isUpdateAvailable: Bool = false
     @State private var updateError: String = ""
 
     public init(
-        specification: BuildSpecification = defaultBuildObject(),
+        // specification: BuildSpecification = defaultBuildObject(),
+        localBuild: BuildObjectConfiguration = defaultBuildObject(),
         alignment: AlignmentStyle = .center,
         display: [[BuildInformationDisplayComponents]] = [[.version, .versionPrefix], [.name], [.author]],
         prefixStyle: VersionPrefixDisplayStyle = .short
     ) {
-        self.specification = specification
+        // self.specification = specification
+        self.localBuild = localBuild
+        self.remoteBuild = localBuild
         self.alignment = alignment
         self.display = display
         self.prefixStyle = prefixStyle
@@ -113,7 +120,8 @@ public struct BuildInformationSwitch: View {
         if display[current].contains(.versionPrefix) { 
             v.append(prefix)
         }
-        v.append(specification.versionString())
+        // v.append(specification.versionString())
+        v.append(localBuild.version.string())
         return v
     }
     
@@ -128,7 +136,7 @@ public struct BuildInformationSwitch: View {
                     if alignment == .trailing { Spacer() }
                     VStack {
                         if display[current].contains(.name) {
-                            Text(specification.name)
+                            Text(localBuild.name)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                         }
@@ -140,16 +148,23 @@ public struct BuildInformationSwitch: View {
                                     .foregroundColor(.secondary)
 
                                 if isUpdateAvailable {
-                                    Text("update available")
+                                    Text("update available: \(remoteBuild.version.string())")
                                         .font(.footnote)
                                         .fontWeight(.bold)
                                         .foregroundColor(Color.orange)
+                                }
+
+                                if !(updateError.isEmpty) {
+                                    NotificationBanner(
+                                        type: .error,
+                                        message: updateError
+                                    )
                                 }
                             }
                         }
 
                         if display[current].contains(.author) {
-                            Text(specification.author)
+                            Text(localBuild.author)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                         }
@@ -171,7 +186,9 @@ public struct BuildInformationSwitch: View {
         .buttonStyle(.plain)
         .task {
             do {
-                isUpdateAvailable = try await checkForUpdate()
+                let fetched = try await fetchRemoteBuildObject()
+                remoteBuild = fetched
+                isUpdateAvailable = fetched.version > localBuild.version
             } catch {
                 updateError = error.localizedDescription
             }
@@ -179,16 +196,18 @@ public struct BuildInformationSwitch: View {
     }
 }
 
-public func defaultBuildObject() -> BuildSpecification {
+public func defaultBuildObject() -> BuildObjectConfiguration {
     do {
-        return try BuildSpecification(fromPkl: URL(fileURLWithPath: "build-object.pkl"))
+        return try BuildObjectConfiguration()
     } catch {
         print("PKL parse failed in BuildInformationSwitch:", error)
-        return BuildSpecification(
-            version: BuildVersion(major: 0, minor: 0, patch: 0),
-            name: "", 
-            author: "", 
-            description: ""
+        return BuildObjectConfiguration(
+            name: "",
+            type: .application,
+            version: ObjectVersion(major: 0, minor: 0, patch: 0),
+            details: "",
+            author: "",
+            update: ""
         )
     }
 }
@@ -213,22 +232,20 @@ enum UpdateCheckError: Error, LocalizedError {
     }
 }
 
-public func checkForUpdate(localBuildObjectPkl localURL: URL = URL(fileURLWithPath: "build-object.pkl")) async throws -> Bool {
+public func fetchRemoteBuildObject(
+    localBuildObjectPkl localURL: URL = URL(fileURLWithPath: "build-object.pkl")
+) async throws -> BuildObjectConfiguration {
     let localCfg = try BuildObjectConfiguration.parse(from: localURL)
-    print("Local version:", localCfg.version.string())
-
     let updateString = localCfg.update
 
     guard let remoteURL = URL(string: updateString)
     else {
-        throw UpdateCheckError.invalidUpdateURL(updateString)
+        throw UpdateCheckError.invalidUpdateURL(localCfg.update)
     }
-
-    print("Fetching remote PKL from:", remoteURL)
-
+    
     let request = URLRequest(url: remoteURL)
     let (data, response) = try await URLSession.shared.data(for: request)
-
+    
     guard let http = response as? HTTPURLResponse,
           http.statusCode == 200
     else {
@@ -240,21 +257,12 @@ public func checkForUpdate(localBuildObjectPkl localURL: URL = URL(fileURLWithPa
         )
         throw UpdateCheckError.networkFailure(networkErr)
     }
-
+    
     guard let text = String(data: data, encoding: .utf8) else {
         throw UpdateCheckError.remoteParseFailure(
-            NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid UTF-8 data"]) )
+            NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid UTF-8 data"])
+        )
     }
-
-    let remoteCfg: BuildObjectConfiguration
-    do {
-        remoteCfg = try PklParser(text).parseBuildObject()
-    } catch {
-        throw UpdateCheckError.remoteParseFailure(error)
-    }
-    print("Remote version: \(remoteCfg.version.string())")
-
-    let ahead = remoteCfg.version > localCfg.version
-    print(ahead ? "Update available!" : "Up to date.")
-    return ahead
+    
+    return try PklParser(text).parseBuildObject()
 }

@@ -1,18 +1,18 @@
 import Foundation
 
-public enum ExecutableObjectType: String, RawRepresentable, Codable {
+public enum ExecutableObjectType: String, RawRepresentable, Codable, Sendable {
     case binary
     case application
     case script
 }
 
-public enum ObjectVersionLevel: String, RawRepresentable, Codable, CaseIterable {
+public enum ObjectVersionLevel: String, RawRepresentable, Codable, CaseIterable, Sendable {
     case major
     case minor
     case patch
 }
 
-public struct ObjectVersion: Codable, Comparable {
+public struct ObjectVersion: Codable, Comparable, Sendable {
     public var major: Int
     public var minor: Int
     public var patch: Int
@@ -49,7 +49,7 @@ public struct ObjectVersion: Codable, Comparable {
 }
 
 // for local repository build info: object.pkl 
-public struct BuildObjectConfiguration: Codable {
+public struct BuildObjectConfiguration: Codable, Sendable {
     public let uuid: UUID
     public let name: String
     public let type: ExecutableObjectType
@@ -68,6 +68,10 @@ public struct BuildObjectConfiguration: Codable {
         self.update = update
     }
 
+    public init(from url: URL = URL(fileURLWithPath: "build-object.pkl")) throws {
+        self = try BuildObjectConfiguration.parse(from: url)
+    }
+
     public static func parse(from url: URL) throws -> BuildObjectConfiguration {
         do {
             let text = try String(contentsOf: url, encoding: .utf8)
@@ -79,6 +83,14 @@ public struct BuildObjectConfiguration: Codable {
             throw PklParserError.ioError(error.localizedDescription)
         }
     }
+
+    // public func versionString() -> String {
+    //     return version.string()
+    // }
+
+    // public func appAndVersionString() -> String {
+    //     return "\(name) \(version.major).\(version.minor).\(version.patch)"
+    // }
 }
 
 public struct BuildObjectDetails: Codable {
