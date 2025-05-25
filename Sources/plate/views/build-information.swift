@@ -149,10 +149,10 @@ public struct BuildInformationSwitch: View {
                                     .strikethrough(isUpdateAvailable)
 
                                 if isUpdateAvailable {
-                                    Text("update available -> \(remoteBuild.version.string())")
-                                        .font(.footnote)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(Color.orange)
+                                    Text("update available (\(remoteBuild.version.string()))")
+                                    .font(.footnote)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color.orange)
                                 }
 
                                 if !(updateError.isEmpty) {
