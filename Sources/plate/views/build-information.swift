@@ -151,7 +151,7 @@ public struct BuildInformationSwitch: View {
                                 if isUpdateAvailable {
                                     Text("update available (\(remoteBuild.version.string()))")
                                     .font(.footnote)
-                                    .fontWeight(.semibold)
+                                    // .fontWeight(.semibold)
                                     .foregroundColor(Color.orange)
                                 }
 
