@@ -210,19 +210,20 @@ public struct ContactsListView: View {
                                         .foregroundColor(Color.secondary)
                                         .padding(.vertical, 6)
                                         // .padding(.horizontal)
-                                        .padding(.leading)
+                                        // .padding(.leading)
 
                                         Text("“\(viewModel.searchQuery)”")
                                         .font(.title2)
                                         .foregroundColor(Color.secondary)
                                         .padding(.vertical, 6)
                                         // .padding(.horizontal)
-                                        .padding(.trailing)
+                                        // .padding(.trailing)
                                         .background(
                                             RoundedRectangle(cornerRadius: 6)
                                             .fill(Color(NSColor.windowBackgroundColor))
                                         )
                                     }
+                                    .padding(.horizontal)
 
                                     Text("Adjust your query or loosen the strictness level")
                                     .font(.caption)
