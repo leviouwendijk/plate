@@ -166,7 +166,7 @@ public struct BuildInformationSwitch: View {
                                 }
 
                                 HStack {
-                                    Text(remoteBuild.version.string(prefixStyle: prefixStyle))
+                                    Text(remoteBuild.version.string(prefixStyle: prefixStyle, remote: true))
                                         .font(.footnote)
                                         .foregroundColor(.secondary)
 

@@ -40,11 +40,16 @@ public struct ObjectVersion: Codable, Comparable, Sendable {
         self.patch = patch
     }
 
-    public func string(prefixStyle: VersionPrefixStyle = .long) -> String {
+    public func string(prefixStyle: VersionPrefixStyle = .long, remote: Bool = false) -> String {
         let versionPrefix = prefixStyle.prefix()
         var str = ""
+        if remote {
+            str.append("latest")
+            str.append(" ")
+        }
         if !(prefixStyle == .none) {
             str.append(versionPrefix)
+            str.append(" ")
         }
         str.append("\(self.major).\(self.minor).\(self.patch)")
         return str
