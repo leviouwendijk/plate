@@ -31,6 +31,7 @@ public class PklParser {
         var type: ExecutableObjectType?
         var version: ObjectVersion?
         var details: String?
+        var author: String?
 
         while skipWhitespaceAndNewlines() {
             let key = try parseIdentifier()
@@ -68,8 +69,12 @@ public class PklParser {
                         throw PklParserError.invalidValue(field: key, value: "\(val)")
                     }
                     details = s
+                case "author":
+                    guard let a = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    author = a
                 default:
-                    // ignore unknown fields
                     break
                 }
             }
@@ -80,10 +85,15 @@ public class PklParser {
         guard let tp = type else     { throw PklParserError.missingField("type") }
         guard let ver = version else { throw PklParserError.missingField("version") }
         guard let det = details else { throw PklParserError.missingField("details") }
+        guard let au = author else     { throw PklParserError.missingField("author") }
 
         return BuildObjectConfiguration(
-            uuid: uu, name: nm, type: tp,
-            version: ver, details: det
+            uuid: uu, 
+            name: nm, 
+            type: tp,
+            version: ver, 
+            details: det,
+            author: au
         )
     }
 
