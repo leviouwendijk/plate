@@ -45,7 +45,6 @@ public struct BuildSpecification {
     public init(fromPkl url: URL = URL(fileURLWithPath: "build-object.pkl")) throws {
         let cfg = try BuildObjectConfiguration.parse(from: url)
 
-        // Map into our spec
         self.version = BuildVersion(
             major: cfg.version.major,
             minor: cfg.version.minor,
