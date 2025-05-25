@@ -93,6 +93,7 @@ public struct BuildInformationSwitch: View {
 
     @State public var current: Int = 0
     @State private var isUpdateAvailable: Bool = false
+    @State private var updateError: String = ""
 
     public init(
         specification: BuildSpecification = defaultBuildObject(),
@@ -139,10 +140,10 @@ public struct BuildInformationSwitch: View {
                                     .foregroundColor(.secondary)
 
                                 if isUpdateAvailable {
-                                Text("update available")
-                                    .font(.footnote)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(Color.orange)
+                                    Text("update available")
+                                        .font(.footnote)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Color.orange)
                                 }
                             }
                         }
@@ -169,7 +170,11 @@ public struct BuildInformationSwitch: View {
         }
         .buttonStyle(.plain)
         .task {
-            isUpdateAvailable = await checkForUpdate()
+            do {
+                isUpdateAvailable = try await checkForUpdate()
+            } catch {
+                updateError = error.localizedDescription
+            }
         }
     }
 }
@@ -188,40 +193,68 @@ public func defaultBuildObject() -> BuildSpecification {
     }
 }
 
-public func checkForUpdate(localBuildObjectPkl localURL: URL = URL(fileURLWithPath: "build-object.pkl")) async -> Bool {
-    do {
-        let localCfg = try BuildObjectConfiguration.parse(from: localURL)
-        print("Local version:", localCfg.version.string())
+enum UpdateCheckError: Error, LocalizedError {
+    case missingUpdateURL
+    case invalidUpdateURL(String)
+    case networkFailure(Error)
+    case remoteParseFailure(Error)
 
-        let updateString = localCfg.update
-
-        guard
-            let remoteURL = URL(string: updateString)
-        else {
-            print("No valid update URL in PKL: \(localCfg.update)")
-            return false
+    var errorDescription: String? {
+        switch self {
+            case .missingUpdateURL:
+                return "PKL is missing the `update` URL."
+            case .invalidUpdateURL(let str):
+                return "Invalid update URL in PKL: \(str)"
+            case .networkFailure(let err):
+                return "Network error: \(err.localizedDescription)"
+            case .remoteParseFailure(let err):
+                return "Failed to parse remote build-object: \(err)"
         }
-
-        print("Fetching remote PKL from:", remoteURL)
-
-        let (data, response) = try await URLSession.shared.data(from: remoteURL)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            print("HTTP error when fetching remote PKL:", response)
-            return false
-        }
-        guard let text = String(data: data, encoding: .utf8) else {
-            print("Couldn't decode remote PKL as UTF-8")
-            return false
-        }
-        let remoteCfg = try PklParser(text).parseBuildObject()
-        print("Remote version:", remoteCfg.version.string())
-
-        let ahead = remoteCfg.version > localCfg.version
-        print(ahead ? "Update available!" : "Up to date.")
-        return ahead
-
-    } catch {
-        print("Update-check failed:", error)
-        return false
     }
+}
+
+public func checkForUpdate(localBuildObjectPkl localURL: URL = URL(fileURLWithPath: "build-object.pkl")) async throws -> Bool {
+    let localCfg = try BuildObjectConfiguration.parse(from: localURL)
+    print("Local version:", localCfg.version.string())
+
+    let updateString = localCfg.update
+
+    guard let remoteURL = URL(string: updateString)
+    else {
+        throw UpdateCheckError.invalidUpdateURL(updateString)
+    }
+
+    print("Fetching remote PKL from:", remoteURL)
+
+    let request = URLRequest(url: remoteURL)
+    let (data, response) = try await URLSession.shared.data(for: request)
+
+    guard let http = response as? HTTPURLResponse,
+          http.statusCode == 200
+    else {
+        let code = (response as? HTTPURLResponse)?.statusCode ?? -1
+        let networkErr = NSError(
+            domain: "ResponderApp.UpdateCheck",
+            code: code,
+            userInfo: [NSLocalizedDescriptionKey: "HTTP request failed with status code \(code)"]
+        )
+        throw UpdateCheckError.networkFailure(networkErr)
+    }
+
+    guard let text = String(data: data, encoding: .utf8) else {
+        throw UpdateCheckError.remoteParseFailure(
+            NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid UTF-8 data"]) )
+    }
+
+    let remoteCfg: BuildObjectConfiguration
+    do {
+        remoteCfg = try PklParser(text).parseBuildObject()
+    } catch {
+        throw UpdateCheckError.remoteParseFailure(error)
+    }
+    print("Remote version: \(remoteCfg.version.string())")
+
+    let ahead = remoteCfg.version > localCfg.version
+    print(ahead ? "Update available!" : "Up to date.")
+    return ahead
 }
