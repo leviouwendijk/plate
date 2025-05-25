@@ -38,10 +38,6 @@ public class PklParser {
             let key = try parseIdentifier()
             skipWhitespaceAndNewlines()
             if key == "version" {
-                if idx < input.endIndex && input[idx] == "=" {
-                    idx = input.index(after: idx)
-                    skipWhitespaceAndNewlines()
-                }
                 let dict = try parseBlock()
                 guard
                   let maj = dict["major"] as? Int,
@@ -126,15 +122,26 @@ public class PklParser {
             idx = input.index(after: idx)
         }
         guard start < idx else {
-            throw PklParserError.syntaxError("Expected identifier at position \(position)")
+            let found = idx < input.endIndex ? String(input[idx]) : "EOF"
+            throw PklParserError.syntaxError(
+              "Expected identifier at pos \(position), found '\(found)'"
+            )
         }
         return String(input[start..<idx])
     }
 
     private func expect(_ char: Character) throws {
         skipWhitespaceAndNewlines()
-        guard idx < input.endIndex && input[idx] == char else {
-            throw PklParserError.syntaxError("Expected '\(char)' at \(position)")
+        guard idx < input.endIndex else {
+            throw PklParserError.syntaxError(
+                "Unexpected EOF: expected '\(char)'"
+            )
+        }
+        let found = input[idx]
+        guard found == char else {
+            throw PklParserError.syntaxError(
+                "Expected '\(char)' but found '\(found)' at pos \(position)"
+            )
         }
         idx = input.index(after: idx)
     }
@@ -150,7 +157,9 @@ public class PklParser {
         } else if c.isNumber {
             return try parseNumber()
         } else {
-            throw PklParserError.syntaxError("Unexpected value start '\(c)' at \(position)")
+            throw PklParserError.syntaxError(
+              "Unexpected value start '\(c)' at pos \(position)"
+            )
         }
     }
 
