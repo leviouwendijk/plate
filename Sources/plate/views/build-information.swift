@@ -133,9 +133,18 @@ public struct BuildInformationSwitch: View {
                         }
 
                         if display[current].contains(.version) {
-                            Text(finalVersionString)
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
+                            HStack {
+                                Text(finalVersionString)
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+
+                                if isUpdateAvailable {
+                                Text("update available")
+                                    .font(.footnote)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color.orange)
+                                }
+                            }
                         }
 
                         if display[current].contains(.author) {
