@@ -52,7 +52,7 @@ public struct BuildSpecification {
             patch: cfg.version.patch
         )
         self.name = cfg.name
-        self.author = ""
+        self.author = cfg.author
         self.description = cfg.details
     }
 }
