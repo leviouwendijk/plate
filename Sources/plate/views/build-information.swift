@@ -25,6 +25,11 @@ public struct BuildInformationStatic: View {
     public let display: [BuildInformationDisplayComponents]
     public let prefixStyle: VersionPrefixDisplayStyle
 
+    @State private var isUpdateAvailable: Bool = false
+
+    // remove hardcoding this
+    public static let repoPkl = URL(string: "https://raw.githubusercontent.com/leviouwendijk/Responder/refs/heads/master/build-object.pkl")!
+
     public init(
         specification: BuildSpecification,
         alignment: AlignmentStyle = .center,
@@ -87,9 +92,13 @@ public struct BuildInformationSwitch: View {
     public let prefixStyle: VersionPrefixDisplayStyle
 
     @State public var current: Int = 0
+    @State private var isUpdateAvailable: Bool = false
+
+    // remove hardcoding this
+    public static let repoPkl = URL(string: "https://raw.githubusercontent.com/leviouwendijk/Responder/refs/heads/master/build-object.pkl")!
 
     public init(
-        specification: BuildSpecification,
+        specification: BuildSpecification = defaultBuildObject(),
         alignment: AlignmentStyle = .center,
         display: [[BuildInformationDisplayComponents]] = [[.version, .versionPrefix], [.name], [.author]],
         prefixStyle: VersionPrefixDisplayStyle = .short
@@ -153,5 +162,17 @@ public struct BuildInformationSwitch: View {
             .background(Color(NSColor.windowBackgroundColor).opacity(0.1))
         }
         .buttonStyle(.plain)
+    }
+}
+
+public func defaultBuildObject() -> BuildSpecification {
+    do {
+        return try BuildSpecification(fromPkl: URL(fileURLWithPath: "build-object.pkl"))
+    } catch {
+        print("PKL parse failed in BuildInformationSwitch:", error)
+        return BuildSpecification(
+            version: BuildVersion(major: 0, minor: 0, patch: 0),
+            name: "", author: "", description: ""
+        )
     }
 }

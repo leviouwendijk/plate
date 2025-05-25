@@ -32,6 +32,7 @@ public class PklParser {
         var version: ObjectVersion?
         var details: String?
         var author: String?
+        var update: String?
 
         while skipWhitespaceAndNewlines() {
             let key = try parseIdentifier()
@@ -74,6 +75,11 @@ public class PklParser {
                         throw PklParserError.invalidValue(field: key, value: "\(val)")
                     }
                     author = a
+                case "update":
+                    guard let u = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    update = u
                 default:
                     break
                 }
@@ -86,6 +92,7 @@ public class PklParser {
         guard let ver = version else { throw PklParserError.missingField("version") }
         guard let det = details else { throw PklParserError.missingField("details") }
         guard let au = author else     { throw PklParserError.missingField("author") }
+        guard let up = update else     { throw PklParserError.missingField("update") }
 
         return BuildObjectConfiguration(
             uuid: uu, 
@@ -93,7 +100,8 @@ public class PklParser {
             type: tp,
             version: ver, 
             details: det,
-            author: au
+            author: au,
+            update: up
         )
     }
 

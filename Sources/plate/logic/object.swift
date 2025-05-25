@@ -56,14 +56,16 @@ public struct BuildObjectConfiguration: Codable {
     public let version: ObjectVersion
     public let details: String
     public let author: String
+    public let update: String
 
-    public init(uuid: UUID = UUID(), name: String, type: ExecutableObjectType, version: ObjectVersion, details: String, author: String) {
+    public init(uuid: UUID = UUID(), name: String, type: ExecutableObjectType, version: ObjectVersion, details: String, author: String, update: String) {
         self.uuid = uuid
         self.name = name
         self.type = type
         self.version = version
         self.details = details
         self.author = author
+        self.update = update
     }
 
     public static func parse(from url: URL) throws -> BuildObjectConfiguration {
