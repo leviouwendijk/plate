@@ -73,14 +73,19 @@ public struct BuildObjectConfiguration: Codable, Sendable {
     }
 
     public static func parse(from url: URL) throws -> BuildObjectConfiguration {
+        let path = url.path
         do {
             let text = try String(contentsOf: url, encoding: .utf8)
             let parser = PklParser(text)
             return try parser.parseBuildObject()
         } catch let err as PklParserError {
-            throw err
+            throw PklParserError.syntaxError(
+                "Error parsing PKL at '\(path)': \(err.description)"
+            )
         } catch {
-            throw PklParserError.ioError(error.localizedDescription)
+            throw PklParserError.ioError(
+                "Failed to load PKL at '\(path)': \(error.localizedDescription)"
+            )
         }
     }
 
