@@ -193,7 +193,11 @@ public struct BuildInformationSwitch: View {
                 remoteBuild = fetched
                 isUpdateAvailable = fetched.version > localBuild.version
             } catch {
-                updateError = error.localizedDescription
+                if let pklErr = error as? PklParserError {
+                    updateError = pklErr.description
+                } else {
+                    updateError = error.localizedDescription
+                }
             }
         }
     }
