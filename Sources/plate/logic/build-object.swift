@@ -1,16 +1,5 @@
 import Foundation
 
-enum TraverseError: Error, LocalizedError {
-    case fileNotFound(buildFile: String, maxDepth: Int, startURL: URL)
-    
-    var errorDescription: String? {
-        switch self {
-        case let .fileNotFound(buildFile, maxDepth, startURL):
-            return "Could not find '\(buildFile)' within \(maxDepth) levels starting at \(startURL.path)"
-        }
-    }
-}
-
 public enum ExecutableObjectType: String, RawRepresentable, Codable, Sendable {
     case binary
     case application
@@ -56,6 +45,17 @@ public struct ObjectVersion: Codable, Comparable, Sendable {
         if lhs.major != rhs.major { return lhs.major < rhs.major }
         if lhs.minor != rhs.minor { return lhs.minor < rhs.minor }
         return lhs.patch < rhs.patch
+    }
+}
+
+enum TraverseError: Error, LocalizedError {
+    case fileNotFound(buildFile: String, maxDepth: Int, startURL: URL)
+    
+    var errorDescription: String? {
+        switch self {
+        case let .fileNotFound(buildFile, maxDepth, startURL):
+            return "Could not find '\(buildFile)' within \(maxDepth) levels starting at \(startURL.path)"
+        }
     }
 }
 

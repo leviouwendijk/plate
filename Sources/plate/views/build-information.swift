@@ -239,9 +239,8 @@ enum UpdateCheckError: Error, LocalizedError {
     }
 }
 
-public func fetchRemoteBuildObject(
-    localBuildObjectPkl localURL: URL = URL(fileURLWithPath: "build-object.pkl")
-) async throws -> BuildObjectConfiguration {
+public func fetchRemoteBuildObject() async throws -> BuildObjectConfiguration {
+    let localURL = try BuildObjectConfiguration.traverseForBuildObjectPkl(buildFile: "build-object.pkl")
     let localCfg = try BuildObjectConfiguration.parse(from: localURL)
     let updateString = localCfg.update
 
