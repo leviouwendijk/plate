@@ -38,7 +38,6 @@ public class PklParser {
             let key = try parseIdentifier()
             skipWhitespaceAndNewlines()
             if key == "version" {
-                // allow `version { ... }` *or* `version = { ... }`
                 if idx < input.endIndex && input[idx] == "=" {
                     idx = input.index(after: idx)
                     skipWhitespaceAndNewlines()
@@ -53,7 +52,7 @@ public class PklParser {
                 }
                 version = ObjectVersion(major: maj, minor: min, patch: pat)
             } else {
-                // try expect("=")
+                try expect("=")
                 let val = try parseValue()
                 switch key {
                 case "uuid":
