@@ -21,11 +21,13 @@ public struct WeeklyScheduleView: View {
 
             VStack {
                 ForEach(MailerAPIWeekday.allCases) { day in
+                    let isOn = viewModel.schedules[day]?.enabled ?? false
+
                     HStack(spacing: 12) {
                         StandardToggle(
                             style: .switch,
                             isOn: Binding(
-                                get:  { viewModel.schedules[day]?.enabled ?? false },
+                                get:  { isOn },
                                 set: { viewModel.schedules[day]?.enabled = $0 }
                             ),
                             title: day.dutch,
@@ -34,19 +36,22 @@ public struct WeeklyScheduleView: View {
 
                         Spacer(minLength: 10)
 
-                        if viewModel.schedules[day]?.enabled == true {
-                            StandardTimeRow(
-                                // title: day.dutch,
-                                start: Binding(
-                                    get:  { viewModel.schedules[day]?.start ?? Date() },
-                                    set: { viewModel.schedules[day]?.start = $0 }
-                                ),
-                                end: Binding(
-                                    get:  { viewModel.schedules[day]?.end ?? Date() },
-                                    set: { viewModel.schedules[day]?.end = $0 }
-                                )
+                        // if viewModel.schedules[day]?.enabled == true {
+                        StandardTimeRow(
+                            // title: day.dutch,
+                            start: Binding(
+                                get:  { viewModel.schedules[day]?.start ?? Date() },
+                                set: { viewModel.schedules[day]?.start = $0 }
+                            ),
+                            end: Binding(
+                                get:  { viewModel.schedules[day]?.end ?? Date() },
+                                set: { viewModel.schedules[day]?.end = $0 }
                             )
-                        }
+                        )
+                        .opacity(isOn ? 1 : 0)
+                        .disabled(!isOn)
+                        .animation(.easeInOut(duration: 0.2), value: isOn)
+                        // }
                     }
                 }
             }
