@@ -142,24 +142,26 @@ public struct BuildInformationSwitch: View {
                         }
 
                         if display[current].contains(.version) {
-                            HStack {
-                                Text(finalVersionString)
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
-                                    .strikethrough(isUpdateAvailable)
-
-                                if isUpdateAvailable {
-                                    Text("update available (\(remoteBuild.version.string()))")
-                                    .font(.footnote)
-                                    // .fontWeight(.semibold)
-                                    .foregroundColor(Color.orange)
-                                }
-
+                            VStack {
                                 if !(updateError.isEmpty) {
                                     NotificationBanner(
                                         type: .error,
                                         message: updateError
                                     )
+                                }
+
+                                HStack {
+                                    Text(finalVersionString)
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                        .strikethrough(isUpdateAvailable)
+
+                                    if isUpdateAvailable {
+                                        Text("update available (\(remoteBuild.version.string()))")
+                                        .font(.footnote)
+                                        // .fontWeight(.semibold)
+                                        .foregroundColor(Color.orange)
+                                    }
                                 }
                             }
                         }
