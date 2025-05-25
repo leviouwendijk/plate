@@ -1,5 +1,16 @@
 import Foundation
 
+enum TraverseError: Error, LocalizedError {
+    case fileNotFound(buildFile: String, maxDepth: Int, startURL: URL)
+    
+    var errorDescription: String? {
+        switch self {
+        case let .fileNotFound(buildFile, maxDepth, startURL):
+            return "Could not find '\(buildFile)' within \(maxDepth) levels starting at \(startURL.path)"
+        }
+    }
+}
+
 public enum ExecutableObjectType: String, RawRepresentable, Codable, Sendable {
     case binary
     case application
@@ -68,7 +79,12 @@ public struct BuildObjectConfiguration: Codable, Sendable {
         self.update = update
     }
 
-    public init(from url: URL = URL(fileURLWithPath: "build-object.pkl")) throws {
+    public init(from url: URL) throws {
+        self = try BuildObjectConfiguration.parse(from: url)
+    }
+
+    public init(traversingFor buildFile: String = "build-object.pkl", maxDepth: Int = 5) throws {
+        let url = try BuildObjectConfiguration.traverseForBuildObjectPkl(buildFile: buildFile)
         self = try BuildObjectConfiguration.parse(from: url)
     }
 
@@ -87,6 +103,33 @@ public struct BuildObjectConfiguration: Codable, Sendable {
                 "Failed to load PKL at '\(path)': \(error.localizedDescription)"
             )
         }
+    }
+
+    public static func traverseForBuildObjectPkl(
+        from startURL: URL = Bundle.main.bundleURL,
+        maxDepth: Int = 5,
+        buildFile: String = "build-object.pkl"
+    ) throws -> URL {
+        var url = startURL
+        let fm = FileManager.default
+        var depth = 0
+
+        while depth < maxDepth {
+            let candidate = url.appendingPathComponent(buildFile)
+            if fm.fileExists(atPath: candidate.path) {
+                return candidate
+            }
+            let parent = url.deletingLastPathComponent()
+            guard parent.path != url.path else { break }
+            url = parent
+            depth += 1
+        }
+
+        throw TraverseError.fileNotFound(
+            buildFile: buildFile,
+            maxDepth: maxDepth,
+            startURL: startURL
+        )
     }
 
     // public func versionString() -> String {
