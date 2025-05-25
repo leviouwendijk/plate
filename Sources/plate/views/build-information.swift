@@ -203,9 +203,32 @@ public struct BuildInformationSwitch: View {
     }
 }
 
+func findBuildObjectPKL(
+    from startURL: URL = Bundle.main.bundleURL,
+    maxDepth: Int = 4
+) -> URL? {
+    var url = startURL
+    let fileManager = FileManager.default
+    var depth = 0
+
+    while depth < maxDepth {
+        let candidate = url.appendingPathComponent("build-object.pkl")
+        if fileManager.fileExists(atPath: candidate.path) {
+            return candidate
+        }
+        let parent = url.deletingLastPathComponent()
+        guard parent.path != url.path else { break }
+        url = parent
+        depth += 1
+    }
+    return nil
+}
+
+
 public func defaultBuildObject() -> BuildObjectConfiguration {
+    let pklURL = findBuildObjectPKL(maxDepth: 4) ?? URL(fileURLWithPath: "build-object.pkl")
     do {
-        return try BuildObjectConfiguration()
+        return try BuildObjectConfiguration(from: pklURL)
     } catch {
         print("PKL parse failed in BuildInformationSwitch:", error)
         return BuildObjectConfiguration(
