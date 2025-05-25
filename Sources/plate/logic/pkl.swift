@@ -53,7 +53,7 @@ public class PklParser {
                 }
                 version = ObjectVersion(major: maj, minor: min, patch: pat)
             } else {
-                try expect("=")
+                // try expect("=")
                 let val = try parseValue()
                 switch key {
                 case "uuid":
