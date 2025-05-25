@@ -15,3 +15,5 @@ libplate.dylib
 libSemanticVersion.dylib
 libSystemPackage.dylib
 libplate.dylib
+
+remove-lib-build.sh
