@@ -63,6 +63,18 @@ public struct BuildObjectConfiguration: Codable {
         self.version = version
         self.details = details
     }
+
+    public static func parse(from url: URL) throws -> BuildObjectConfiguration {
+        do {
+            let text = try String(contentsOf: url, encoding: .utf8)
+            let parser = PklParser(text)
+            return try parser.parseBuildObject()
+        } catch let err as PklParserError {
+            throw err
+        } catch {
+            throw PklParserError.ioError(error.localizedDescription)
+        }
+    }
 }
 
 public struct BuildObjectDetails: Codable {

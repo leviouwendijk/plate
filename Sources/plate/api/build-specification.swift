@@ -41,4 +41,18 @@ public struct BuildSpecification {
     public func appAndVersionString() -> String {
         return "\(name) \(version.major).\(version.minor).\(version.patch)"
     }
+
+    public init(fromPkl url: URL = URL(fileURLWithPath: "build-object.pkl")) throws {
+        let cfg = try BuildObjectConfiguration.parse(from: url)
+
+        // Map into our spec
+        self.version = BuildVersion(
+            major: cfg.version.major,
+            minor: cfg.version.minor,
+            patch: cfg.version.patch
+        )
+        self.name = cfg.name
+        self.author = ""
+        self.description = cfg.details
+    }
 }

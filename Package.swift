@@ -23,15 +23,15 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "plate",
-            resources: [
-                .process("Resources")
-            ]
             // swiftSettings: [
             //     .unsafeFlags(["-enable-library-evolution"])
             // ],
             // dependencies: [
             //     .product(name: "PklSwift", package: "pkl-swift")
-            // ]
+            // ],
+            resources: [
+                .process("Resources")
+            ]
         ),
         .testTarget(
             name: "plateTests",
