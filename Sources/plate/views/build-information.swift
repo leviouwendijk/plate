@@ -146,9 +146,10 @@ public struct BuildInformationSwitch: View {
                                 Text(finalVersionString)
                                     .font(.footnote)
                                     .foregroundColor(.secondary)
+                                    .strikethrough(isUpdateAvailable)
 
                                 if isUpdateAvailable {
-                                    Text("update available: \(remoteBuild.version.string())")
+                                    Text("update available -> \(remoteBuild.version.string())")
                                         .font(.footnote)
                                         .fontWeight(.bold)
                                         .foregroundColor(Color.orange)
