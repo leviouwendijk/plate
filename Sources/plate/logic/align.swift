@@ -57,8 +57,8 @@ public func alignPairs(
     }
 }
 
-public extension Array where Element == (String, String) {
-    func aligned(
+extension Array where Element == (String, String) {
+    public func aligned(
         spaceBetween: Int = 10,
         char: String = " "
     ) -> [String] {
