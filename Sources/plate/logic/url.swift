@@ -5,7 +5,11 @@ public enum URLKind {
     case path
 }
 
-extension String {
+public protocol URLable {
+    func url(_ kind: URLKind) throws -> URL
+}
+
+extension String: URLable {
     public func url(_ kind: URLKind = .string) throws -> URL {
         switch kind {
         case .string:
