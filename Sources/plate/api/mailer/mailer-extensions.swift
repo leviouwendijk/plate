@@ -29,6 +29,48 @@ extension String {
     }
 }
 
+public struct StringTemplateReplacement {
+    public let placeholders: [String]
+    public let replacement: String
+
+    public init(
+        placeholders: [String],
+        replacement: String = ""
+    ) {
+        self.placeholders = placeholders
+        self.replacement = replacement
+    }
+}
+
+public struct StringTemplateConverter {
+    public let text: String
+    public let replacements: [StringTemplateReplacement]
+
+    public init(
+        text: String,
+        replacements: [StringTemplateReplacement],
+    ) {
+        self.text = text
+        self.replacements = replacements
+    }
+
+    public func replace() -> String {
+        var t = text
+        
+        for r in replacements {
+            for p in r.placeholders {
+                t = t
+                .replaceNotEmptyVariable(
+                    replacing: p,
+                    with: r.replacement
+                )
+            }
+        }
+
+        return t
+    }
+}
+
 extension String {
     public var replacePipesWithWhitespace: String {
         return self.replacingOccurrences(of: "|", with: " ")
@@ -42,6 +84,14 @@ extension String {
         .filter { !$0.isEmpty }
         .joined(separator: " ")
         .lowercased()
+    }
+
+    public func replaceNotEmptyVariable(
+        replacing placeholder: String,
+        with injectedValue: String
+    ) -> String {
+        return self
+            .replacingOccurrences(of: placeholder, with: (injectedValue.isEmpty ? placeholder : injectedValue))
     }
 
     public func extractClientDog() throws -> MailerAPIClientVariable {
