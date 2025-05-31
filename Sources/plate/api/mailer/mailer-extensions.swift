@@ -54,7 +54,15 @@ extension String {
         return self.replacingOccurrences(of: placeholder, with: replacement)
     }
 
-    public func replaceClientDogTemplatePlaceholders(client: String, dog: String, placeholderSyntax: PlaceholderSyntax) -> String {
+    public func replaceClientDogTemplatePlaceholders(
+        client: String,
+        dog: String,
+        placeholderSyntax: PlaceholderSyntax = PlaceholderSyntax(
+            prepending: "{", 
+            appending: "}", 
+            repeating: 2
+        )
+    ) -> String {
         let replacements: [StringTemplateReplacement] = [
             StringTemplateReplacement(
                 placeholders: ["client", "name"],
