@@ -126,6 +126,43 @@ extension String {
         return self.range(of: pattern, options: .regularExpression) != nil
     }
 
+    public func containsRawTemplatePlaceholders(
+        ignoring exceptions: [String] = [],
+        placeholderSyntaxes syntaxes: [PlaceholderSyntax] = [
+            PlaceholderSyntax(prepending: "{", appending: "}", repeating: 2),
+            PlaceholderSyntax(prepending: "{", appending: "}"),
+        ]
+    ) -> Bool {
+        let negativeLookahead: String
+        if exceptions.isEmpty {
+            negativeLookahead = ""
+        } else {
+            let lookaheads = exceptions.map { rawName in
+                let escapedName = NSRegularExpression.escapedPattern(for: rawName)
+                return "(?!\(escapedName)\\b)"
+            }
+            negativeLookahead = lookaheads.joined()
+        }
+
+        for syntax in syntaxes {
+            let openDelim  = NSRegularExpression.escapedPattern(for: syntax.prepending)
+            let closeDelim = NSRegularExpression.escapedPattern(for: syntax.appending)
+
+            let pattern =
+                openDelim +
+                "\\s*" +
+                negativeLookahead +
+                ".*?" +
+                "\\s*" +
+                closeDelim
+
+            if self.range(of: pattern, options: .regularExpression) != nil {
+                return true
+            }
+        }
+        return false
+    }
+
     @MainActor
     public func filteredClientContacts(
         uponEmptyReturn: EmptyQueryBehavior = .all,
