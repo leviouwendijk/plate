@@ -131,6 +131,7 @@ extension String {
         placeholderSyntaxes syntaxes: [PlaceholderSyntax] = [
             PlaceholderSyntax(prepending: "{", appending: "}", repeating: 2),
             PlaceholderSyntax(prepending: "{", appending: "}"),
+            PlaceholderSyntax(prepending: "${", appending: "}"),
         ]
     ) -> Bool {
         let negativeLookahead: String
