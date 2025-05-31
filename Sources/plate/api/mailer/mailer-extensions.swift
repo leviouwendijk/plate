@@ -29,15 +29,54 @@ extension String {
     }
 }
 
+public enum PlaceholderInitializationType {
+    case manual
+    case auto
+}
+
+public struct PlaceholderSyntax {
+    public let prepending: String
+    public let appending: String
+    // public let symmetrical: Bool
+
+    public init(
+        prepending: String,
+        appending: String = "",
+        // symmetrical: Bool = true
+    ) {
+        self.prepending = prepending
+        self.appending = appending
+        // self.symmetrical = symmetrical
+    }
+
+    public func set(for string: String) -> String {
+        return "\(prepending)\(string)\(appending)"
+    }
+}
+
 public struct StringTemplateReplacement {
     public let placeholders: [String]
     public let replacement: String
 
     public init(
         placeholders: [String],
-        replacement: String = ""
+        replacement: String = "",
+        initializer: PlaceholderInitializationType = .manual,
+        placeholderSyntax: PlaceholderSyntax = PlaceholderSyntax(prepending: "{{", appending: "}}")
     ) {
-        self.placeholders = placeholders
+        var p: [String] = []
+
+        switch initializer {
+            case .manual:
+                p = placeholders
+            case .auto:
+                for i in placeholders {
+                    let autoInitializedPlaceholder = placeholderSyntax.set(for: i)
+                    p.append(autoInitializedPlaceholder)
+                }
+        }
+
+        self.placeholders = p
         self.replacement = replacement
     }
 }
