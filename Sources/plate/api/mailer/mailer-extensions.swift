@@ -46,10 +46,12 @@ extension String {
 
     public func replaceNotEmptyVariable(
         replacing placeholder: String,
-        with injectedValue: String
+        with replacement: String
     ) -> String {
-        return self
-            .replacingOccurrences(of: placeholder, with: (injectedValue.isEmpty ? placeholder : injectedValue))
+        guard !replacement.isEmpty else {
+            return self
+        }
+        return self.replacingOccurrences(of: placeholder, with: replacement)
     }
 
     public func replaceClientDogTemplatePlaceholders(client: String, dog: String) -> String {
