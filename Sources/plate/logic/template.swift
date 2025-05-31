@@ -1,0 +1,82 @@
+import Foundation
+
+public enum PlaceholderInitializationType {
+    case manual
+    case auto
+}
+
+public struct PlaceholderSyntax {
+    public let prepending: String
+    public let appending: String
+    // public let symmetrical: Bool
+
+    public init(
+        prepending: String,
+        appending: String = "",
+        // symmetrical: Bool = true
+    ) {
+        self.prepending = prepending
+        self.appending = appending
+        // self.symmetrical = symmetrical
+    }
+
+    public func set(for str: String) -> String {
+        return "\(prepending)\(str)\(appending)"
+    }
+}
+
+public struct StringTemplateReplacement {
+    public let placeholders: [String]
+    public let replacement: String
+
+    public init(
+        placeholders: [String],
+        replacement: String = "",
+        initializer: PlaceholderInitializationType = .manual,
+        placeholderSyntax: PlaceholderSyntax = PlaceholderSyntax(prepending: "{{", appending: "}}")
+    ) {
+        var p: [String] = []
+
+        switch initializer {
+            case .manual:
+                p = placeholders
+            case .auto:
+                for i in placeholders {
+                    let autoInitializedPlaceholder = placeholderSyntax.set(for: i)
+                    p.append(autoInitializedPlaceholder)
+                }
+        }
+
+        self.placeholders = p
+        self.replacement = replacement
+    }
+}
+
+public struct StringTemplateConverter {
+    public let text: String
+    public let replacements: [StringTemplateReplacement]
+
+    public init(
+        text: String,
+        replacements: [StringTemplateReplacement],
+    ) {
+        self.text = text
+        self.replacements = replacements
+    }
+
+    public func replace() -> String {
+        var t = text
+        
+        for r in replacements {
+            for p in r.placeholders {
+                t = t
+                .replaceNotEmptyVariable(
+                    replacing: p,
+                    with: r.replacement
+                )
+            }
+        }
+
+        return t
+    }
+}

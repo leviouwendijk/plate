@@ -29,87 +29,6 @@ extension String {
     }
 }
 
-public enum PlaceholderInitializationType {
-    case manual
-    case auto
-}
-
-public struct PlaceholderSyntax {
-    public let prepending: String
-    public let appending: String
-    // public let symmetrical: Bool
-
-    public init(
-        prepending: String,
-        appending: String = "",
-        // symmetrical: Bool = true
-    ) {
-        self.prepending = prepending
-        self.appending = appending
-        // self.symmetrical = symmetrical
-    }
-
-    public func set(for string: String) -> String {
-        return "\(prepending)\(string)\(appending)"
-    }
-}
-
-public struct StringTemplateReplacement {
-    public let placeholders: [String]
-    public let replacement: String
-
-    public init(
-        placeholders: [String],
-        replacement: String = "",
-        initializer: PlaceholderInitializationType = .manual,
-        placeholderSyntax: PlaceholderSyntax = PlaceholderSyntax(prepending: "{{", appending: "}}")
-    ) {
-        var p: [String] = []
-
-        switch initializer {
-            case .manual:
-                p = placeholders
-            case .auto:
-                for i in placeholders {
-                    let autoInitializedPlaceholder = placeholderSyntax.set(for: i)
-                    p.append(autoInitializedPlaceholder)
-                }
-        }
-
-        self.placeholders = p
-        self.replacement = replacement
-    }
-}
-
-public struct StringTemplateConverter {
-    public let text: String
-    public let replacements: [StringTemplateReplacement]
-
-    public init(
-        text: String,
-        replacements: [StringTemplateReplacement],
-    ) {
-        self.text = text
-        self.replacements = replacements
-    }
-
-    public func replace() -> String {
-        var t = text
-        
-        for r in replacements {
-            for p in r.placeholders {
-                t = t
-                .replaceNotEmptyVariable(
-                    replacing: p,
-                    with: r.replacement
-                )
-            }
-        }
-
-        return t
-    }
-}
-
 extension String {
     public var replacePipesWithWhitespace: String {
         return self.replacingOccurrences(of: "|", with: " ")
@@ -131,6 +50,32 @@ extension String {
     ) -> String {
         return self
             .replacingOccurrences(of: placeholder, with: (injectedValue.isEmpty ? placeholder : injectedValue))
+    }
+
+    func replaceClientDogTemplatePlaceholders(client: String, dog: String) -> String {
+        let placeholderSyntax = PlaceholderSyntax(prepending: "{{", appending: "}}")
+
+        let replacements: [StringTemplateReplacement] = [
+            StringTemplateReplacement(
+                placeholders: ["client", "name"],
+                replacement: client,
+                initializer: .auto,
+                placeholderSyntax: placeholderSyntax
+            ),
+            StringTemplateReplacement(
+                placeholders: ["dog"],
+                replacement: dog,
+                initializer: .auto,
+                placeholderSyntax: placeholderSyntax
+            ),
+        ]
+
+        let converter = StringTemplateConverter(
+            text: self,
+            replacements: replacements
+        )
+
+        return converter.replace()
     }
 
     public func extractClientDog() throws -> MailerAPIClientVariable {
