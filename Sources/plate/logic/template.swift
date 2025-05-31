@@ -8,20 +8,22 @@ public enum PlaceholderInitializationType {
 public struct PlaceholderSyntax {
     public let prepending: String
     public let appending: String
-    // public let symmetrical: Bool
+    public let repeating: Int
 
     public init(
         prepending: String,
         appending: String = "",
-        // symmetrical: Bool = true
+        repeating: Int = 1
     ) {
         self.prepending = prepending
         self.appending = appending
-        // self.symmetrical = symmetrical
+        self.repeating = repeating
     }
 
     public func set(for str: String) -> String {
-        return "\(prepending)\(str)\(appending)"
+        let pre = String(repeating: prepending, count: repeating)
+        let app = String(repeating: appending, count: repeating)
+        return "\(pre)\(str)\(app)"
     }
 }
 
