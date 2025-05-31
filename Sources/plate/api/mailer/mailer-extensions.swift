@@ -126,7 +126,7 @@ extension String {
         return self.range(of: pattern, options: .regularExpression) != nil
     }
 
-    public func containsRawTemplatePlaceholders(
+    public func containsRawTemplatePlaceholderSyntaxes(
         ignoring exceptions: [String] = [],
         placeholderSyntaxes syntaxes: [PlaceholderSyntax] = [
             PlaceholderSyntax(prepending: "{", appending: "}", repeating: 2),
