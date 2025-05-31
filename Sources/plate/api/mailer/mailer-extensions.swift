@@ -52,7 +52,7 @@ extension String {
             .replacingOccurrences(of: placeholder, with: (injectedValue.isEmpty ? placeholder : injectedValue))
     }
 
-    func replaceClientDogTemplatePlaceholders(client: String, dog: String) -> String {
+    public func replaceClientDogTemplatePlaceholders(client: String, dog: String) -> String {
         let placeholderSyntax = PlaceholderSyntax(prepending: "{{", appending: "}}")
 
         let replacements: [StringTemplateReplacement] = [
