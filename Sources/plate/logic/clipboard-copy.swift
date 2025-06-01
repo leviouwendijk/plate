@@ -2,6 +2,7 @@ import Foundation
 import AppKit
 
 public enum CopyClipboardError: Error {
+    case fileNotFound(String)
     case copyFailure(String)
 }
 
@@ -47,6 +48,9 @@ extension NSAttributedString: NSAttributedStringCopyable {
 }
 
 public func copyFileObjectToClipboard(path file: String) throws {
+    guard FileManager.default.fileExists(atPath: file) else {
+        throw CopyClipboardError.fileNotFound("No file found at path: \(file)")
+    }
     let fileURL = URL(fileURLWithPath: file)
     
     let pasteboard = NSPasteboard.general
@@ -60,5 +64,3 @@ public func copyFileObjectToClipboard(path file: String) throws {
         throw CopyClipboardError.copyFailure("Failed to copy PDF file to clipboard.")
     }
 }
-
-
