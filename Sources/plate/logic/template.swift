@@ -41,12 +41,12 @@ public struct StringTemplateReplacement {
 
         switch initializer {
             case .manual:
-                p = placeholders
+            p = placeholders
             case .auto:
-                for i in placeholders {
-                    let autoInitializedPlaceholder = placeholderSyntax.set(for: i)
-                    p.append(autoInitializedPlaceholder)
-                }
+            for i in placeholders {
+                let autoInitializedPlaceholder = placeholderSyntax.set(for: i)
+                p.append(autoInitializedPlaceholder)
+            }
         }
 
         self.placeholders = p

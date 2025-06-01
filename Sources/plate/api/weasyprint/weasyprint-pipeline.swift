@@ -1,8 +1,5 @@
 import Foundation
 
-// html template in
-// replacement values ( logo + values )
-// output dest
 public struct WeasyActor {
     public let html: LoadableResource
     public let replacements: [StringTemplateReplacement]

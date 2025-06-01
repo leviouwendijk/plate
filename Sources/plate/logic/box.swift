@@ -23,3 +23,24 @@ public func createBox(for content: String) -> String {
     boxedContent += horizontalBorder
     return boxedContent
 }
+
+public func makeQuickSummary(
+    _ values: [(name: String, amount: Double)],
+    _ title: String = "Quick Summary:"
+) -> String {
+    var summaryString = ""
+    summaryString.append(title)
+    summaryString.append("\n\n")
+
+    var stringToBox = ""
+    for value in values {
+        let string = leftAlignText(value.name.ansi(.bold), width: 25) + rightAlignText("\(value.amount)".ansi(.bold), width: 25)
+        stringToBox.append(string)
+        stringToBox.append("\n")
+    }
+    
+    let box = createBox(for: stringToBox)
+    summaryString.append(box)
+
+    return summaryString.indent()
+}
