@@ -11,11 +11,11 @@ extension String {
     }
 
     public func replaceSimplePlaceholders(with values: [String: String]) -> String {
-        var modifiedTemplate = self
+        var replaced = ""
         for (placeholder, value) in values {
-            modifiedTemplate = modifiedTemplate.replacingOccurrences(of: placeholder, with: value)
+            replaced = self.replacingOccurrences(of: placeholder, with: value)
         }
-        return modifiedTemplate
+        return replaced
     }
 }
 

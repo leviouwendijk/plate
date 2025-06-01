@@ -18,3 +18,10 @@ public func writeToTemporaryFile(content: String, fileExtension: String) throws 
         throw TemporaryFileError.writeError(message)
     }
 }
+
+extension String {
+    public func tempFile(fileExtension: String) throws -> URL {
+        let url = try writeToTemporaryFile(content: self, fileExtension: fileExtension)
+        return url
+    }
+}
