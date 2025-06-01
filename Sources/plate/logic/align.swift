@@ -68,3 +68,16 @@ extension Array where Element == (String, String) {
         }
     }
 }
+
+// backwards compat with travel-quote
+public func leftAlignText(_ text: String, width: Int) -> String {
+    let padding = max(0, width - text.count)
+    let paddedText = text + String(repeating: ".", count: padding)
+    return paddedText
+}
+
+public func rightAlignText(_ text: String, width: Int) -> String {
+    let padding = max(0, width - text.count)
+    let paddedText = String(repeating: ".", count: padding) + text
+    return paddedText
+}
