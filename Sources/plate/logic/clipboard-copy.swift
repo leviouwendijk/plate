@@ -1,6 +1,10 @@
 import Foundation
 import AppKit
 
+public enum CopyClipboardError: Error {
+    case copyFailure(String)
+}
+
 // as function calls, backwards compatibility
 public func copyToClipboard(_ text: String) {
     let pasteboard = NSPasteboard.general
@@ -41,3 +45,20 @@ extension NSAttributedString: NSAttributedStringCopyable {
 
     }
 }
+
+public func copyFileObjectToClipboard(path file: String) throws {
+    let fileURL = URL(fileURLWithPath: file)
+    
+    let pasteboard = NSPasteboard.general
+    pasteboard.clearContents()
+    
+    let success = pasteboard.writeObjects([fileURL as NSURL])
+    
+    if success {
+        print("File copied to clipboard as a file reference.")
+    } else {
+        throw CopyClipboardError.copyFailure("Failed to copy PDF file to clipboard.")
+    }
+}
+
+

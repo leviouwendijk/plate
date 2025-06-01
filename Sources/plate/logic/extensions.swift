@@ -9,6 +9,14 @@ extension String {
     public func clipboard() -> Void {
         copyToClipboard(self)
     }
+
+    public func replaceSimplePlaceholders(with values: [String: String]) -> String {
+        var modifiedTemplate = self
+        for (placeholder, value) in values {
+            modifiedTemplate = modifiedTemplate.replacingOccurrences(of: placeholder, with: value)
+        }
+        return modifiedTemplate
+    }
 }
 
 extension View {
