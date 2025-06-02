@@ -10,6 +10,14 @@ public struct PlaceholderSyntax {
     public let appending: String
     public let repeating: Int
 
+    public var prefix: String {
+        return String(repeating: prepending, count: repeating)
+    }
+
+    public var suffix: String {
+        return String(repeating: appending, count: repeating)
+    }
+
     public init(
         prepending: String,
         appending: String = "",
@@ -21,9 +29,7 @@ public struct PlaceholderSyntax {
     }
 
     public func set(for str: String) -> String {
-        let pre = String(repeating: prepending, count: repeating)
-        let app = String(repeating: appending, count: repeating)
-        return "\(pre)\(str)\(app)"
+        return "\(prefix)\(str)\(suffix)"
     }
 }
 
