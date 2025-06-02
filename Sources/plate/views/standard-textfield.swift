@@ -56,8 +56,11 @@ public struct StandardTextField: View {
                     TextField("", text: $text)
                         .textFieldStyle(PlainTextFieldStyle())
                         .focused($isFocused)
-                        .onChange(of: text) { newValue in
-                            validate(newValue)
+                        // .onChange(of: text) { newValue in
+                        //     validate(newValue)
+                        // }
+                        .onSubmit {
+                          validate(text)
                         }
                 }
 
