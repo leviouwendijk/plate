@@ -24,14 +24,10 @@ public struct ApplicationEnvironmentLoader {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty, !trimmed.hasPrefix("#") else { continue }
             
-            let withoutExport: String
-            if trimmed.hasPrefix("export ") {
-                withoutExport = String(trimmed.dropFirst("export ".count))
-            } else {
-                withoutExport = trimmed
-            }
-            
-            let parts = withoutExport.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+            let parts = trimmed
+            .strippingExportPrefix()
+            .split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+
             guard parts.count == 2 else {
                 throw ApplicationEnvironmentLoaderError.invalidConfigLine(trimmed)
             }
@@ -42,6 +38,7 @@ public struct ApplicationEnvironmentLoader {
             let value = parts[1]
             .trimmingCharacters(in: .whitespaces)
             .replacingShellHomeVariable()
+            .strippingEnclosingQuotes()
 
             result[key] = value
         }

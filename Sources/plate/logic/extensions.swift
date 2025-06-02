@@ -22,6 +22,27 @@ extension String {
         let home = Home.string()
         return self.replacingOccurrences(of: "$HOME", with: home)
     }
+
+    func strippingExportPrefix() -> String {
+        let prefix = "export "
+        if self.hasPrefix(prefix) {
+            return String(self.dropFirst(prefix.count))
+        }
+        return self
+    }
+    
+    func strippingEnclosingQuotes() -> String {
+        guard self.count >= 2 else {
+            return self
+        }
+        let firstChar = self.first!
+        let lastChar = self.last!
+        
+        if (firstChar == "\"" && lastChar == "\"") || (firstChar == "'" && lastChar == "'") {
+            return String(self.dropFirst().dropLast())
+        }
+        return self
+    }
 }
 
 extension View {
