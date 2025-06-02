@@ -22,11 +22,16 @@ public struct ApplicationEnvironmentLoader {
         
         for line in raw.components(separatedBy: .newlines) {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty, !trimmed.hasPrefix("#") else {
-                continue
+            guard !trimmed.isEmpty, !trimmed.hasPrefix("#") else { continue }
+            
+            let withoutExport: String
+            if trimmed.hasPrefix("export ") {
+                withoutExport = String(trimmed.dropFirst("export ".count))
+            } else {
+                withoutExport = trimmed
             }
             
-            let parts = trimmed.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+            let parts = withoutExport.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
             guard parts.count == 2 else {
                 throw ApplicationEnvironmentLoaderError.invalidConfigLine(trimmed)
             }
