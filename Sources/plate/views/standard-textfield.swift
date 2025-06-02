@@ -60,7 +60,7 @@ public struct StandardTextField: View {
                         //     validate(newValue)
                         // }
                         .onSubmit {
-                          validate(text)
+                            validate(text)
                         }
                 }
 
@@ -90,7 +90,7 @@ public struct StandardTextField: View {
             }
         }
         .frame(maxWidth: maxWidth)
-        .animation(.easeInOut, value: validationMessage)
+        // .animation(.easeInOut, value: validationMessage)
         .onAppear { validate(text) }
     }
 
