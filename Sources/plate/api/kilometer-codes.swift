@@ -1,6 +1,6 @@
 import Foundation
 
-public struct KilometerCodes {
+public struct KilometerCodes: Codable, Sendable {
     public static let codes: [String: Int] = [
         "52V9NK" : 93,
         "EA5YNG" : 974,
