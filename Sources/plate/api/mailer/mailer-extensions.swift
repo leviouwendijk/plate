@@ -18,14 +18,6 @@ extension String {
         return "\(self)"
         .replacingOccurrences(of: "/", with: " / ")
         .replacingOccurrences(of: "/  /", with: "//")
-
-        // let replacedSingles = "\(self)"
-        // .replacingOccurrences(of: "/", with: " / ")
-
-        // let avoidedDoubles = replacedSingles
-        // .replacingOccurrences(of: "/  /", with: "//")
-
-        // return avoidedDoubles
     }
 }
 
@@ -154,8 +146,12 @@ extension String {
         let ignoreSet = Set(exceptions)
         
         for syntax in syntaxes {
-            let openDelim  = syntax.prepending
-            let closeDelim = syntax.appending
+            let openDelim  = syntax.prefix
+            let closeDelim = syntax.suffix
+
+            // debug
+            // print("open delimiter = ", openDelim)
+            // print("closing delimiter = ", closeDelim)
             
             var scanStart = startIndex
             while true {
