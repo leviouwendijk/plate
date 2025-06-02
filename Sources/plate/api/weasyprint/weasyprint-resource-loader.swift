@@ -36,5 +36,12 @@ public struct ResourceLoader {
         }
         return fileURL.path
     }
-}
 
+    public static func contents(at path: String) throws -> String {
+        let fileURL = URL(fileURLWithPath: path)
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            throw ResourceError.invalidPath(path: path)
+        }
+        return try String(contentsOf: fileURL, encoding: .utf8)
+    }
+}

@@ -2,11 +2,14 @@ import Foundation
 
 public enum ResourceError: PlateLibraryError, LocalizedError {
     case notFound(resourceName: String, resourceType: String)
+    case invalidPath(path: String)
     
     public var errorDescription: String? {
         switch self {
         case .notFound(let name, let type):
             return "Unable to find resource “\(name).\(type)” in bundle."
+        case .invalidPath(let path):
+            return "invalid path provided: \(path)"
         }
     }
 }
