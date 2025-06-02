@@ -1,16 +1,20 @@
 import Foundation
 
-public enum ApplicationEnvironmentActorError: Error {
+public enum ApplicationEnvironmentLoaderError: Error {
     case fileNotFound(String)
     case invalidConfigLine(String)
     case missingEnv(String)
 }
 
-public struct ApplicationEnvironmentActor {
+public enum ApplicationEnvironmentActorError: Error {
+    case missingEnv(String)
+}
+
+public struct ApplicationEnvironmentLoader {
     public static func load(from filePath: String) throws -> [String: String] {
         let url = URL(fileURLWithPath: filePath)
         guard FileManager.default.fileExists(atPath: url.path) else {
-            throw ApplicationEnvironmentActorError.fileNotFound(filePath)
+            throw ApplicationEnvironmentLoaderError.fileNotFound(filePath)
         }
         
         let raw = try String(contentsOf: url, encoding: .utf8)
@@ -24,7 +28,7 @@ public struct ApplicationEnvironmentActor {
             
             let parts = trimmed.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
             guard parts.count == 2 else {
-                throw ApplicationEnvironmentActorError.invalidConfigLine(trimmed)
+                throw ApplicationEnvironmentLoaderError.invalidConfigLine(trimmed)
             }
             
             let key = parts[0].trimmingCharacters(in: .whitespaces)
@@ -39,6 +43,18 @@ public struct ApplicationEnvironmentActor {
         for (key, value) in loadedDictionary {
             setenv(key, value, 1)
         }
+    }
+}
+
+public struct ApplicationEnvironmentActor {
+    public let environmentFile: String // environment filepath
+
+    public init(
+        environmentFile: String
+    ) throws {
+        self.environmentFile = environmentFile
+        let dictionary = try ApplicationEnvironmentLoader.load(from: environmentFile)
+        ApplicationEnvironmentLoader.set(to: dictionary)
     }
 
     public static func get(key: String) throws -> String {
