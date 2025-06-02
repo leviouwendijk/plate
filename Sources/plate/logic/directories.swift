@@ -38,3 +38,12 @@ public struct User {
         }
     }
 }
+
+public struct DefaultEnvironmentVariables {
+    public init() {}
+
+    public static func string() -> String {
+        let home = Home.string()
+        return "\(home)/dotfiles/.vars.zsh"
+    }
+}
