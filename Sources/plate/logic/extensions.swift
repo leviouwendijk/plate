@@ -17,6 +17,11 @@ extension String {
         }
         return replaced
     }
+
+    public func replacingShellHomeVariable() -> String {
+        let home = Home.string()
+        return self.replacingOccurrences(of: "$HOME", with: home)
+    }
 }
 
 extension View {

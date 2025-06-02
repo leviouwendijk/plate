@@ -36,8 +36,13 @@ public struct ApplicationEnvironmentLoader {
                 throw ApplicationEnvironmentLoaderError.invalidConfigLine(trimmed)
             }
             
-            let key = parts[0].trimmingCharacters(in: .whitespaces)
-            let value = parts[1].trimmingCharacters(in: .whitespaces)
+            let key = parts[0]
+            .trimmingCharacters(in: .whitespaces)
+
+            let value = parts[1]
+            .trimmingCharacters(in: .whitespaces)
+            .replacingShellHomeVariable()
+
             result[key] = value
         }
         
