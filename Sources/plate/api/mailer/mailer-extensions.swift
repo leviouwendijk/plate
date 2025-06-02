@@ -117,13 +117,30 @@ extension String {
     }
 
     public func containsRawTemplateVariables(ignoring exceptions: [String] = []) -> Bool {
-        let negativeLookahead = exceptions
-            .map { "(?!\($0)\\b)" }
-            .joined()
+        let pattern = #"\{\{\s*([^}]+?)\s*\}\}"#
         
-        let pattern = #"\{\{\s*\#(negativeLookahead)[^}]+\s*\}\}"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
+            return false
+        }
         
-        return self.range(of: pattern, options: .regularExpression) != nil
+        let nsString = self as NSString
+        let fullRange = NSRange(location: 0, length: nsString.length)
+        let matches = regex.matches(in: self, options: [], range: fullRange)
+        
+        for match in matches {
+            let contentRange = match.range(at: 1)
+            let rawContent = nsString.substring(with: contentRange)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            let firstToken = rawContent
+                .components(separatedBy: .whitespaces)
+                .first ?? ""
+            
+            if !exceptions.contains(firstToken) {
+                return true
+            }
+        }
+        return false
     }
 
     public func containsRawTemplatePlaceholderSyntaxes(
