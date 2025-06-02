@@ -146,36 +146,41 @@ extension String {
     public func containsRawTemplatePlaceholderSyntaxes(
         ignoring exceptions: [String] = [],
         placeholderSyntaxes syntaxes: [PlaceholderSyntax] = [
-            PlaceholderSyntax(prepending: "{", appending: "}", repeating: 2),
-            PlaceholderSyntax(prepending: "{", appending: "}"),
-            PlaceholderSyntax(prepending: "${", appending: "}"),
+            .init(prepending: "{", appending: "}", repeating: 2), // `{{ … }}`
+            .init(prepending: "{", appending: "}"),               // `{ … }`
+            .init(prepending: "${", appending: "}"),              // `${ … }`
         ]
     ) -> Bool {
-        let negativeLookahead: String
-        if exceptions.isEmpty {
-            negativeLookahead = ""
-        } else {
-            let lookaheads = exceptions.map { rawName in
-                let escapedName = NSRegularExpression.escapedPattern(for: rawName)
-                return "(?!\(escapedName)\\b)"
-            }
-            negativeLookahead = lookaheads.joined()
-        }
-
+        let ignoreSet = Set(exceptions)
+        
         for syntax in syntaxes {
-            let openDelim  = NSRegularExpression.escapedPattern(for: syntax.prepending)
-            let closeDelim = NSRegularExpression.escapedPattern(for: syntax.appending)
+            let openDelim  = syntax.prepending
+            let closeDelim = syntax.appending
+            
+            var scanStart = startIndex
+            while true {
+                guard let openRange = self.range(of: openDelim, range: scanStart..<endIndex) else {
+                    break
+                }
+                
+                let afterOpen = openRange.upperBound
+                guard let closeRange = self.range(of: closeDelim, range: afterOpen..<endIndex) else {
+                    break
+                }
+                
+                let innerRange = afterOpen..<closeRange.lowerBound
+                let rawContent = self[innerRange].trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                let firstToken = rawContent
+                    .split(whereSeparator: { $0.isWhitespace })
+                    .first
+                    .map(String.init) ?? ""
+                
+                if !ignoreSet.contains(firstToken) {
+                    return true
+                }
 
-            let pattern =
-                openDelim +
-                "\\s*" +
-                negativeLookahead +
-                ".*?" +
-                "\\s*" +
-                closeDelim
-
-            if self.range(of: pattern, options: .regularExpression) != nil {
-                return true
+                scanStart = closeRange.upperBound
             }
         }
         return false
