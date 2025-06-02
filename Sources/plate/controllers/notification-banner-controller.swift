@@ -6,6 +6,8 @@ public class NotificationBannerController: ObservableObject {
     @Published public var style: NotificationBannerType
     @Published public var message: String
 
+    public var hide: Bool { return !show }
+
     public init(
         show: Bool = false,
         style: NotificationBannerType = .info,
