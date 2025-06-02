@@ -3,6 +3,7 @@ import Foundation
 public enum ApplicationEnvironmentActorError: Error {
     case fileNotFound(String)
     case invalidConfigLine(String)
+    case missingEnv(String)
 }
 
 public struct ApplicationEnvironmentActor {
@@ -38,5 +39,14 @@ public struct ApplicationEnvironmentActor {
         for (key, value) in loadedDictionary {
             setenv(key, value, 1)
         }
+    }
+
+    public static func get(key: String) throws -> String {
+        guard let raw = ProcessInfo.processInfo.environment[key],
+            !raw.isEmpty
+        else {
+            throw ApplicationEnvironmentActorError.missingEnv(key)
+        }
+        return raw
     }
 }
