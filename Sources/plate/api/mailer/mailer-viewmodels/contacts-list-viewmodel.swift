@@ -1,4 +1,3 @@
-// @preconcurrency
 import SwiftUI
 @preconcurrency import Contacts
 import Combine
@@ -18,7 +17,7 @@ public class ContactsListViewModel: ObservableObject {
 
     public init() {
         Task { await loadAllContacts() }
-        fuzzyFilterListener()
+        // fuzzyFilterListener()
     }
 
     public func loadAllContacts() async {
