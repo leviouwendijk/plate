@@ -48,7 +48,7 @@ public class ContactsListViewModel: ObservableObject {
     public func fuzzyFilterListener() {
         Publishers
         .CombineLatest3($contacts, $searchQuery, $searchStrictness)
-        // .drop { contacts, _, _ in contacts.isEmpty }
+        .drop { contacts, _, _ in contacts.isEmpty }
         .debounce(for: .milliseconds(200), scheduler: DispatchQueue.main)
         .sink { [weak self] allContacts, query, strictness in
             guard let self = self else { return }
