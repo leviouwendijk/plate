@@ -81,8 +81,8 @@ public struct StandardNotifyingButton: View {
         }
     }
 
-    public func checkPosition(if position: NotificationBannerPosition) -> Bool {
-        return (self.notifierPosition == position)
+    public func isNotPosition(_ position: NotificationBannerPosition) -> Bool {
+        return !(self.notifierPosition == position)
     }
 
     public var body: some View {
@@ -92,7 +92,7 @@ public struct StandardNotifyingButton: View {
                 message: notifier.message
             )
             .hide(when: notifier.hide)
-            .hide(when: checkPosition(if: .left))
+            .hide(when: isNotPosition(.left))
 
             VStack {
                 NotificationBanner(
@@ -100,7 +100,7 @@ public struct StandardNotifyingButton: View {
                     message: notifier.message
                 )
                 .hide(when: notifier.hide)
-                .hide(when: checkPosition(if: .above))
+                .hide(when: isNotPosition(.above))
 
 
                 VStack(alignment: .center, spacing: 4) {
@@ -150,7 +150,7 @@ public struct StandardNotifyingButton: View {
                     message: notifier.message
                 )
                 .hide(when: notifier.hide)
-                .hide(when: checkPosition(if: .under))
+                .hide(when: isNotPosition(.under))
             }
 
             NotificationBanner(
@@ -158,7 +158,7 @@ public struct StandardNotifyingButton: View {
                 message: notifier.message
             )
             .hide(when: notifier.hide)
-            .hide(when: checkPosition(if: .right))
+            .hide(when: isNotPosition(.right))
         }
     }
 }
