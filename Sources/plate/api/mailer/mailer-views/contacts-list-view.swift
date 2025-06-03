@@ -143,8 +143,11 @@ public struct ContactsListView: View {
                         else { 
                             return
                         }
-                        withAnimation(.linear(duration: 0.05)) {
-                            proxy.scrollTo(firstID, anchor: .top)
+
+                        DispatchQueue.main.async {
+                            withAnimation(.linear(duration: 0.05)) {
+                                proxy.scrollTo(firstID, anchor: .top)
+                            }
                         }
                     }
                     .onAppear {
