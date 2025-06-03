@@ -23,22 +23,22 @@ public class ContactsListViewModel: ObservableObject {
     }
 
     public func loadAllContacts() async {
-        DispatchQueue.main.async {
+        // DispatchQueue.main.async {
             self.isLoading = true
             self.errorMessage = nil
-        }
+        // }
         do {
             let fetched = try await loadContacts()
-            DispatchQueue.main.async {
+            // DispatchQueue.main.async {
                 print("[ContactsVM] assigning contacts (\(fetched.count) items)")
                 self.contacts = fetched
                 self.isLoading = false
-            }
+            // }
         } catch {
-            DispatchQueue.main.async {
+            // DispatchQueue.main.async {
                 self.errorMessage = error.localizedDescription
                 self.isLoading = false
-            }
+            // }
         }
         // isLoading = false
     }
