@@ -81,25 +81,26 @@ public struct StandardNotifyingButton: View {
         }
     }
 
+    public func checkPosition(if position: NotificationBannerPosition) -> Bool {
+        return (self.notifierPosition == position)
+    }
+
     public var body: some View {
         HStack {
-            if notifierPosition == .left {
+            NotificationBanner(
+                type: notifier.style,
+                message: notifier.message
+            )
+            .hide(when: notifier.hide)
+            .hide(when: checkPosition(if: .left))
+
+            VStack {
                 NotificationBanner(
                     type: notifier.style,
                     message: notifier.message
                 )
                 .hide(when: notifier.hide)
-            }
-
-            VStack {
-
-                if notifierPosition == .above {
-                    NotificationBanner(
-                        type: notifier.style,
-                        message: notifier.message
-                    )
-                    .hide(when: notifier.hide)
-                }
+                .hide(when: checkPosition(if: .above))
 
 
                 VStack(alignment: .center, spacing: 4) {
@@ -144,30 +145,20 @@ public struct StandardNotifyingButton: View {
                     }
                 )
 
-
-                if notifierPosition == .under {
-                    NotificationBanner(
-                        type: notifier.style,
-                        message: notifier.message
-                    )
-                    .hide(when: notifier.hide)
-                }
-
-
-
-            }
-
-
-            if notifierPosition == .right {
                 NotificationBanner(
                     type: notifier.style,
                     message: notifier.message
                 )
                 .hide(when: notifier.hide)
+                .hide(when: checkPosition(if: .under))
             }
 
-
-
+            NotificationBanner(
+                type: notifier.style,
+                message: notifier.message
+            )
+            .hide(when: notifier.hide)
+            .hide(when: checkPosition(if: .right))
         }
     }
 }
