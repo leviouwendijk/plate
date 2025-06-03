@@ -136,23 +136,32 @@ public struct ContactsListView: View {
                     .frame(maxHeight: maxListHeight)
                     .padding(.horizontal)
 
-                    // auto-scroll
-                    .onChange(of: viewModel.searchQuery) { _ in
-                        guard autoScrollToTop,
-                            let firstID = viewModel.filteredContacts.first?.identifier
-                        else { 
-                            return
+                    // .onChange(of: viewModel.searchQuery) { _ in
+                    //     guard autoScrollToTop,
+                    //         let firstID = viewModel.filteredContacts.first?.identifier
+                    //     else { 
+                    //         return
+                    //     }
+
+                    //     DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+                    //         withAnimation(.linear(duration: 0.05)) {
+                    //             proxy.scrollTo(firstID, anchor: .top)
+                    //         }
+                    //     }
+                    // }
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+                            viewModel.fuzzyFilterListener()
                         }
+                    }
+
+                    .onReceive(viewModel.$scrollToFirstID.compactMap { $0 }) { firstID in
+                        guard autoScrollToTop else { return }
 
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
                             withAnimation(.linear(duration: 0.05)) {
                                 proxy.scrollTo(firstID, anchor: .top)
                             }
-                        }
-                    }
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-                            viewModel.fuzzyFilterListener()
                         }
                     }
                 }

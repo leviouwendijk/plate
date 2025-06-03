@@ -15,6 +15,8 @@ public class ContactsListViewModel: ObservableObject {
     @Published public private(set) var filteredContacts: [CNContact] = []
     @Published public var isFuzzyFiltering = false
 
+    @Published public var scrollToFirstID: String? = nil
+
     public init() {
         Task { 
             await loadAllContacts()
@@ -91,6 +93,7 @@ public class ContactsListViewModel: ObservableObject {
                     self.filteredContacts = results
                     self.isFuzzyFiltering = false
                 }
+                self.scrollToFirstID = results.first?.identifier
             }
         }
     }
