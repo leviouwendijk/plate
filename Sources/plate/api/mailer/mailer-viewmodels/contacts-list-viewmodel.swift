@@ -29,18 +29,25 @@ public class ContactsListViewModel: ObservableObject {
         fuzzyFilterListener()
     }
 
-    func loadAllContacts() async {
-        isLoading = true
-        errorMessage = nil
+    public func loadAllContacts() async {
+        DispatchQueue.main.async {
+            self.isLoading = true
+            self.errorMessage = nil
+        }
         do {
             let fetched = try await loadContacts()
-            contacts = fetched
+            DispatchQueue.main.async {
+                self.contacts = fetched
+                self.isLoading = false
+            }
         } catch {
-            errorMessage = error.localizedDescription
+            DispatchQueue.main.async {
+                self.errorMessage = error.localizedDescription
+                self.isLoading = false
+            }
         }
-        isLoading = false
+        // isLoading = false
     }
-
 
     private var cancellables = Set<AnyCancellable>()
 
