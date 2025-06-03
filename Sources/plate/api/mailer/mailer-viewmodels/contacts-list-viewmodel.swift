@@ -23,22 +23,22 @@ public class ContactsListViewModel: ObservableObject {
     }
 
     public func loadAllContacts() async {
-        // DispatchQueue.main.async {
+        DispatchQueue.main.async {
             self.isLoading = true
             self.errorMessage = nil
-        // }
+        }
         do {
             let fetched = try await loadContacts()
-            // DispatchQueue.main.async {
+            DispatchQueue.main.async {
                 print("[ContactsVM] assigning contacts (\(fetched.count) items)")
                 self.contacts = fetched
                 self.isLoading = false
-            // }
+            }
         } catch {
-            // DispatchQueue.main.async {
+            DispatchQueue.main.async {
                 self.errorMessage = error.localizedDescription
                 self.isLoading = false
-            // }
+            }
         }
         // isLoading = false
     }
@@ -48,7 +48,11 @@ public class ContactsListViewModel: ObservableObject {
     public func fuzzyFilterListener() {
         Publishers
         .CombineLatest3($contacts, $searchQuery, $searchStrictness)
-        .drop { contacts, _, _ in contacts.isEmpty }
+        .removeDuplicates(by: { a, b in
+            return a.0.count == b.0.count
+            && a.1 == b.1
+            && a.2 == b.2
+        })
         .debounce(for: .milliseconds(200), scheduler: DispatchQueue.main)
         .sink { [weak self] allContacts, query, strictness in
             guard let self = self else { return }
