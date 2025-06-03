@@ -50,6 +50,7 @@ public class ContactsListViewModel: ObservableObject {
     public func fuzzyFilterListener() {
         Publishers
         .CombineLatest3($contacts, $searchQuery, $searchStrictness)
+        .drop { contacts, _, _ in contacts.isEmpty }
         .removeDuplicates(by: { a, b in
             return a.0.count == b.0.count
             && a.1 == b.1
