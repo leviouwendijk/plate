@@ -18,8 +18,8 @@ public class ContactsListViewModel: ObservableObject {
     public init() {
         Task { 
             await loadAllContacts()
-            fuzzyFilterListener()
         }
+        // fuzzyFilterListener()
     }
 
     public func loadAllContacts() async {
@@ -45,7 +45,7 @@ public class ContactsListViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private func fuzzyFilterListener() {
+    public func fuzzyFilterListener() {
         Publishers
         .CombineLatest3($contacts, $searchQuery, $searchStrictness)
         // .drop { contacts, _, _ in contacts.isEmpty }
@@ -68,7 +68,7 @@ public class ContactsListViewModel: ObservableObject {
         .store(in: &cancellables)
     }
 
-    private func applyFuzzyFilter(
+    public func applyFuzzyFilter(
         to allContacts: [CNContact],
         query: String,
         tolerance: Int
