@@ -144,7 +144,7 @@ public struct ContactsListView: View {
                             return
                         }
 
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
                             withAnimation(.linear(duration: 0.05)) {
                                 proxy.scrollTo(firstID, anchor: .top)
                             }
