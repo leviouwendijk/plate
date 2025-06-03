@@ -148,7 +148,7 @@ public struct ContactsListView: View {
                         }
                     }
                     .onAppear {
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
                             viewModel.fuzzyFilterListener()
                         }
                     }
