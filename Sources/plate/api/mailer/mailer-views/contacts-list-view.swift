@@ -147,11 +147,11 @@ public struct ContactsListView: View {
                             proxy.scrollTo(firstID, anchor: .top)
                         }
                     }
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-                            viewModel.fuzzyFilterListener()
-                        }
-                    }
+                    // .onAppear {
+                    //     DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+                    //         viewModel.fuzzyFilterListener()
+                    //     }
+                    // }
                 }
 
                 if showWarning {
