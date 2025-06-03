@@ -86,21 +86,21 @@ public struct StandardNotifyingButton: View {
     }
 
     public var body: some View {
-        HStack {
-            NotificationBanner(
-                type: notifier.style,
-                message: notifier.message
-            )
-            .hide(when: notifier.hide)
-            .hide(when: isNotPosition(.left))
+        // HStack {
+        //     NotificationBanner(
+        //         type: notifier.style,
+        //         message: notifier.message
+        //     )
+        //     .hide(when: notifier.hide)
+        //     .hide(when: isNotPosition(.left))
 
             VStack {
-                NotificationBanner(
-                    type: notifier.style,
-                    message: notifier.message
-                )
-                .hide(when: notifier.hide)
-                .hide(when: isNotPosition(.above))
+                // NotificationBanner(
+                //     type: notifier.style,
+                //     message: notifier.message
+                // )
+                // .hide(when: notifier.hide)
+                // .hide(when: isNotPosition(.above))
 
 
                 VStack(alignment: .center, spacing: 4) {
@@ -153,67 +153,12 @@ public struct StandardNotifyingButton: View {
                 .hide(when: isNotPosition(.under))
             }
 
-            NotificationBanner(
-                type: notifier.style,
-                message: notifier.message
-            )
-            .hide(when: notifier.hide)
-            .hide(when: isNotPosition(.right))
-        }
+            // NotificationBanner(
+            //     type: notifier.style,
+            //     message: notifier.message
+            // )
+            // .hide(when: notifier.hide)
+            // .hide(when: isNotPosition(.right))
+        // }
     }
 }
-
-
-
-//                                 VStack {
-//                                     StandardButton(
-//                                         type: .execute,
-//                                         title: "Render Remote",
-//                                         action: {
-//                                             do {
-//                                                 withAnimation {
-//                                                     remotePdfNotifier.show = false
-//                                                 }
-
-//                                                 try renderTier(quota: quota, for: .remote)
-
-//                                                 remotePdfNotifier.message = "quota pdf rendered"
-//                                                 remotePdfNotifier.style = .success
-//                                                 withAnimation {
-//                                                     remotePdfNotifier.show = true
-//                                                 }
-
-//                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//                                                     withAnimation { 
-//                                                         remotePdfNotifier.show = false
-//                                                     }
-//                                                 }
-//                                             } catch {
-//                                                 withAnimation {
-//                                                     remotePdfNotifier.show = false
-//                                                 }
-
-//                                                 remotePdfNotifier.message = "render failed: \(error)"
-//                                                 remotePdfNotifier.style = .error
-//                                                 withAnimation {
-//                                                     remotePdfNotifier.show = true
-//                                                 }
-
-//                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//                                                     withAnimation { 
-//                                                         remotePdfNotifier.show = false 
-//                                                     }
-//                                                 }
-//                                             }
-//                                         }
-//                                     )
-//                                     .disabled((quotaVm.loadedQuota == nil))
-//                                     .padding(.top, 8)
-
-//                                     NotificationBanner(
-//                                         type: remotePdfNotifier.style,
-//                                         message: remotePdfNotifier.message
-//                                     )
-//                                     .hide(when: remotePdfNotifier.hide)
-//                                 }
-//                                 .padding(.trailing, 40)
