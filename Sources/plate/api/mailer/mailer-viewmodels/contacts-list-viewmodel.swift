@@ -90,7 +90,7 @@ public class ContactsListViewModel: ObservableObject {
             )
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-                withAnimation(.easeInOut(duration: 0.25)) {
+                withAnimation(.easeInOut(duration: 0.20)) {
                     self.filteredContacts = results
                     self.isFuzzyFiltering = false
                 }
