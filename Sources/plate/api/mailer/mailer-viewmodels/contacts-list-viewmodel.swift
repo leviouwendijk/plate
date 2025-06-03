@@ -37,6 +37,7 @@ public class ContactsListViewModel: ObservableObject {
         do {
             let fetched = try await loadContacts()
             DispatchQueue.main.async {
+                print("[ContactsVM] assigning contacts (\(fetched.count) items)")
                 self.contacts = fetched
                 self.isLoading = false
             }
