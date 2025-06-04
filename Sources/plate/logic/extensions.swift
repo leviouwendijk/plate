@@ -10,6 +10,16 @@ extension String {
         copyToClipboard(self)
     }
 
+    public func replaceNotEmptyVariable(
+        replacing placeholder: String,
+        with replacement: String
+    ) -> String {
+        guard !replacement.isEmpty else {
+            return self
+        }
+        return self.replacingOccurrences(of: placeholder, with: replacement)
+    }
+
     public func replaceSimplePlaceholders(with values: [String: String]) -> String {
         var replaced = ""
         for (placeholder, value) in values {
