@@ -29,9 +29,9 @@ let package = Package(
             // dependencies: [
             //     .product(name: "PklSwift", package: "pkl-swift")
             // ],
-            resources: [
-                .process("Resources")
-            ]
+            // resources: [
+            //     .process("Resources")
+            // ]
         ),
         .testTarget(
             name: "plateTests",
