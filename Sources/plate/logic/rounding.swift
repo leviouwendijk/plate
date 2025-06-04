@@ -56,6 +56,10 @@ extension Double: Roundable {
         .roundTo(multiple)
         .offset(direction: direction, by: offset)
     }
+
+    public func integer() -> Int {
+        Int(self)
+    }
 }
 
 // Extension for Int
