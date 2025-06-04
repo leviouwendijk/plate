@@ -26,10 +26,35 @@ public protocol Roundable {
     func roundTo(_ multiple: Self) -> Self
 }
 
+public enum RoundingOffsetDirection: Sendable {
+    case up
+    case down
+}
+
 // Extension for Double
 extension Double: Roundable {
     public func roundTo(_ multiple: Double) -> Double {
         return (self / multiple).rounded() * multiple
+    }
+
+    public func offset(direction: RoundingOffsetDirection = .down, by offset: Double) -> Double {
+        switch direction {
+            case .up:
+            return self + offset
+
+            case .down:
+            return self - offset
+        }
+    }
+
+    public func roundThenOffset(
+        to multiple: Double,
+        direction: RoundingOffsetDirection = .down,
+        by offset: Double
+    ) -> Double {
+        return self
+        .roundTo(multiple)
+        .offset(direction: direction, by: offset)
     }
 }
 
