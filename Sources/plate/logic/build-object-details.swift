@@ -199,5 +199,3 @@ public struct BuildObjectList: Codable {
         self.objects = objects
     }
 }
-
-
