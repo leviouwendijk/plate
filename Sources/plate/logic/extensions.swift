@@ -33,7 +33,7 @@ extension String {
         return self.replacingOccurrences(of: "$HOME", with: home)
     }
 
-    func strippingExportPrefix() -> String {
+    public func strippingExportPrefix() -> String {
         let prefix = "export "
         if self.hasPrefix(prefix) {
             return String(self.dropFirst(prefix.count))
@@ -41,7 +41,7 @@ extension String {
         return self
     }
     
-    func strippingEnclosingQuotes() -> String {
+    public func strippingEnclosingQuotes() -> String {
         guard self.count >= 2 else {
             return self
         }
