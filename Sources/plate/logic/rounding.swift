@@ -67,6 +67,10 @@ extension Int: Roundable {
     public func roundTo(_ multiple: Int) -> Int {
         return ((self / multiple) * multiple)
     }
+
+    public func string() -> String {
+        return String(self)
+    }
 }
 
 public protocol StringRoundable {
