@@ -43,20 +43,20 @@ public func splitFile(_ resource: String) -> SplitResource {
     return SplitResource(name: filename, filetype: filetype)
 }
 
-// // helper for cross-lib importing
-// public enum PlateResources {
-//     public static var bundle: Bundle {
-//         #if SWIFT_PACKAGE
-//         return Bundle.module
-//         #else
-//         return Bundle(for: PlateResources.self)
-//         #endif
-//     }
+// helper for cross-lib importing
+public enum PlateResources {
+    public static var bundle: Bundle {
+        #if SWIFT_PACKAGE
+        return Bundle.module
+        #else
+        return Bundle(for: PlateResources.self)
+        #endif
+    }
 
-//     public static func url(
-//         forResource name: String,
-//         withExtension ext: String
-//     ) -> URL? {
-//         return bundle.url(forResource: name, withExtension: ext)
-//     }
-// }
+    public static func url(
+        forResource name: String,
+        withExtension ext: String
+    ) -> URL? {
+        return bundle.url(forResource: name, withExtension: ext)
+    }
+}
