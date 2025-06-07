@@ -72,7 +72,7 @@ extension Double {
         formatter.maximumFractionDigits = decimals
         formatter.minimumFractionDigits = decimals
 
-        if let decim = thousandsSeparator {
+        if let decim = decimalSeparator {
             formatter.decimalSeparator = decim
         }
 
