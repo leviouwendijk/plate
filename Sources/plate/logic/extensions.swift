@@ -55,6 +55,32 @@ extension String {
     }
 }
 
+extension Double {
+    public func display(
+        decimals: Int = 2,
+        thousandsSeparator: String? = ",",
+        decimalSeparator: String? = ".",
+
+    ) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+
+        if let thousands = thousandsSeparator {
+            formatter.groupingSeparator = thousands
+        }
+
+        formatter.maximumFractionDigits = decimals
+        formatter.minimumFractionDigits = decimals
+
+        if let decim = thousandsSeparator {
+            formatter.decimalSeparator = decim
+        }
+
+        let number = NSNumber(value: self)
+        return formatter.string(from: number) ?? "n/a (plate/extensions)"
+    }
+}
+
 extension View {
     @ViewBuilder
     public func hide(when hideCondition: Bool) -> some View {
