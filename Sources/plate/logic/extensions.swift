@@ -53,6 +53,10 @@ extension String {
         }
         return self
     }
+
+    public func strippingUnderscores() -> String {
+        return self.replacingOccurrences(of: "_", with: "")
+    }
 }
 
 extension Double {
