@@ -57,6 +57,21 @@ extension String {
     public func strippingUnderscores() -> String {
         return self.replacingOccurrences(of: "_", with: "")
     }
+
+    public func strippingDots() -> String {
+        return self.replacingOccurrences(of: ".", with: "")
+    }
+
+    public func strippingCommas() -> String {
+        return self.replacingOccurrences(of: ",", with: "")
+    }
+
+    public func cleanedNumberInput() -> String {
+        return self
+        .strippingUnderscores()
+        .strippingDots()
+        .strippingCommas()
+    }
 }
 
 extension Double {
