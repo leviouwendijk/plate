@@ -111,6 +111,12 @@ extension View {
     }
 }
 
+public enum WrittenDateLocale: String, RawRepresentable {
+    case us = "en_US"
+    case nl = "nl_NL"
+    case gb = "en_GB"
+}
+
 extension Date {
     /// e.g. “07/06/2025”
     public func conventional() -> String {
@@ -127,9 +133,11 @@ extension Date {
     }
 
     /// e.g. “Monday, 7 June”
-    public func written() -> String {
+    public func written(
+        locale: WrittenDateLocale = .nl
+    ) -> String {
         let fmt = DateFormatter()
-        fmt.locale = Locale(identifier: "nl_NL")  // Dutch
+        fmt.locale = Locale(identifier: locale.rawValue)
         fmt.dateFormat = "EEEE, d MMMM"
         return fmt.string(from: self)
     }
