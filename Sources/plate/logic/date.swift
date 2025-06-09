@@ -125,7 +125,6 @@ public enum DateStyle {
     case dateTime
 }
 
-
 extension Date: DateTimeFormattable {
     public func format(
         to timezone: CustomTimeZone = .amsterdam,

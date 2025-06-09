@@ -110,3 +110,27 @@ extension View {
         }
     }
 }
+
+extension Date {
+    /// e.g. “07/06/2025”
+    func conventional() -> String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "dd/MM/yyyy"
+        return fmt.string(from: self)
+    }
+
+    /// e.g. “14:30”
+    func time() -> String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "HH:mm"
+        return fmt.string(from: self)
+    }
+
+    /// e.g. “Monday, 7 June”
+    func written() -> String {
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "nl_NL")  // Dutch
+        fmt.dateFormat = "EEEE, d MMMM"
+        return fmt.string(from: self)
+    }
+}
