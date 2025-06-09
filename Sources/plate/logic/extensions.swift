@@ -134,7 +134,7 @@ extension Date {
 
     /// e.g. “Monday, 7 June”
     public func written(
-        locale: WrittenDateLocale = .nl
+        in locale: WrittenDateLocale = .nl
     ) -> String {
         let fmt = DateFormatter()
         fmt.locale = Locale(identifier: locale.rawValue)
