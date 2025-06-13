@@ -142,3 +142,7 @@ extension Date {
         return fmt.string(from: self)
     }
 }
+
+public extension Font {
+    static let tableLine = Font.system(size: 14, weight: .regular, design: .default)
+}
