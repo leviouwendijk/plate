@@ -20,6 +20,13 @@ extension String {
         return self.replacingOccurrences(of: placeholder, with: replacement)
     }
 
+    public func replaceVariable(
+        replacing placeholder: String,
+        with replacement: String
+    ) -> String {
+        return self.replacingOccurrences(of: placeholder, with: replacement)
+    }
+
     public func replaceSimplePlaceholders(with values: [String: String]) -> String {
         var replaced = ""
         for (placeholder, value) in values {

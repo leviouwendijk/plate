@@ -72,16 +72,24 @@ public struct StringTemplateConverter {
         self.replacements = replacements
     }
 
-    public func replace() -> String {
+    public func replace(replaceEmpties: Bool = false) -> String {
         var t = text
         
         for r in replacements {
             for p in r.placeholders {
-                t = t
-                .replaceNotEmptyVariable(
-                    replacing: p,
-                    with: r.replacement
-                )
+                if !replaceEmpties {
+                    t = t
+                    .replaceNotEmptyVariable(
+                        replacing: p,
+                        with: r.replacement
+                    )
+                } else {
+                    t = t
+                    .replaceVariable(
+                        replacing: p,
+                        with: r.replacement
+                    )
+                }
             }
         }
 
