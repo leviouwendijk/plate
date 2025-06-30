@@ -79,6 +79,10 @@ extension String {
         .strippingDots()
         .strippingCommas()
     }
+
+    public func strippingBreaks() -> String {
+        return self.replacingOccurrences(of: "<br>", with: "")
+    }
 }
 
 extension Double {
