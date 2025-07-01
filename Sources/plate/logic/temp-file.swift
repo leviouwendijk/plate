@@ -4,14 +4,18 @@ public enum TemporaryFileError: Error {
     case writeError(String)
 }
 
-public func writeToTemporaryFile(content: String, fileExtension: String) throws -> URL {
+public func writeToTemporaryFile(
+    content: String,
+    fileExtension: String,
+    encoding: String.Encoding = .utf8
+) throws -> URL {
     let tempDirectory = FileManager.default.temporaryDirectory
     let fileURL = tempDirectory
         .appendingPathComponent(UUID().uuidString)
         .appendingPathExtension(fileExtension)
 
     do {
-        try content.write(to: fileURL, atomically: true, encoding: .utf8)
+        try content.write(to: fileURL, atomically: true, encoding: encoding)
         return fileURL
     } catch {
         let message = "Error writing to temporary file at \(fileURL.path): \(error.localizedDescription)"
@@ -20,8 +24,11 @@ public func writeToTemporaryFile(content: String, fileExtension: String) throws 
 }
 
 extension String {
-    public func tempFile(fileExtension: String) throws -> URL {
-        let url = try writeToTemporaryFile(content: self, fileExtension: fileExtension)
+    public func tempFile(
+        fileExtension: String,
+        encoding: String.Encoding = .utf8
+    ) throws -> URL {
+        let url = try writeToTemporaryFile(content: self, fileExtension: fileExtension, encoding: encoding)
         return url
     }
 }
