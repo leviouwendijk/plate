@@ -55,6 +55,7 @@ public enum CustomTimeZone: String {
 public enum DateConversionError: Error {
     case invalidDateComponents
     case invalidStringFormat
+    case cannotExtractDateParts
 }
 
 public enum DateFormattingError: Error {
@@ -94,7 +95,7 @@ public enum DateParserFormatting: Sendable {
     case mmDDyyyy
     case yyyyDDmm
     
-    public func components(_ parts: [String]) throws -> DateComponents {
+    public func components(from parts: [String]) throws -> DateComponents {
         let year: Int?
         let month: Int?
         let day: Int?
@@ -151,27 +152,34 @@ public enum DateParserFormatting: Sendable {
 
 // String -> DateComponents
 public protocol DateRetrievable {
-    func date(_ timezone: CustomTimeZone, separator: String?, as format: DateParserFormatting) throws -> Date
+    func date(_ timezone: CustomTimeZone, as format: DateParserFormatting) throws -> Date
 }
 
-extension String: DateRetrievable {
-    public func date(
-        _ timezone: CustomTimeZone = .amsterdam,
-        separator: String? = nil,
-        as format: DateParserFormatting = .yyyyMMdd
-    ) throws -> Date {
-        let separators = separator.map { [$0] } ?? ["-", "/", ".", "_"]
-
+extension String {
+    public func dateParts(by separators: [String] = ["-", "/", ".", "_"]) throws -> [String] { 
         for sep in separators {
             let parts = self.components(separatedBy: sep)
             guard parts.count == 3 else { continue }
-            
-            let comps = try format.components(parts)
-            
-            return try comps.toDate(using: .current, timezone)
+
+            return parts
         }
 
-        throw DateConversionError.invalidStringFormat
+        throw DateConversionError.cannotExtractDateParts
+    }
+}
+
+extension String: DateRetrievable {
+    public func dateComponents(as format: DateParserFormatting = .yyyyMMdd) throws -> DateComponents {
+        let parts = try self.dateParts()
+        return try format.components(from: parts)
+    }
+
+    public func date(
+        _ timezone: CustomTimeZone = .amsterdam,
+        as format: DateParserFormatting = .yyyyMMdd
+    ) throws -> Date {
+        let comps = try self.dateComponents(as: format)
+        return try comps.toDate(using: .current, timezone)
     }
 }
 
