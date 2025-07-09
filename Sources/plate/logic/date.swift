@@ -156,7 +156,7 @@ public protocol DateRetrievable {
 }
 
 extension String {
-    public func dateParts(by separators: [String] = ["-", "/", ".", "_"]) throws -> [String] { 
+    public func dateParts(by separators: [String] = ["-", "/", ".", "_", " "]) throws -> [String] { 
         for sep in separators {
             let parts = self.components(separatedBy: sep)
             guard parts.count == 3 else { continue }
