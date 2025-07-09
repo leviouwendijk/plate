@@ -89,29 +89,37 @@ extension DateComponents: DateConvertible {
 
 // String -> DateComponents
 public protocol DateRetrievable {
-    func date(_ timezone: CustomTimeZone, separator: String) throws -> Date
+    func date(_ timezone: CustomTimeZone, separator: String?) throws -> Date
 }
 
 extension String: DateRetrievable {
-    public func date(_ timezone: CustomTimeZone = .amsterdam, separator: String = "-") throws -> Date {
-        let components = self.split(separator: separator)
+    public func date(
+        _ timezone: CustomTimeZone = .amsterdam,
+        separator: String? = nil
+    ) throws -> Date {
+        let separators = separator.map { [$0] } ?? ["-", "/", ".", "_"]
 
-        guard components.count == 3,
-            components[0].count == 4,
-            components[1].count == 2,
-            components[2].count == 2,
-            let year = Int(components[0]), 
-            let month = Int(components[1]), 
-            let day = Int(components[2]) else {
-            throw DateConversionError.invalidStringFormat
+        for sep in separators {
+            let components = self.components(separatedBy: sep)
+            guard components.count == 3,
+                  components[0].count == 4,
+                  components[1].count == 2,
+                  components[2].count == 2,
+                  let year = Int(components[0]),
+                  let month = Int(components[1]),
+                  let day = Int(components[2]) else {
+                continue
+            }
+
+            var dateComponents = DateComponents()
+            dateComponents.year = year
+            dateComponents.month = month
+            dateComponents.day = day
+
+            return try dateComponents.toDate(using: .current, timezone)
         }
-        
-        var dateComponents = DateComponents()
-        dateComponents.year = year
-        dateComponents.month = month
-        dateComponents.day = day
 
-        return try dateComponents.toDate(using: .current, timezone)
+        throw DateConversionError.invalidStringFormat
     }
 }
 
