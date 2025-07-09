@@ -58,7 +58,8 @@ public enum DateConversionError: Error {
 }
 
 public enum DateFormattingError: Error {
-  case unsupportedStyle
+    case unsupportedStyle
+    case badStringForSelectedFormat
 }
 
 // func defaultDate() -> Date {
@@ -87,36 +88,77 @@ extension DateComponents: DateConvertible {
     }
 }
 
+public enum DateParserFormatting: Sendable {
+    case yyyyMMdd
+    case ddMMyyyy
+    case mmDDyyyy
+    
+    public func components(_ parts: [String]) throws -> DateComponents {
+        let year: Int?
+        let month: Int?
+        let day: Int?
+
+        switch self {
+            case .yyyyMMdd:
+                if parts[0].count == 4, parts[1].count == 2, parts[2].count == 2 {
+                    year  = Int(parts[0])
+                    month = Int(parts[1])
+                    day   = Int(parts[2])
+                } else {
+                    throw DateFormattingError.badStringForSelectedFormat
+                }
+
+            case .ddMMyyyy:
+                if parts[0].count == 2, parts[1].count == 2, parts[2].count == 4 {
+                    day   = Int(parts[0])
+                    month = Int(parts[1])
+                    year  = Int(parts[2])
+                } else {
+                    throw DateFormattingError.badStringForSelectedFormat
+                }
+
+            case .mmDDyyyy:
+                if parts[0].count == 2, parts[1].count == 2, parts[2].count == 4 {
+                    month   = Int(parts[0])
+                    day     = Int(parts[1])
+                    year    = Int(parts[2])
+                } else {
+                    throw DateFormattingError.badStringForSelectedFormat
+                }
+        }
+
+        guard let y = year, let m = month, let d = day else {
+            throw DateFormattingError.badStringForSelectedFormat
+        }
+
+        var comps = DateComponents()
+        comps.year  = y
+        comps.month = m
+        comps.day   = d
+        return comps
+    }
+}
+
 // String -> DateComponents
 public protocol DateRetrievable {
-    func date(_ timezone: CustomTimeZone, separator: String?) throws -> Date
+    func date(_ timezone: CustomTimeZone, separator: String?, as format: DateParserFormatting) throws -> Date
 }
 
 extension String: DateRetrievable {
     public func date(
         _ timezone: CustomTimeZone = .amsterdam,
-        separator: String? = nil
+        separator: String? = nil,
+        as format: DateParserFormatting = .yyyyMMdd
     ) throws -> Date {
         let separators = separator.map { [$0] } ?? ["-", "/", ".", "_"]
 
         for sep in separators {
-            let components = self.components(separatedBy: sep)
-            guard components.count == 3,
-                  components[0].count == 4,
-                  components[1].count == 2,
-                  components[2].count == 2,
-                  let year = Int(components[0]),
-                  let month = Int(components[1]),
-                  let day = Int(components[2]) else {
-                continue
-            }
-
-            var dateComponents = DateComponents()
-            dateComponents.year = year
-            dateComponents.month = month
-            dateComponents.day = day
-
-            return try dateComponents.toDate(using: .current, timezone)
+            let parts = self.components(separatedBy: sep)
+            guard parts.count == 3 else { continue }
+            
+            let comps = try format.components(parts)
+            
+            return try comps.toDate(using: .current, timezone)
         }
 
         throw DateConversionError.invalidStringFormat
