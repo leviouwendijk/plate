@@ -83,6 +83,21 @@ extension String {
     public func strippingBreaks() -> String {
         return self.replacingOccurrences(of: "<br>", with: "")
     }
+
+    public func strippingTrailingSlashes() -> String {
+        var updated = self
+        while updated.last == "/" {
+            let new = updated.dropLast()
+            updated = String(new)
+        }
+        return updated
+    }
+
+    public func strippingDomainProtocol() -> String {
+        return self
+        .replacingOccurrences(of: "http://", with: "")
+        .replacingOccurrences(of: "https://", with: "")
+    }
 }
 
 extension Double {
