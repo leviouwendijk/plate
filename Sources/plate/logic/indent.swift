@@ -10,9 +10,9 @@ extension String: StringIndentable {
         let indent = String(repeating: " ", count: spaces)
 
         return self
-            .split(separator: "\n") // Split the string into lines
-            .map { "\(indent)\($0)" } // Add indentation to each line
-            .joined(separator: "\n") // Combine lines back into a single string
+            .split(separator: "\n")
+            .map { "\(indent)\($0)" }
+            .joined(separator: "\n")
     }
 }
 
