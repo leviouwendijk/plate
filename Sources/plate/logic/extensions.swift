@@ -194,22 +194,13 @@ extension NSAttributedString {
         return type(of: self).init(attributedString: mutable)
     }
 
-    public func withFontSize(_ fontSize: CGFloat) -> Self {
+    public func applyingFontTransform(_ transform: (NSFont) -> NSFont) -> Self {
         let mutable = NSMutableAttributedString(attributedString: self)
         mutable.beginEditing()
         
-        mutable.enumerateAttribute(
-            .font,
-            in: NSRange(location: 0, length: mutable.length),
-            options: []
-        ) { value, range, _ in
-            let newFont: NSFont
-            if let old = value as? NSFont,
-                let replaced = NSFont(descriptor: old.fontDescriptor, size: fontSize) {
-                   newFont = replaced
-            } else {
-                newFont = NSFont.systemFont(ofSize: fontSize)
-            }
+        mutable.enumerateAttribute(.font, in: NSRange(location: 0, length: mutable.length), options: []) { value, range, _ in
+            let oldFont = (value as? NSFont) ?? NSFont.systemFont(ofSize: NSFont.systemFontSize)
+            let newFont = transform(oldFont)
             mutable.addAttribute(.font, value: newFont, range: range)
         }
         
@@ -217,21 +208,36 @@ extension NSAttributedString {
         return type(of: self).init(attributedString: mutable)
     }
 
-    public func withFont(_ font: NSFont) -> Self {
-        let mutable = NSMutableAttributedString(attributedString: self)
-        mutable.beginEditing()
-        
-        mutable.enumerateAttribute(
-            .font, in: NSRange(location: 0, length: mutable.length), options: []) { _, range, _ in
-            mutable.addAttribute(.font, value: font, range: range)
+    public func withFontSize(_ fontSize: CGFloat) -> Self {
+        return applyingFontTransform { oldFont in
+            return NSFont(descriptor: oldFont.fontDescriptor, size: fontSize) ?? NSFont.systemFont(ofSize: fontSize)
         }
-        
-        mutable.endEditing()
-        return type(of: self).init(attributedString: mutable)
+    }
+
+    public func withFont(_ baseFont: NSFont) -> Self {
+        let manager = NSFontManager.shared
+        return applyingFontTransform { oldFont in
+            let traits = oldFont.fontDescriptor.symbolicTraits
+            var newFont = NSFont(descriptor: baseFont.fontDescriptor, size: baseFont.pointSize) ?? baseFont
+
+            if traits.contains(.italic)      { newFont = manager.convert(newFont, toHaveTrait: .italicFontMask) }
+            if traits.contains(.bold)        { newFont = manager.convert(newFont, toHaveTrait: .boldFontMask) }
+            if traits.contains(.condensed)   { newFont = manager.convert(newFont, toHaveTrait: .condensedFontMask) }
+            if traits.contains(.expanded)    { newFont = manager.convert(newFont, toHaveTrait: .expandedFontMask) }
+            // if traits.contains(.monoSpace)   { newFont = manager.convert(newFont, toHaveTrait: .monospacedFontMask) }
+            // if traits.contains(.vertical)    { newFont = manager.convert(newFont, toHaveTrait: .verticalFontMask) }
+            // if traits.contains(.uiOptimized) { newFont = manager.convert(newFont, toHaveTrait: .uiOptimizedFontMask) }
+            // if traits.contains(.tightLeading){ newFont = manager.convert(newFont, toHaveTrait: .tightLeadingFontMask) }
+            // if traits.contains(.looseLeading){ newFont = manager.convert(newFont, toHaveTrait: .looseLeadingFontMask) }
+            // if traits.contains(.colorGlyphs) { newFont = manager.convert(newFont, toHaveTrait: .colorGlyphsFontMask) }
+            // if traits.contains(.composite)   { newFont = manager.convert(newFont, toHaveTrait: .compositeFontMask) }
+
+            return newFont
+        }
     }
 
     public func withFont(name: String, size: CGFloat) -> Self {
-        let font = NSFont(name: name, size: size) ?? NSFont.systemFont(ofSize: size)
-        return withFont(font)
+        let baseFont = NSFont(name: name, size: size) ?? NSFont.systemFont(ofSize: size, weight: .regular)
+        return withFont(baseFont)
     }
 }
