@@ -1,5 +1,9 @@
 import Foundation
 
+public enum PlateDirectoriesError: Error, LocalizedError {
+    case cannotCreateURLFromString
+}
+
 // public enum ReturnType {
 //     case url, string
 // }
@@ -13,6 +17,22 @@ public struct Home {
 
     public static func string() -> String {
         return FileManager.default.homeDirectoryForCurrentUser.path
+    }
+}
+
+public struct CWD {
+    public init() {}
+
+    public static func url() throws -> URL {
+        if let url = URL(string: FileManager.default.currentDirectoryPath) {
+            return url
+        } else {
+            throw PlateDirectoriesError.cannotCreateURLFromString
+        }
+    }
+
+    public static func string() -> String {
+        return FileManager.default.currentDirectoryPath
     }
 }
 
