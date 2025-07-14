@@ -108,6 +108,10 @@ extension String {
     public func appendingExtension(type: DocumentExtensionType) -> String {
         return self + type.dotPrefixed
     }
+
+    public func appendingNewline() -> String {
+        return self + "\n"
+    }
 }
 
 extension Double {
