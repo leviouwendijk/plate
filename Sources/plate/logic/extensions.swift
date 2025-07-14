@@ -229,4 +229,9 @@ extension NSAttributedString {
         mutable.endEditing()
         return type(of: self).init(attributedString: mutable)
     }
+
+    public func withFont(name: String, size: CGFloat) -> Self {
+        let font = NSFont(name: name, size: size) ?? NSFont.systemFont(ofSize: size)
+        return withFont(font)
+    }
 }
