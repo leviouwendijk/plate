@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import AppKit
 
 extension String {
     public func wrapJsonForCLI() -> String {
@@ -180,4 +181,16 @@ extension Date {
 
 public extension Font {
     static let tableLine = Font.system(size: 14, weight: .regular, design: .default)
+}
+
+extension NSAttributedString {
+    public func justified() -> Self {
+        let para = NSMutableParagraphStyle()
+        para.alignment = .justified
+        // para.lineSpacing = 4.0
+
+        let mutable = NSMutableAttributedString(attributedString: self)
+        mutable.addAttribute(.paragraphStyle, value: para, range: NSRange(location: 0, length: mutable.length))
+        return type(of: self).init(attributedString: mutable)
+    }
 }
