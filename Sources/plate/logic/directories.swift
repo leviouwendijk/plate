@@ -36,7 +36,7 @@ public struct CWD {
     }
 
     public static func appending(_ component: String) -> String {
-        return self.string() + component
+        return self.string() + "/" + component
     }
 }
 
