@@ -205,12 +205,25 @@ extension NSAttributedString {
         ) { value, range, _ in
             let newFont: NSFont
             if let old = value as? NSFont,
-               let replaced = NSFont(descriptor: old.fontDescriptor, size: fontSize) {
-                newFont = replaced
+                let replaced = NSFont(descriptor: old.fontDescriptor, size: fontSize) {
+                   newFont = replaced
             } else {
                 newFont = NSFont.systemFont(ofSize: fontSize)
             }
             mutable.addAttribute(.font, value: newFont, range: range)
+        }
+        
+        mutable.endEditing()
+        return type(of: self).init(attributedString: mutable)
+    }
+
+    public func withFont(_ font: NSFont) -> Self {
+        let mutable = NSMutableAttributedString(attributedString: self)
+        mutable.beginEditing()
+        
+        mutable.enumerateAttribute(
+            .font, in: NSRange(location: 0, length: mutable.length), options: []) { _, range, _ in
+            mutable.addAttribute(.font, value: font, range: range)
         }
         
         mutable.endEditing()
