@@ -34,6 +34,10 @@ public struct CWD {
     public static func string() -> String {
         return FileManager.default.currentDirectoryPath
     }
+
+    public static func appending(_ component: String) -> String {
+        return self.string() + component
+    }
 }
 
 public struct User {
