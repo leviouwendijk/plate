@@ -193,4 +193,27 @@ extension NSAttributedString {
         mutable.addAttribute(.paragraphStyle, value: para, range: NSRange(location: 0, length: mutable.length))
         return type(of: self).init(attributedString: mutable)
     }
+
+    public func withFontSize(_ fontSize: CGFloat) -> Self {
+        let mutable = NSMutableAttributedString(attributedString: self)
+        mutable.beginEditing()
+        
+        mutable.enumerateAttribute(
+            .font,
+            in: NSRange(location: 0, length: mutable.length),
+            options: []
+        ) { value, range, _ in
+            let newFont: NSFont
+            if let old = value as? NSFont,
+               let replaced = NSFont(descriptor: old.fontDescriptor, size: fontSize) {
+                newFont = replaced
+            } else {
+                newFont = NSFont.systemFont(ofSize: fontSize)
+            }
+            mutable.addAttribute(.font, value: newFont, range: range)
+        }
+        
+        mutable.endEditing()
+        return type(of: self).init(attributedString: mutable)
+    }
 }
