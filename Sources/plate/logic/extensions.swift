@@ -98,6 +98,15 @@ extension String {
         .replacingOccurrences(of: "http://", with: "")
         .replacingOccurrences(of: "https://", with: "")
     }
+
+    public func strippingExtension(type: DocumentExtensionType) -> String {
+        return self
+        .replacingOccurrences(of: type.dotPrefixed, with: "")
+    }
+
+    public func appendingExtension(type: DocumentExtensionType) -> String {
+        return self + type.dotPrefixed
+    }
 }
 
 extension Double {
