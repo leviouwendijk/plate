@@ -1,5 +1,9 @@
 import Foundation
 
+public enum DocumentExtensionError: Error {
+    case unsupportedExtension(filename: String)
+}
+
 public enum DocumentExtensionType: String, CaseIterable {
     case txt
     case md
@@ -29,5 +33,25 @@ public enum DocumentExtensionType: String, CaseIterable {
 
     public var dotPrefixed: String {
         return ".\(self.rawValue)"
+    }
+
+    public init?(fileExtension: String) {
+        let cleaned = fileExtension.hasPrefix(".") ? String(fileExtension.dropFirst()).lowercased() : fileExtension.lowercased()
+        self.init(rawValue: cleaned)
+    }
+
+    public init(filename: String) throws {
+        let lowercased = filename.lowercased()
+
+        let sorted = DocumentExtensionType.allCases
+            .sorted { $0.dotPrefixed.count > $1.dotPrefixed.count }
+
+        for ext in sorted {
+            if lowercased.hasSuffix(ext.dotPrefixed) {
+                self = ext
+                return
+            }
+        }
+        throw DocumentExtensionError.unsupportedExtension(filename: filename)
     }
 }
