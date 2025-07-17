@@ -27,6 +27,11 @@ public enum DocumentExtensionType: String, RawRepresentable, CaseIterable, Codab
     case epub
     case mobi
 
+    case png
+    case jpg
+    case jpeg
+    case webp
+
     case xml
     case json
     case yaml
