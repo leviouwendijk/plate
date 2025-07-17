@@ -31,6 +31,8 @@ public enum DocumentExtensionType: String, RawRepresentable, CaseIterable, Codab
     case yaml
     case yml
 
+    case base64
+
     public var dotPrefixed: String {
         return ".\(self.rawValue)"
     }
