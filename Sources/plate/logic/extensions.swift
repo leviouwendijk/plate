@@ -117,6 +117,16 @@ extension String {
         return self
         .replacingOccurrences(of: "_", with: "-")
     }
+
+    public func strippingHtmlWidthAttributes() -> String {
+        return self
+        .replacingOccurrences(
+            of: #"width="\{\{.+?\}\}"#, 
+            with: "",
+            options: .regularExpression
+        )
+        .trimmingCharacters(in: CharacterSet.whitespaces)
+    }
 }
 
 extension Double {
