@@ -112,6 +112,11 @@ extension String {
     public func appendingNewline() -> String {
         return self + "\n"
     }
+
+    public func underscoresToHyphens() -> String {
+        return self
+        .replacingOccurrences(of: "_", with: "-")
+    }
 }
 
 extension Double {
