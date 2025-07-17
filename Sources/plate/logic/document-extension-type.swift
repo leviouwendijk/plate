@@ -10,6 +10,7 @@ public enum DocumentExtensionType: String, RawRepresentable, CaseIterable, Codab
     case norg
     case html
     case pdf
+    case css
 
     case doc
     case docx
