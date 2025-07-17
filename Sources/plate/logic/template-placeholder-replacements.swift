@@ -1,11 +1,11 @@
 import Foundation
 
-public enum PlaceholderInitializationType {
+public enum PlaceholderInitializationType: String, RawRepresentable, CaseIterable, Sendable {
     case manual
     case auto
 }
 
-public struct PlaceholderSyntax {
+public struct PlaceholderSyntax: Sendable {
     public let prepending: String
     public let appending: String
     public let repeating: Int
@@ -33,7 +33,7 @@ public struct PlaceholderSyntax {
     }
 }
 
-public struct StringTemplateReplacement {
+public struct StringTemplateReplacement: Sendable {
     public let placeholders: [String]
     public let replacement: String
 
@@ -60,7 +60,7 @@ public struct StringTemplateReplacement {
     }
 }
 
-public struct StringTemplateConverter {
+public struct StringTemplateConverter: Sendable {
     public let text: String
     public let replacements: [StringTemplateReplacement]
 
