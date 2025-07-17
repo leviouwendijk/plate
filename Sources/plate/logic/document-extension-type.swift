@@ -1,10 +1,10 @@
 import Foundation
 
-public enum DocumentExtensionError: Error {
+public enum DocumentExtensionError: Error, Sendable {
     case unsupportedExtension(filename: String)
 }
 
-public enum DocumentExtensionType: String, CaseIterable {
+public enum DocumentExtensionType: String, RawRepresentable, CaseIterable, Sendable {
     case txt
     case md
     case norg
