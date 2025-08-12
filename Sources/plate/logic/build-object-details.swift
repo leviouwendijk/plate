@@ -21,6 +21,7 @@ public enum ExecutableObjectType: String, RawRepresentable, Codable, Sendable {
     case binary
     case application
     case script
+    case specification
 }
 
 public enum ObjectVersionLevel: String, RawRepresentable, Codable, CaseIterable, Sendable {
