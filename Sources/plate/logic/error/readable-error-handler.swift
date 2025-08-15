@@ -12,7 +12,12 @@ public struct ReadableErrorHandler: Sendable {
     /// Decodes two JSON arrays-of-strings and prints a colored, contextual diff.
     /// Returns true when equal, false otherwise.
     @discardableResult
-    public func diffTokens(expected: Data, actual: Data, atPath: String) -> Bool {
+    public func diffTokens(
+        expected: Data,
+        actual: Data,
+        atPath: String,
+        lineForIndex: ((Int) -> Int)? = nil
+    ) -> Bool {
         guard
             let e = try? JSONSerialization.jsonObject(with: expected) as? [String],
             let a = try? JSONSerialization.jsonObject(with: actual)   as? [String]
@@ -20,12 +25,13 @@ public struct ReadableErrorHandler: Sendable {
             return expected == actual
         }
         if e == a { return true }
-        printTokenArrayDiff(exp: e, act: a, atPath: atPath)
+        printTokenArrayDiff(exp: e, act: a, atPath: atPath, lineForIndex: lineForIndex)
         return false
     }
 
     /// Parses arbitrary JSON (objects/arrays) and shows first differing JSONPath
     /// with pretty-printed, colored expected vs actual. Returns true when equal.
+    // === JSON diff: add spacing + arrow summary ===
     @discardableResult
     public func diffJSON(expected: Data, actual: Data, atPath: String) -> Bool {
         func parse(_ d: Data) -> Any? { try? JSONSerialization.jsonObject(with: d, options: []) }
@@ -35,24 +41,46 @@ public struct ReadableErrorHandler: Sendable {
             let hdr = indent("first differing path: \(cc(path, .cyan))")
             print(hdr)
             print(indent("expected: \(pretty(ev))"))
+            print("") // spacing
             print(indent("  actual: \(pretty(av))"))
+            print("") // spacing
+            print(indent("-->> \(cc(pretty(ev), .yellow))  \(cc("→", .bold))  \(cc(pretty(av), .yellow))"))
         }
         return false
     }
 
-    // Tokens diff
-    private func printTokenArrayDiff(exp e: [String], act a: [String], atPath: String) {
+    // === Tokens diff: add spacing + optional line + arrow summary ===
+    private func printTokenArrayDiff(
+        exp e: [String],
+        act a: [String],
+        atPath: String,
+        lineForIndex: ((Int) -> Int)?
+    ) {
         let i = firstIndexOfDifference(e, a) ?? min(e.count, a.count)
         let start = max(0, i - context)
         let endE  = min(e.count, i + context + 1)
         let endA  = min(a.count, i + context + 1)
 
+        let lineTag: String = {
+            if let ln = lineForIndex?(i) { return "[\(ln)]" }
+            return "[tok \(i)]"
+        }()
+
         print(indent("first differing index: \(i)"))
+
         print(indent("… expected[\(start)..<\(endE)]:"))
         print(indent(renderSlice(e, start..<endE, highlightAt: i)))
+        print("") // spacing
 
         print(indent("…   actual[\(start)..<\(endA)]:"))
         print(indent(renderSlice(a, start..<endA, highlightAt: i)))
+        print("") // spacing
+
+        // short summary lines
+        let expTok = i < e.count ? e[i] : cc("<missing>", .red)
+        let actTok = i < a.count ? a[i] : cc("<missing>", .red)
+        print(indent("\(lineTag): -->> \(cc(expTok, .yellow))"))
+        print(indent("\(lineTag): -->> \(cc(actTok, .yellow))"))
     }
 
     private func renderSlice(_ arr: [String], _ range: Range<Int>, highlightAt hi: Int) -> String {
