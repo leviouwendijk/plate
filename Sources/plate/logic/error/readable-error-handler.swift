@@ -16,7 +16,8 @@ public struct ReadableErrorHandler: Sendable {
         expected: Data,
         actual: Data,
         atPath: String,
-        lineForIndex: ((Int) -> Int)? = nil
+        lineForExpectedIndex: ((Int) -> Int)? = nil,
+        lineForActualIndex:   ((Int) -> Int)? = nil
     ) -> Bool {
         guard
             let e = try? JSONSerialization.jsonObject(with: expected) as? [String],
@@ -25,7 +26,11 @@ public struct ReadableErrorHandler: Sendable {
             return expected == actual
         }
         if e == a { return true }
-        printTokenArrayDiff(exp: e, act: a, atPath: atPath, lineForIndex: lineForIndex)
+        printTokenArrayDiff(
+            exp: e, act: a, atPath: atPath,
+            lineForExpectedIndex: lineForExpectedIndex,
+            lineForActualIndex:   lineForActualIndex
+        )
         return false
     }
 
@@ -54,7 +59,8 @@ public struct ReadableErrorHandler: Sendable {
         exp e: [String],
         act a: [String],
         atPath: String,
-        lineForIndex: ((Int) -> Int)?
+        lineForExpectedIndex: ((Int) -> Int)?,
+        lineForActualIndex:   ((Int) -> Int)?
     ) {
         let i = firstIndexOfDifference(e, a) ?? min(e.count, a.count)
         let start = max(0, i - context)
@@ -62,40 +68,60 @@ public struct ReadableErrorHandler: Sendable {
         let endA  = min(a.count, i + context + 1)
 
         let lineTag: String = {
-            if let ln = lineForIndex?(i) { return "[\(ln)]" }
+            if let ln = lineForActualIndex?(i) { return "[\(ln)]" }
             return "[tok \(i)]"
         }()
 
         print(indent("first differing index: \(i)"))
 
         print(indent("… expected[\(start)..<\(endE)]:"))
-        print(indent(renderSlice(e, start..<endE, highlightAt: i)))
+        let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForExpectedIndex)
+        print(indentAll(expBlock))
         print("") // spacing
 
         print(indent("…   actual[\(start)..<\(endA)]:"))
-        print(indent(renderSlice(a, start..<endA, highlightAt: i)))
+        let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForActualIndex)
+        print(indentAll(actBlock))
         print("") // spacing
 
-        // short summary lines
         let expTok = i < e.count ? e[i] : cc("<missing>", .red)
         let actTok = i < a.count ? a[i] : cc("<missing>", .red)
         print(indent("\(lineTag): -->> \(cc(expTok, .yellowBackground, .black))"))
         print(indent("\(lineTag): -->> \(cc(actTok, .yellowBackground, .black))"))
     }
 
-    private func renderSlice(_ arr: [String], _ range: Range<Int>, highlightAt hi: Int) -> String {
-        var out: [String] = []
+    private func renderSlice(
+        _ arr: [String],
+        _ range: Range<Int>,
+        highlightAt hi: Int,
+        lineForIndex: ((Int) -> Int)?
+    ) -> String {
+        var out = ""
+        var lastLine: Int? = nil
+        var atLineStart = true
+
         for idx in range {
-            let t = arr[idx]
-            if idx == hi {
-                // choose your style:
-                // out.append(cc(t, .bold, .brightRedBackground, .white)) // strong highlight
-                out.append(cc(t, .bold, .red)) // simpler highlight
+            let raw = arr[idx]
+            let tok = (idx == hi) ? cc(raw, .bold, .red) : raw
+
+            if let lf = lineForIndex {
+                let ln = lf(idx)
+                if let l = lastLine, ln > l {
+                    out.append("\n")           // preserve newline(s)
+                    atLineStart = true
+                } else if !atLineStart {
+                    out.append(" ")
+                }
+                out.append(tok)
+                lastLine = (lastLine == nil) ? ln : lastLine.map { max($0, ln) }
+                atLineStart = false
             } else {
-                out.append(t)
+                // fallback: single line with spaces
+                if !out.isEmpty { out.append(" ") }
+                out.append(tok)
             }
         }
-        return out.joined(separator: " ")
+        return out
     }
 
     private func firstIndexOfDifference(_ e: [String], _ a: [String]) -> Int? {
@@ -175,6 +201,14 @@ public struct ReadableErrorHandler: Sendable {
     }
 
     private func indent(_ s: String) -> String { "      " + s }
+
+    private func indentAll(_ s: String) -> String {
+        let pre = String(repeating: " ", count: 6)
+        // preserve empty lines too
+        return s.split(separator: "\n", omittingEmptySubsequences: false)
+                .map { pre + $0 }
+                .joined(separator: "\n")
+    }
 
     // Bridge to your existing ANSI helpers without needing an array overload.
     private func cc(_ s: String, _ colors: ANSIColor...) -> String {
