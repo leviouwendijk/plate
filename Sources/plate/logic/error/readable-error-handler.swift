@@ -9,8 +9,6 @@ public struct ReadableErrorHandler: Sendable {
         self.useColor = useColor
     }
 
-    /// Decodes two JSON arrays-of-strings and prints a colored, contextual diff.
-    /// Returns true when equal, false otherwise.
     @discardableResult
     public func diffTokens(
         expected: Data,
@@ -25,13 +23,10 @@ public struct ReadableErrorHandler: Sendable {
             return expected == actual
         }
         if e == a { return true }
-        printTokenArrayDiff(exp: e, act: a, atPath: atPath, lineForIndex: lineForIndex) // <— pass it through
+        printTokenArrayDiff(exp: e, act: a, atPath: atPath, lineForIndex: lineForIndex)
         return false
     }
 
-    /// Parses arbitrary JSON (objects/arrays) and shows first differing JSONPath
-    /// with pretty-printed, colored expected vs actual. Returns true when equal.
-    // === JSON diff: add spacing + arrow summary ===
     @discardableResult
     public func diffJSON(expected: Data, actual: Data, atPath: String) -> Bool {
         func parse(_ d: Data) -> Any? { try? JSONSerialization.jsonObject(with: d, options: []) }
@@ -65,14 +60,15 @@ public struct ReadableErrorHandler: Sendable {
             return "[tok \(i)]"
         }()
 
-        print("first differing index: \(i)".indent())
+        print("first differing index: \(i)".indent().ansi(.italic))
+        print()
 
-        print("… expected[\(start)..<\(endE)]:".indent())
+        print("… expected[\(start)..<\(endE)]:".ansi(.italic, .underline))
         let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex)
         print(expBlock.indent())
         print()
 
-        print("…   actual[\(start)..<\(endA)]:".indent())
+        print("… actual[\(start)..<\(endA)]:".ansi(.italic, .underline))
         let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex)
         print(actBlock.indent())
         print()
@@ -123,7 +119,6 @@ public struct ReadableErrorHandler: Sendable {
         return (i < n || e.count != a.count) ? i : nil
     }
 
-    // Generic JSON diff helpers (first difference)
     private func deepEqual(_ x: Any, _ y: Any) -> Bool {
         switch (x, y) {
         case let (dx as [String: Any], dy as [String: Any]):
@@ -164,7 +159,6 @@ public struct ReadableErrorHandler: Sendable {
         }
     }
 
-    // Pretty + ANSI
     private func pretty(_ v: Any) -> String {
         if let s = v as? String {
             let escaped = s
@@ -192,17 +186,6 @@ public struct ReadableErrorHandler: Sendable {
         return cc(String(describing: v), .yellow)
     }
 
-    // private func indent(_ s: String) -> String { "      " + s }
-
-    // private func indentAll(_ s: String) -> String {
-    //     let pre = String(repeating: " ", count: 6)
-    //     // preserve empty lines too
-    //     return s.split(separator: "\n", omittingEmptySubsequences: false)
-    //             .map { pre + $0 }
-    //             .joined(separator: "\n")
-    // }
-
-    // Bridge to your existing ANSI helpers without needing an array overload.
     private func cc(_ s: String, _ colors: ANSIColor...) -> String {
         guard useColor, !colors.isEmpty else { return s }
         let prefix = colors.map { $0.rawValue }.joined()
