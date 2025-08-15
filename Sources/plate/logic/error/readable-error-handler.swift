@@ -66,12 +66,12 @@ public struct ReadableErrorHandler: Sendable {
         print()
 
         print("expected[\(start)..<\(endE)]:".ansi(.underline).indent())
-        let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex, ansiColor: .greenBackground)
+        let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex, ansiColor: .red)
         print(expBlock.indent(times: 2))
         print()
 
         print("actual[\(start)..<\(endA)]:".ansi(.underline).indent())
-        let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex, ansiColor: .redBackground)
+        let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex, ansiColor: .red)
         print(actBlock.indent(times: 2))
         print()
 
