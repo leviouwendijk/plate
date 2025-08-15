@@ -60,7 +60,7 @@ public struct ReadableErrorHandler: Sendable {
             return "[tok \(i)]"
         }()
 
-        print("(!) mismatch".ansi(.brightBlack))
+        print("(!) mismatch detected by diff handler".ansi(.brightBlack))
         print()
         print("first differing index: \(i)".ansi())
         print()

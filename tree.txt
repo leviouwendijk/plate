@@ -1,0 +1,80 @@
+plate/
+└── Package.swift
+└── Sources/
+    └── plate/
+        └── Resources/
+            └── resources.html
+        └── logic/
+            └── align.swift
+            └── ansi.swift
+            └── api.swift
+            └── ascii.swift
+            └── base64.swift
+            └── box.swift
+            └── build-object-details.swift
+            └── build-object-spec.swift
+            └── bundle.swift
+            └── capitalization.swift
+            └── case-conversion.swift
+            └── clipboard-copy.swift
+            └── convert-types.swift
+            └── custom-string-convertible-with-newlines.swift
+            └── date/
+                └── date-components-convertible.swift
+                └── date-components.swift
+                └── date-custom-timezone.swift
+                └── date-display-style.swift
+                └── date-error.swift
+                └── date-formattable.swift
+                └── date-parser-formatting.swift
+                └── date-string-retrievable.swift
+            └── debug.swift
+            └── directories.swift
+            └── document-extension-type.swift
+            └── dotenv.swift
+            └── error/
+                └── readable-error-handler.swift
+            └── extensions.swift
+            └── file.swift
+            └── hash.swift
+            └── indent.swift
+            └── indexable-dictionary.swift
+            └── json.swift
+            └── kilometer-codes.swift
+            └── language-specifier.swift
+            └── llm.swift
+            └── load-key.swift
+            └── multi-error.swift
+            └── network-request.swift
+            └── newline.swift
+            └── norg.swift
+            └── obscure.swift
+            └── path-opener.swift
+            └── pkl.swift
+            └── printable.swift
+            └── read-file.swift
+            └── rounding.swift
+            └── spacer.swift
+            └── spacers-dividers.swift
+            └── string-remove.swift
+            └── temp-file.swift
+            └── template-placeholder-replacements.swift
+            └── time.swift
+            └── trim.swift
+            └── url.swift
+        └── plate.swift
+└── Tests/
+    └── plateTests/
+        └── dotenv-tests.swift
+        └── plateTests.swift
+└── libplate.dylib
+└── libplate.dylib.dSYM/
+    └── Contents/
+        └── Info.plist
+        └── Resources/
+            └── DWARF/
+                └── libplate.dylib
+            └── Relocations/
+                └── aarch64/
+                    └── libplate.dylib.yml
+└── remove-lib-build.sh
