@@ -60,17 +60,19 @@ public struct ReadableErrorHandler: Sendable {
             return "[tok \(i)]"
         }()
 
-        print("first differing index: \(i)".ansi(.italic))
+        print("(!) mismatch".ansi(.brightBlack))
+        print()
+        print("first differing index: \(i)".ansi())
         print()
 
-        print("… expected[\(start)..<\(endE)]:".ansi(.italic, .greenBackground))
+        print("expected[\(start)..<\(endE)]:".ansi(.italic, .greenBackground).indent())
         let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex)
-        print(expBlock.indent())
+        print(expBlock.indent(times: 2))
         print()
 
-        print("… actual[\(start)..<\(endA)]:".ansi(.italic, .redBackground))
+        print("actual[\(start)..<\(endA)]:".ansi(.italic, .redBackground).indent())
         let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex)
-        print(actBlock.indent())
+        print(actBlock.indent(times: 2))
         print()
 
         let expTok = i < e.count ? e[i] : cc("<missing>".indent(), .red)
