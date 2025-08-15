@@ -16,8 +16,7 @@ public struct ReadableErrorHandler: Sendable {
         expected: Data,
         actual: Data,
         atPath: String,
-        lineForExpectedIndex: ((Int) -> Int)? = nil,
-        lineForActualIndex:   ((Int) -> Int)? = nil
+        lineForIndex: ((Int) -> Int?)? = nil   // <— NEW
     ) -> Bool {
         guard
             let e = try? JSONSerialization.jsonObject(with: expected) as? [String],
@@ -26,11 +25,7 @@ public struct ReadableErrorHandler: Sendable {
             return expected == actual
         }
         if e == a { return true }
-        printTokenArrayDiff(
-            exp: e, act: a, atPath: atPath,
-            lineForExpectedIndex: lineForExpectedIndex,
-            lineForActualIndex:   lineForActualIndex
-        )
+        printTokenArrayDiff(exp: e, act: a, atPath: atPath, lineForIndex: lineForIndex) // <— pass it through
         return false
     }
 
@@ -54,13 +49,11 @@ public struct ReadableErrorHandler: Sendable {
         return false
     }
 
-    // === Tokens diff: add spacing + optional line + arrow summary ===
     private func printTokenArrayDiff(
         exp e: [String],
         act a: [String],
         atPath: String,
-        lineForExpectedIndex: ((Int) -> Int)?,
-        lineForActualIndex:   ((Int) -> Int)?
+        lineForIndex: ((Int) -> Int?)?          
     ) {
         let i = firstIndexOfDifference(e, a) ?? min(e.count, a.count)
         let start = max(0, i - context)
@@ -68,21 +61,21 @@ public struct ReadableErrorHandler: Sendable {
         let endA  = min(a.count, i + context + 1)
 
         let lineTag: String = {
-            if let ln = lineForActualIndex?(i) { return "[\(ln)]" }
+            if let ln = lineForIndex?(i) { return "[\(ln)]" }
             return "[tok \(i)]"
         }()
 
         print(indent("first differing index: \(i)"))
 
         print(indent("… expected[\(start)..<\(endE)]:"))
-        let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForExpectedIndex)
-        print(indentAll(expBlock))
-        print("") // spacing
+        let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex)
+        print(indentAll(expBlock))                       // <— indent every line
+        print("")                                        // spacing
 
         print(indent("…   actual[\(start)..<\(endA)]:"))
-        let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForActualIndex)
-        print(indentAll(actBlock))
-        print("") // spacing
+        let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex)
+        print(indentAll(actBlock))                       // <— indent every line
+        print("")                                        // spacing
 
         let expTok = i < e.count ? e[i] : cc("<missing>", .red)
         let actTok = i < a.count ? a[i] : cc("<missing>", .red)
@@ -94,32 +87,31 @@ public struct ReadableErrorHandler: Sendable {
         _ arr: [String],
         _ range: Range<Int>,
         highlightAt hi: Int,
-        lineForIndex: ((Int) -> Int)?
+        lineForIndex: ((Int) -> Int?)?          
     ) -> String {
         var out = ""
-        var lastLine: Int? = nil
+        var prevLine: Int? = nil
         var atLineStart = true
 
         for idx in range {
             let raw = arr[idx]
             let tok = (idx == hi) ? cc(raw, .bold, .red) : raw
+            let ln  = lineForIndex?(idx)
 
-            if let lf = lineForIndex {
-                let ln = lf(idx)
-                if let l = lastLine, ln > l {
-                    out.append("\n")           // preserve newline(s)
-                    atLineStart = true
-                } else if !atLineStart {
-                    out.append(" ")
-                }
+            if let pl = prevLine, let ln = ln, ln > pl {
+                out.append("\n")                 // preserve original return
+                atLineStart = true
+            }
+
+            if atLineStart {
                 out.append(tok)
-                lastLine = (lastLine == nil) ? ln : lastLine.map { max($0, ln) }
                 atLineStart = false
             } else {
-                // fallback: single line with spaces
-                if !out.isEmpty { out.append(" ") }
+                out.append(" ")
                 out.append(tok)
             }
+
+            prevLine = ln ?? prevLine
         }
         return out
     }
