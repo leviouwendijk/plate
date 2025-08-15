@@ -80,7 +80,7 @@ public struct ReadableErrorHandler: Sendable {
         let expTok = i < e.count ? e[i] : cc("<missing>", .red)
         let actTok = i < a.count ? a[i] : cc("<missing>", .red)
         print(indent("\(lineTag): -->> \(cc(expTok, .brightYellow))"))
-        print(indent("\(lineTag): -->> \(cc(expTok, .yellowBackground))"))
+        print(indent("\(lineTag): -->> \(cc(expTok, .yellowBackground, .black))"))
         print(indent("\(lineTag): -->> \(cc(actTok, .yellow))"))
     }
 
