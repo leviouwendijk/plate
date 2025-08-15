@@ -16,7 +16,7 @@ public struct ReadableErrorHandler: Sendable {
         expected: Data,
         actual: Data,
         atPath: String,
-        lineForIndex: ((Int) -> Int?)? = nil   // <— NEW
+        lineForIndex: ((Int) -> Int?)? = nil
     ) -> Bool {
         guard
             let e = try? JSONSerialization.jsonObject(with: expected) as? [String],
@@ -38,13 +38,13 @@ public struct ReadableErrorHandler: Sendable {
         guard let e = parse(expected), let a = parse(actual) else { return expected == actual }
         if deepEqual(e, a) { return true }
         if let (path, ev, av) = firstDiff(e, a) {
-            let hdr = indent("first differing path: \(cc(path, .cyan))")
+            let hdr = "first differing path: \(cc(path, .cyan))".indent()
             print(hdr)
-            print(indent("expected: \(pretty(ev))"))
-            print("") // spacing
-            print(indent("  actual: \(pretty(av))"))
-            print("") // spacing
-            print(indent("-->> \(cc(pretty(ev), .yellow))  \(cc("→", .bold))  \(cc(pretty(av), .yellow))"))
+            print("expected: \(pretty(ev))".indent())
+            print()
+            print("actual: \(pretty(av))".indent())
+            print()
+            print("-->> \(cc(pretty(ev), .yellow))  \(cc("→", .bold))  \(cc(pretty(av), .yellow))".indent())
         }
         return false
     }
@@ -65,22 +65,22 @@ public struct ReadableErrorHandler: Sendable {
             return "[tok \(i)]"
         }()
 
-        print(indent("first differing index: \(i)"))
+        print("first differing index: \(i)".indent())
 
-        print(indent("… expected[\(start)..<\(endE)]:"))
+        print("… expected[\(start)..<\(endE)]:".indent())
         let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex)
-        print(indentAll(expBlock))                       // <— indent every line
-        print("")                                        // spacing
+        print(expBlock.indent())
+        print()
 
-        print(indent("…   actual[\(start)..<\(endA)]:"))
+        print("…   actual[\(start)..<\(endA)]:".indent())
         let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex)
-        print(indentAll(actBlock))                       // <— indent every line
-        print("")                                        // spacing
+        print(actBlock.indent())
+        print()
 
-        let expTok = i < e.count ? e[i] : cc("<missing>", .red)
-        let actTok = i < a.count ? a[i] : cc("<missing>", .red)
-        print(indent("\(lineTag): -->> \(cc(expTok, .yellowBackground, .black))"))
-        print(indent("\(lineTag): -->> \(cc(actTok, .yellowBackground, .black))"))
+        let expTok = i < e.count ? e[i] : cc("<missing>".indent(), .red)
+        let actTok = i < a.count ? a[i] : cc("<missing>".indent(), .red)
+        print("\(lineTag): -->> \(cc(expTok, .yellowBackground, .black))".indent())
+        print("\(lineTag): -->> \(cc(actTok, .yellowBackground, .black))".indent())
     }
 
     private func renderSlice(
@@ -192,15 +192,15 @@ public struct ReadableErrorHandler: Sendable {
         return cc(String(describing: v), .yellow)
     }
 
-    private func indent(_ s: String) -> String { "      " + s }
+    // private func indent(_ s: String) -> String { "      " + s }
 
-    private func indentAll(_ s: String) -> String {
-        let pre = String(repeating: " ", count: 6)
-        // preserve empty lines too
-        return s.split(separator: "\n", omittingEmptySubsequences: false)
-                .map { pre + $0 }
-                .joined(separator: "\n")
-    }
+    // private func indentAll(_ s: String) -> String {
+    //     let pre = String(repeating: " ", count: 6)
+    //     // preserve empty lines too
+    //     return s.split(separator: "\n", omittingEmptySubsequences: false)
+    //             .map { pre + $0 }
+    //             .joined(separator: "\n")
+    // }
 
     // Bridge to your existing ANSI helpers without needing an array overload.
     private func cc(_ s: String, _ colors: ANSIColor...) -> String {
