@@ -65,13 +65,13 @@ public struct ReadableErrorHandler: Sendable {
         print("first differing index: \(i)".ansi())
         print()
 
-        print("expected[\(start)..<\(endE)]:".ansi(.italic, .greenBackground).indent())
-        let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex)
+        print("expected[\(start)..<\(endE)]:".ansi(.underline).indent())
+        let expBlock = renderSlice(e, start..<endE, highlightAt: i, lineForIndex: lineForIndex, ansiColor: .greenBackground)
         print(expBlock.indent(times: 2))
         print()
 
-        print("actual[\(start)..<\(endA)]:".ansi(.italic, .redBackground).indent())
-        let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex)
+        print("actual[\(start)..<\(endA)]:".ansi(.underline).indent())
+        let actBlock = renderSlice(a, start..<endA, highlightAt: i, lineForIndex: lineForIndex, ansiColor: .redBackground)
         print(actBlock.indent(times: 2))
         print()
 
@@ -87,7 +87,8 @@ public struct ReadableErrorHandler: Sendable {
         _ arr: [String],
         _ range: Range<Int>,
         highlightAt hi: Int,
-        lineForIndex: ((Int) -> Int?)?          
+        lineForIndex: ((Int) -> Int?)?,
+        ansiColor: ANSIColor
     ) -> String {
         var out = ""
         var prevLine: Int? = nil
@@ -95,7 +96,7 @@ public struct ReadableErrorHandler: Sendable {
 
         for idx in range {
             let raw = arr[idx]
-            let tok = (idx == hi) ? cc(raw, .bold, .red) : raw
+            let tok = (idx == hi) ? cc(raw, .bold, ansiColor) : raw
             let ln  = lineForIndex?(idx)
 
             if let pl = prevLine, let ln = ln, ln > pl {
