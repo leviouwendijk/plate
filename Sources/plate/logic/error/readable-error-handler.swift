@@ -79,9 +79,8 @@ public struct ReadableErrorHandler: Sendable {
         // short summary lines
         let expTok = i < e.count ? e[i] : cc("<missing>", .red)
         let actTok = i < a.count ? a[i] : cc("<missing>", .red)
-        print(indent("\(lineTag): -->> \(cc(expTok, .brightYellow))"))
         print(indent("\(lineTag): -->> \(cc(expTok, .yellowBackground, .black))"))
-        print(indent("\(lineTag): -->> \(cc(actTok, .yellow))"))
+        print(indent("\(lineTag): -->> \(cc(actTok, .yellowBackground, .black))"))
     }
 
     private func renderSlice(_ arr: [String], _ range: Range<Int>, highlightAt hi: Int) -> String {
