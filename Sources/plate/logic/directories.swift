@@ -38,6 +38,10 @@ public struct CWD {
     public static func appending(_ component: String) -> String {
         return self.string() + "/" + component
     }
+
+    public static func appendingURL(_ component: String) throws -> URL {
+        try url().appendingPathComponent(component)
+    }
 }
 
 public struct User {
