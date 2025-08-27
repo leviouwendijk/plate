@@ -132,6 +132,10 @@ extension String {
         self.replacingOccurrences(of: "\u{00A0}", with: " ")
         .trimmingCharacters(in: .whitespacesAndNewlines)
     }
+    
+    public var esc: String { 
+        self.replacingOccurrences(of: "\"", with: "\\\"") 
+    }
 }
 
 extension Double {
