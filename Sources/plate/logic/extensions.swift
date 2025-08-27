@@ -127,6 +127,11 @@ extension String {
         )
         .trimmingCharacters(in: CharacterSet.whitespaces)
     }
+
+    public var normKey: String {
+        self.replacingOccurrences(of: "\u{00A0}", with: " ")
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 extension Double {
