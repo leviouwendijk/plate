@@ -239,3 +239,19 @@ private func makeSimpleLineDiff(old: String, new: String, oldName: String, newNa
     }
     return out.joined(separator: "\n")
 }
+
+// let file = SafeFile(URL(fileURLWithPath: "/path/to/output.txt"))
+
+// // 1) Safe write (will throw if non-blank file exists)
+// try file.write("Hello\n")
+
+// // 2) Override with backup
+// var opts = SafeWriteOptions(overrideExisting: true, makeBackupOnOverride: true)
+// try file.write("Hello new world\n", options: opts)
+
+// // 3) Show diff against backup
+// let diff = try file.diffAgainstBackup()
+// print(diff)
+
+// // 4) Restore from backup
+// try file.restoreFromBackup()
