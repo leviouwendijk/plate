@@ -61,7 +61,7 @@ public struct SafeWriteResult: Sendable {
     public let overwrittenExisting: Bool
 }
 
-public struct SafeFile {
+public struct SafeFile: Sendable {
     public let url: URL
 
     public init(
