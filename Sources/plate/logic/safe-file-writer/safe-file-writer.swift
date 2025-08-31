@@ -35,7 +35,13 @@ public struct SafeFile: Sendable, SafelyWritable {
             let writeOpts: Data.WritingOptions = options.atomic ? [.atomic] : []
             try data.write(to: url, options: writeOpts)
 
-            return .init(wrote: true, backupURL: backupURL, overwrittenExisting: overwritten)
+            return .init(
+                target: url,
+                wrote: true,
+                backupURL: backupURL,
+                overwrittenExisting: overwritten,
+                bytesWritten: data.count
+            )
         } catch let e as SafeFileError {
             throw e
         } catch {
