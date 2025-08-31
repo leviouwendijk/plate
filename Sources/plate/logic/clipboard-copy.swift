@@ -32,6 +32,10 @@ extension String: StringCopyable {
         pasteboard.setString(self, forType: .string)
 
     }
+
+    public func scp() {
+        self.sCopy()
+    }
 }
 
 public protocol NSAttributedStringCopyable {
