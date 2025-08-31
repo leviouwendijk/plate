@@ -64,11 +64,17 @@ public extension SafelyWritable {
 // lower level
 public extension SafelyWritable {
     @inlinable
-    func ensureParentExists() throws {
+    func ensureParentExists(createIfNeeded: Bool) throws {
         let parent = url.deletingLastPathComponent()
         let fm = FileManager.default
         var isDir: ObjCBool = false
-        if !fm.fileExists(atPath: parent.path, isDirectory: &isDir) || !isDir.boolValue {
+        if fm.fileExists(atPath: parent.path, isDirectory: &isDir) {
+            if !isDir.boolValue { throw SafeFileError.parentDirectoryMissing(url) }
+            return
+        }
+        if createIfNeeded {
+            try fm.createDirectory(at: parent, withIntermediateDirectories: true)
+        } else {
             throw SafeFileError.parentDirectoryMissing(url)
         }
     }

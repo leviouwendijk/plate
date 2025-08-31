@@ -12,6 +12,7 @@ public struct SafeWriteOptions: Sendable {
     public var backupSuffix: String
     /// If a backup with the same name already exists, add a timestamp to avoid clobbering.
     public var addTimestampIfBackupExists: Bool
+    public var createIntermediateDirectories: Bool
     /// Write atomically (via `.atomic`).
     public var atomic: Bool
 
@@ -21,6 +22,7 @@ public struct SafeWriteOptions: Sendable {
         whitespaceOnlyIsBlank: Bool = false,
         backupSuffix: String = "_previous_version.bak",
         addTimestampIfBackupExists: Bool = true,
+        createIntermediateDirectories: Bool = true,
         atomic: Bool = true
     ) {
         self.overrideExisting = overrideExisting
@@ -28,6 +30,7 @@ public struct SafeWriteOptions: Sendable {
         self.whitespaceOnlyIsBlank = whitespaceOnlyIsBlank
         self.backupSuffix = backupSuffix
         self.addTimestampIfBackupExists = addTimestampIfBackupExists
+        self.createIntermediateDirectories = createIntermediateDirectories
         self.atomic = atomic
     }
 }

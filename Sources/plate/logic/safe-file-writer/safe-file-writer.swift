@@ -12,7 +12,7 @@ public struct SafeFile: Sendable, SafelyWritable {
     @discardableResult
     public func write(_ data: Data, options: SafeWriteOptions = .init()) throws -> SafeWriteResult {
         do {
-            try ensureParentExists()
+            try ensureParentExists(createIfNeeded: options.createIntermediateDirectories)
 
             let fm = FileManager.default
             var backupURL: URL? = nil
@@ -23,20 +23,17 @@ public struct SafeFile: Sendable, SafelyWritable {
                 if !isBlank && !options.overrideExisting {
                     throw SafeFileError.fileExistsAndNotBlank(url)
                 }
-
-                if !isBlank && options.overrideExisting {
+                if !isBlank && options.overrideExisting, options.makeBackupOnOverride {
                     overwritten = true
-                    if options.makeBackupOnOverride {
-                        backupURL = try makeBackup(
-                            suffix: options.backupSuffix,
-                            addTimestampIfExists: options.addTimestampIfBackupExists
-                        )
-                    }
+                    backupURL = try makeBackup(
+                        suffix: options.backupSuffix,
+                        addTimestampIfExists: options.addTimestampIfBackupExists
+                    )
                 }
             }
 
-            let writeOptions: Data.WritingOptions = options.atomic ? [.atomic] : []
-            try data.write(to: url, options: writeOptions)
+            let writeOpts: Data.WritingOptions = options.atomic ? [.atomic] : []
+            try data.write(to: url, options: writeOpts)
 
             return .init(wrote: true, backupURL: backupURL, overwrittenExisting: overwritten)
         } catch let e as SafeFileError {
