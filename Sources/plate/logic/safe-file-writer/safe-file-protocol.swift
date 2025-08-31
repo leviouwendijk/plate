@@ -1,0 +1,122 @@
+import Foundation
+
+public protocol SafelyWritable: Sendable {
+    var url: URL { get }
+}
+
+public extension SafelyWritable {
+    @inlinable
+    func defaultBackupURL(suffix: String) -> URL {
+        url.deletingLastPathComponent()
+        .appendingPathComponent(url.lastPathComponent + suffix, isDirectory: false)
+    }
+
+    /// Returns a simple unified-like diff (lines starting with " - " / " + ").
+    /// If `backupURL` is nil, uses the default backup path.
+    @inlinable
+    func diffAgainstBackup(
+        backupURL: URL? = nil,
+        encoding: String.Encoding = .utf8,
+        backupSuffix: String = "_previous_version.bak"
+    ) throws -> String {
+        let fm = FileManager.default
+        let bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+        guard fm.fileExists(atPath: bu.path) else { throw SafeFileError.backupNotFound(bu) }
+        guard fm.fileExists(atPath: url.path) else { throw SafeFileError.nothingToRestore(url) }
+
+        let oldStr = try String(contentsOf: bu, encoding: encoding)
+        let newStr = try String(contentsOf: url, encoding: encoding)
+        return makeSimpleLineDiff(
+            old: oldStr,
+            new: newStr,
+            oldName: bu.lastPathComponent,
+            newName: url.lastPathComponent
+        )
+    }
+
+    /// Restores the backup over the current file. By default, preserves the current file
+    /// to a timestamped ".restore_point.bak".
+    @discardableResult
+    @inlinable
+    func restoreFromBackup(
+        backupURL: URL? = nil,
+        backupSuffix: String = "_previous_version.bak",
+        keepCurrentAsRestorePoint: Bool = true
+    ) throws -> URL {
+        let fm = FileManager.default
+        let bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+        guard fm.fileExists(atPath: bu.path) else { throw SafeFileError.backupNotFound(bu) }
+
+        if fm.fileExists(atPath: url.path), keepCurrentAsRestorePoint {
+            let rp = timestampedSibling(for: url, extraSuffix: ".restore_point.bak")
+            try fm.copyItem(at: url, to: rp)
+        }
+
+        // Replace current with backup (copy then replace for safety)
+        let tmp = timestampedSibling(for: url, extraSuffix: ".tmp.restore")
+        try? fm.removeItem(at: tmp)
+        try fm.copyItem(at: bu, to: tmp)
+        try replaceItem(at: url, with: tmp) // atomic-ish replace
+        return url
+    }
+}
+
+// lower level
+public extension SafelyWritable {
+    @inlinable
+    func ensureParentExists() throws {
+        let parent = url.deletingLastPathComponent()
+        let fm = FileManager.default
+        var isDir: ObjCBool = false
+        if !fm.fileExists(atPath: parent.path, isDirectory: &isDir) || !isDir.boolValue {
+            throw SafeFileError.parentDirectoryMissing(url)
+        }
+    }
+
+    @inlinable
+    func fileIsBlank(whitespaceCounts: Bool) throws -> Bool {
+        let data = try Data(contentsOf: url, options: .uncached)
+        if data.isEmpty { return true }
+        guard whitespaceCounts else { return false }
+        if let s = String(data: data, encoding: .utf8) {
+            return s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+        return false
+    }
+
+    @inlinable
+    func makeBackup(suffix: String, addTimestampIfExists: Bool) throws -> URL {
+        let fm = FileManager.default
+        var bu = defaultBackupURL(suffix: suffix)
+        if fm.fileExists(atPath: bu.path), addTimestampIfExists {
+            bu = timestampedSibling(for: bu)
+        }
+        try? fm.removeItem(at: bu) // be permissive if not timestamping
+        try fm.copyItem(at: url, to: bu)
+        return bu
+    }
+
+    @inlinable
+    func timestampedSibling(for original: URL, extraSuffix: String = "") -> URL {
+        // Local timestamp helper; no dependency on conforming type
+        let df = DateFormatter()
+        df.dateFormat = "yyyyMMdd_HHmmss"
+        df.locale = Locale(identifier: "en_US_POSIX")
+        let stamp = df.string(from: Date())
+        let name = original.lastPathComponent + "." + stamp + extraSuffix
+        return original.deletingLastPathComponent().appendingPathComponent(name, isDirectory: false)
+    }
+
+    @inlinable
+    func replaceItem(at dst: URL, with src: URL) throws {
+        let fm = FileManager.default
+        do {
+            if fm.fileExists(atPath: dst.path) {
+                try fm.removeItem(at: dst)
+            }
+            try fm.moveItem(at: src, to: dst)
+        } catch {
+            throw SafeFileError.io(underlying: error)
+        }
+    }
+}
