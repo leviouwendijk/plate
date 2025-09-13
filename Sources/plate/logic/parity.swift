@@ -35,4 +35,3 @@ extension Int {
         return plate.odd(self)
     }
 }
-
