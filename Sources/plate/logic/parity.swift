@@ -1,6 +1,6 @@
 import Foundation
 
-public enum NumberParity: Sendable {
+public enum NumberParity: String, RawRepresentable, Sendable {
     case even
     case odd
 
