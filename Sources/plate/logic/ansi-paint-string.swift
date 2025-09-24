@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ColorableString {
+public struct ColorableString: Sendable {
     public let selection: Set<String>
     public let colors: Set<ANSIColor>
     

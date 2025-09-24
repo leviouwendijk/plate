@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ANSIColor: String {
+public enum ANSIColor: String, Sendable {
     // Basic Text Formatting
     case reset = "\u{001B}[0m"
     case bold = "\u{001B}[1m"
