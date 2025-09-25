@@ -1,8 +1,11 @@
 import Foundation
 
-public enum ANSIColor: String, Sendable {
-    // Basic Text Formatting
+public typealias ANSIColor = ANSICode
+
+public enum ANSICode: String, Sendable {
     case reset = "\u{001B}[0m"
+
+    // Basic Text Formatting
     case bold = "\u{001B}[1m"
     case dim = "\u{001B}[2m"
     case italic = "\u{001B}[3m"
@@ -89,9 +92,38 @@ extension String: StringANSIFormattable {
     }
 }
 
-// extension Error {
-//     public func ansi(_ colors: ANSIColor...) -> String {
-//         let errorMessage = String(describing: self)
-//         return errorMessage.ansi(colors...)
-//     }
-// }
+// OSC-8 links
+public enum ANSITerminator: Sendable {
+    case bel
+    case st
+
+    public var value: String {
+        switch self {
+        case .bel: return "\u{0007}"
+        case .st:  return "\u{001B}\\"
+        }
+    }
+}
+
+public enum ANSILink {
+    public static func osc8(url: String, label: String? = nil, terminator: ANSITerminator = .bel) -> String {
+        let start = "\u{001B}]8;;\(url)\(terminator.value)"
+        let end   = "\u{001B}]8;;\(terminator.value)"
+        return "\(start)\(label ?? url)\(end)"
+    }
+}
+
+public extension URL {
+    func osc8(label: String? = nil, terminator: ANSITerminator = .bel) -> String {
+        ANSILink.osc8(url: self.absoluteString, label: label, terminator: terminator)
+    }
+}
+
+public extension String {
+    var osc8: String { ANSILink.osc8(url: self) }
+
+    func osc8(label: String? = nil, terminator: ANSITerminator = .bel) -> String {
+        ANSILink.osc8(url: self, label: label, terminator: terminator)
+    }
+}
+
