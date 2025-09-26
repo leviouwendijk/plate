@@ -4,7 +4,7 @@ extension CompiledLocalBuildObject {
     public func string() -> String {
         var args: String {
             return arguments
-            .map { String(reflecting: $0).indent() }
+            .map { String(reflecting: $0) }
             .joined(separator: " ")
         }
 
