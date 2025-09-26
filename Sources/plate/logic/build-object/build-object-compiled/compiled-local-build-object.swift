@@ -2,7 +2,7 @@ import Foundation
 
 // track which version was built locally (.gitignore)
 public struct CompiledLocalBuildObject: Codable, Sendable {
-    public let version: ObjectVersion
+    public var version: ObjectVersion
     public let arguments: [String]
 
     public init(
