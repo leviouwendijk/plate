@@ -16,7 +16,7 @@ extension CompiledLocalBuildObject {
                 patch = \(version.patch)
             }
         }
-        compile { \(args) }
+        arguments { \(args) }
         """
 
         return pklContent
