@@ -6,8 +6,8 @@ public enum VersionReference: String, RawRepresentable, Codable, CaseIterable, S
 }
 
 public struct ProjectVersions: Codable, Sendable {
-    public let built: ObjectVersion
-    public let repository: ObjectVersion
+    public var built: ObjectVersion
+    public var repository: ObjectVersion
     
     public init(
         built: ObjectVersion,
