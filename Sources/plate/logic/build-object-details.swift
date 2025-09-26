@@ -22,6 +22,7 @@ public enum ExecutableObjectType: String, RawRepresentable, Codable, Sendable {
     case application
     case script
     case specification
+    case resource
 }
 
 public enum ObjectVersionLevel: String, RawRepresentable, Codable, CaseIterable, Sendable {
@@ -92,16 +93,16 @@ enum TraverseError: Error, LocalizedError {
 public struct BuildObjectConfiguration: Codable, Sendable {
     public let uuid: UUID
     public let name: String
-    public let type: ExecutableObjectType
+    public let types: [ExecutableObjectType]
     public let version: ObjectVersion
     public let details: String
     public let author: String
     public let update: String
 
-    public init(uuid: UUID = UUID(), name: String, type: ExecutableObjectType, version: ObjectVersion, details: String, author: String, update: String) {
+    public init(uuid: UUID = UUID(), name: String, types: [ExecutableObjectType], version: ObjectVersion, details: String, author: String, update: String) {
         self.uuid = uuid
         self.name = name
-        self.type = type
+        self.types = types
         self.version = version
         self.details = details
         self.author = author

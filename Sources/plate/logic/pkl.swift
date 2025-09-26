@@ -28,7 +28,7 @@ public class PklParser {
     public func parseBuildObject() throws -> BuildObjectConfiguration {
         var uuid: UUID?
         var name: String?
-        var type: ExecutableObjectType?
+        var types: [ExecutableObjectType]?
         var version: ObjectVersion?
         var details: String?
         var author: String?
@@ -40,13 +40,24 @@ public class PklParser {
             if key == "version" {
                 let dict = try parseBlock()
                 guard
-                  let maj = dict["major"] as? Int,
-                  let min = dict["minor"] as? Int,
-                  let pat = dict["patch"] as? Int
+                    let maj = dict["major"] as? Int,
+                    let min = dict["minor"] as? Int,
+                    let pat = dict["patch"] as? Int
                 else {
                     throw PklParserError.syntaxError("version block missing major/minor/patch")
                 }
                 version = ObjectVersion(major: maj, minor: min, patch: pat)
+
+            } else if key == "types" {
+                let names = try parseStringListBlock()
+                var acc: [ExecutableObjectType] = []
+                for s in names {
+                    guard let t = ExecutableObjectType(rawValue: s) else {
+                        throw PklParserError.invalidValue(field: "types", value: s)
+                    }
+                    acc.append(t)
+                }
+                types = acc
             } else {
                 try expect("=")
                 let val = try parseValue()
@@ -61,11 +72,6 @@ public class PklParser {
                         throw PklParserError.invalidValue(field: key, value: "\(val)")
                     }
                     name = s
-                case "type":
-                    guard let s = val as? String, let t = ExecutableObjectType(rawValue: s) else {
-                        throw PklParserError.invalidValue(field: key, value: "\(val)")
-                    }
-                    type = t
                 case "details":
                     guard let s = val as? String else {
                         throw PklParserError.invalidValue(field: key, value: "\(val)")
@@ -89,7 +95,7 @@ public class PklParser {
 
         guard let uu = uuid else     { throw PklParserError.missingField("uuid") }
         guard let nm = name else     { throw PklParserError.missingField("name") }
-        guard let tp = type else     { throw PklParserError.missingField("type") }
+        guard let tp = types, !tp.isEmpty else { throw PklParserError.missingField("types") }
         guard let ver = version else { throw PklParserError.missingField("version") }
         guard let det = details else { throw PklParserError.missingField("details") }
         guard let au = author else     { throw PklParserError.missingField("author") }
@@ -98,7 +104,7 @@ public class PklParser {
         return BuildObjectConfiguration(
             uuid: uu, 
             name: nm, 
-            type: tp,
+            types: tp,
             version: ver, 
             details: det,
             author: au,
@@ -204,6 +210,29 @@ public class PklParser {
             dict[k] = v
         }
         return dict
+    }
+
+    private func parseStringListBlock() throws -> [String] {
+        try expect("{")
+        var out: [String] = []
+        while true {
+            skipWhitespaceAndNewlines()
+            if idx < input.endIndex, input[idx] == "}" {
+                idx = input.index(after: idx)
+                break
+            }
+            guard idx < input.endIndex, input[idx] == "\"" else {
+                let found = idx < input.endIndex ? String(input[idx]) : "EOF"
+                throw PklParserError.syntaxError("Expected string literal in list at pos \(position), found '\(found)'")
+            }
+            out.append(try parseString())
+            // commas optional; tolerate either commas or just newlines/whitespace
+            skipWhitespaceAndNewlines()
+            if idx < input.endIndex, input[idx] == "," {
+                idx = input.index(after: idx)
+            }
+        }
+        return out
     }
 
     private var position: Int {
