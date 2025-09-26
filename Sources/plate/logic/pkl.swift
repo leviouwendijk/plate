@@ -25,93 +25,6 @@ public class PklParser {
         self.idx = text.startIndex
     }
 
-    public func parseBuildObject() throws -> BuildObjectConfiguration {
-        var uuid: UUID?
-        var name: String?
-        var types: [ExecutableObjectType]?
-        var version: ObjectVersion?
-        var details: String?
-        var author: String?
-        var update: String?
-
-        while skipWhitespaceAndNewlines() {
-            let key = try parseIdentifier()
-            skipWhitespaceAndNewlines()
-            if key == "version" {
-                let dict = try parseBlock()
-                guard
-                    let maj = dict["major"] as? Int,
-                    let min = dict["minor"] as? Int,
-                    let pat = dict["patch"] as? Int
-                else {
-                    throw PklParserError.syntaxError("version block missing major/minor/patch")
-                }
-                version = ObjectVersion(major: maj, minor: min, patch: pat)
-
-            } else if key == "types" {
-                let names = try parseStringListBlock()
-                var acc: [ExecutableObjectType] = []
-                for s in names {
-                    guard let t = ExecutableObjectType(rawValue: s) else {
-                        throw PklParserError.invalidValue(field: "types", value: s)
-                    }
-                    acc.append(t)
-                }
-                types = acc
-            } else {
-                try expect("=")
-                let val = try parseValue()
-                switch key {
-                case "uuid":
-                    guard let s = val as? String, let u = UUID(uuidString: s) else {
-                        throw PklParserError.invalidValue(field: key, value: "\(val)")
-                    }
-                    uuid = u
-                case "name":
-                    guard let s = val as? String else {
-                        throw PklParserError.invalidValue(field: key, value: "\(val)")
-                    }
-                    name = s
-                case "details":
-                    guard let s = val as? String else {
-                        throw PklParserError.invalidValue(field: key, value: "\(val)")
-                    }
-                    details = s
-                case "author":
-                    guard let a = val as? String else {
-                        throw PklParserError.invalidValue(field: key, value: "\(val)")
-                    }
-                    author = a
-                case "update":
-                    guard let u = val as? String else {
-                        throw PklParserError.invalidValue(field: key, value: "\(val)")
-                    }
-                    update = u
-                default:
-                    break
-                }
-            }
-        }
-
-        guard let uu = uuid else     { throw PklParserError.missingField("uuid") }
-        guard let nm = name else     { throw PklParserError.missingField("name") }
-        guard let tp = types, !tp.isEmpty else { throw PklParserError.missingField("types") }
-        guard let ver = version else { throw PklParserError.missingField("version") }
-        guard let det = details else { throw PklParserError.missingField("details") }
-        guard let au = author else     { throw PklParserError.missingField("author") }
-        guard let up = update else     { throw PklParserError.missingField("update") }
-
-        return BuildObjectConfiguration(
-            uuid: uu, 
-            name: nm, 
-            types: tp,
-            version: ver, 
-            details: det,
-            author: au,
-            update: up
-        )
-    }
-
     @discardableResult
     private func skipWhitespaceAndNewlines() -> Bool {
         _ = idx
@@ -235,8 +148,210 @@ public class PklParser {
         return out
     }
 
+    private func parseVersionBlock() throws -> ObjectVersion {
+        let dict = try parseBlock()
+        guard
+            let maj = dict["major"] as? Int,
+            let min = dict["minor"] as? Int,
+            let pat = dict["patch"] as? Int
+        else {
+            throw PklParserError.syntaxError("version block missing major/minor/patch")
+        }
+        return ObjectVersion(major: maj, minor: min, patch: pat)
+    }
+
+    private func parseVersions() throws -> ProjectVersions {
+        // expects:
+        // versions { built { ... } repository { ... } }
+        try expect("{")
+        var built: ObjectVersion?
+        var repo:  ObjectVersion?
+
+        while true {
+            skipWhitespaceAndNewlines()
+            // end of `versions { ... }`
+            if idx < input.endIndex, input[idx] == "}" {
+                idx = input.index(after: idx)
+                break
+            }
+            let sub = try parseIdentifier() // "built" or "repository"
+            skipWhitespaceAndNewlines()
+            // sub-block (no '=' here)
+            try expect("{")
+
+            // Rewind 1 to pass '{' to parseBlock()
+            idx = input.index(before: idx)
+            let ver = try parseVersionBlock()
+
+            switch sub {
+            case "built":       built = ver
+            case "repository":  repo  = ver
+            default:
+                throw PklParserError.syntaxError("Unknown versions subsection '\(sub)' at pos \(position)")
+            }
+        }
+
+        guard let b = built, let r = repo else {
+            throw PklParserError.syntaxError("versions block must contain both 'built' and 'repository'")
+        }
+        return ProjectVersions(built: b, repository: r)
+    }
+
     private var position: Int {
         return input.distance(from: input.startIndex, to: idx)
+    }
+}
+
+extension PklParser {
+    public func parseBuildObject() throws -> BuildObjectConfiguration {
+        var uuid: UUID?
+        var name: String?
+        var types: [ExecutableObjectType]?
+        var versions: ProjectVersions?
+        var details: String?
+        var author: String?
+        var update: String?
+
+        while skipWhitespaceAndNewlines() {
+            let key = try parseIdentifier()
+            skipWhitespaceAndNewlines()
+            if key == "versions" {
+                versions = try parseVersions()
+            } else if key == "types" {
+                let names = try parseStringListBlock()
+                var acc: [ExecutableObjectType] = []
+                for s in names {
+                    guard let t = ExecutableObjectType(rawValue: s) else {
+                        throw PklParserError.invalidValue(field: "types", value: s)
+                    }
+                    acc.append(t)
+                }
+                types = acc
+            } else {
+                try expect("=")
+                let val = try parseValue()
+                switch key {
+                case "uuid":
+                    guard let s = val as? String, let u = UUID(uuidString: s) else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    uuid = u
+                case "name":
+                    guard let s = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    name = s
+                case "details":
+                    guard let s = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    details = s
+                case "author":
+                    guard let a = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    author = a
+                case "update":
+                    guard let u = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    update = u
+                default:
+                    break
+                }
+            }
+        }
+
+        guard let uu = uuid else     { throw PklParserError.missingField("uuid") }
+        guard let nm = name else     { throw PklParserError.missingField("name") }
+        guard let tp = types, !tp.isEmpty else { throw PklParserError.missingField("types") }
+        guard let ver = versions else { throw PklParserError.missingField("versions") }
+        guard let det = details else { throw PklParserError.missingField("details") }
+        guard let au = author else     { throw PklParserError.missingField("author") }
+        guard let up = update else     { throw PklParserError.missingField("update") }
+
+        return BuildObjectConfiguration(
+            uuid: uu, 
+            name: nm, 
+            types: tp,
+            versions: ver, 
+            details: det,
+            author: au,
+            update: up
+        )
+    }
+
+    public func parseLegacyBuildObject() throws -> BuildObjectConfiguration.LegacyObject {
+        var uuid: UUID?
+        var name: String?
+        var type: ExecutableObjectType?
+        var version: ObjectVersion?
+        var details: String?
+        var author: String?
+        var update: String?
+
+        while skipWhitespaceAndNewlines() {
+            let key = try parseIdentifier()
+            skipWhitespaceAndNewlines()
+            if key == "version" {
+                version = try parseVersionBlock()
+            } else {
+                try expect("=")
+                let val = try parseValue()
+                switch key {
+                case "uuid":
+                    guard let s = val as? String, let u = UUID(uuidString: s) else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    uuid = u
+                case "name":
+                    guard let s = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    name = s
+                case "type":
+                    guard let s = val as? String, let t = ExecutableObjectType(rawValue: s) else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    type = t
+                case "details":
+                    guard let s = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    details = s
+                case "author":
+                    guard let a = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    author = a
+                case "update":
+                    guard let u = val as? String else {
+                        throw PklParserError.invalidValue(field: key, value: "\(val)")
+                    }
+                    update = u
+                default:
+                    break
+                }
+            }
+        }
+
+        guard let uu = uuid else     { throw PklParserError.missingField("uuid") }
+        guard let nm = name else     { throw PklParserError.missingField("name") }
+        guard let tp = type else    { throw PklParserError.missingField("type") }
+        guard let ver = version else { throw PklParserError.missingField("version") }
+        guard let det = details else { throw PklParserError.missingField("details") }
+        guard let au = author else     { throw PklParserError.missingField("author") }
+        guard let up = update else     { throw PklParserError.missingField("update") }
+
+        return BuildObjectConfiguration.LegacyObject(
+            uuid: uu, 
+            name: nm, 
+            type: tp,
+            version: ver, 
+            details: det,
+            author: au,
+            update: up
+        )
     }
 }
 

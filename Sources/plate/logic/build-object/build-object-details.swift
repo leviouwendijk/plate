@@ -1,6 +1,6 @@
 import Foundation
 
-// unused so far
+// unused so far?
 public struct BuildObjectDetails: Codable {
     public let uuid: UUID
     public let name: String

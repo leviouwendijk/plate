@@ -16,16 +16,26 @@ public struct BuildObjectConfiguration: Codable, Sendable {
     public let uuid: UUID
     public let name: String
     public let types: [ExecutableObjectType]
-    public let version: ObjectVersion
+    // public let version: ObjectVersion
+    public let versions: ProjectVersions
     public let details: String
     public let author: String
     public let update: String
 
-    public init(uuid: UUID = UUID(), name: String, types: [ExecutableObjectType], version: ObjectVersion, details: String, author: String, update: String) {
+    public init(
+        uuid: UUID = UUID(),
+        name: String,
+        types: [ExecutableObjectType],
+        // version: ObjectVersion,
+        versions: ProjectVersions,
+        details: String,
+        author: String,
+        update: String
+    ) {
         self.uuid = uuid
         self.name = name
         self.types = types
-        self.version = version
+        self.versions = versions
         self.details = details
         self.author = author
         self.update = update
@@ -36,7 +46,10 @@ public struct BuildObjectConfiguration: Codable, Sendable {
     }
 
     public init(traversingFor buildFile: String = "build-object.pkl", maxDepth: Int = 5) throws {
-        let url = try BuildObjectConfiguration.traverseForBuildObjectPkl(buildFile: buildFile)
+        let url = try BuildObjectConfiguration.traverseForBuildObjectPkl(
+            maxDepth: maxDepth,
+            buildFile: buildFile
+        )
         self = try BuildObjectConfiguration.parse(from: url)
     }
 
@@ -56,7 +69,9 @@ public struct BuildObjectConfiguration: Codable, Sendable {
             )
         }
     }
+}
 
+extension BuildObjectConfiguration {
     public static func traverseForBuildObjectPkl(
         from startURL: URL = Bundle.main.bundleURL,
         maxDepth: Int = 5,
@@ -82,5 +97,127 @@ public struct BuildObjectConfiguration: Codable, Sendable {
             maxDepth: maxDepth,
             startURL: startURL
         )
+    }
+}
+
+extension BuildObjectConfiguration {
+    public func new(to url: URL) throws {
+        let new = empty()
+        do {
+            try new.write(to: url, atomically: true, encoding: .utf8)
+        } catch {
+            throw PklParserError.ioError(
+                "Failed to write PKL to '\(url.path)': \(error.localizedDescription)"
+            )
+        }
+    }
+
+    public func empty() -> String {
+        let empty = BuildObjectConfiguration(
+            name: "",
+            types: [],
+            versions: .init(
+                built: ObjectVersion.default_version(for: .built),
+                repository: ObjectVersion.default_version(for: .repository)
+            ),
+            details: "",
+            author: "",
+            update: ""
+        )
+        return empty.string()
+    }
+}
+
+extension BuildObjectConfiguration {
+    public func string() -> String {
+        let typesList = types
+        .map(\.rawValue)
+        .sorted()
+        .map { String(reflecting: $0).indent() }
+        .joined(separator: "\n")
+
+        let pklContent = """
+        uuid = "\(uuid)"
+        name = "\(name)"
+        types {
+        \(typesList)
+        }
+        versions {
+            built {
+                major = \(versions.built.major)
+                minor = \(versions.built.minor)
+                patch = \(versions.built.patch)
+            }
+
+            repository {
+                major = \(versions.repository.major)
+                minor = \(versions.repository.minor)
+                patch = \(versions.repository.patch)
+            }
+        }
+        details = "\(details)"
+        author = "\(author)"
+        update = "\(update)"
+        """
+
+        return pklContent
+    }
+
+    public func write(to url: URL) throws -> Void {
+        let path = url.path
+        let string = string()
+        do {
+            try string.write(to: url, atomically: true, encoding: String.Encoding.utf8)
+        } catch {
+            throw PklParserError.ioError(
+                "Failed to write PKL to '\(path)': \(error.localizedDescription)"
+            )
+        }
+    }
+}
+
+extension BuildObjectConfiguration {
+    public struct LegacyObject: Codable, Sendable {
+        public let uuid: UUID
+        public let name: String
+        public let type: ExecutableObjectType
+        public let version: ObjectVersion
+        public let details: String
+        public let author: String
+        public let update: String
+
+        public init(
+            uuid: UUID = UUID(),
+            name: String,
+            type: ExecutableObjectType,
+            version: ObjectVersion,
+            details: String,
+            author: String,
+            update: String
+        ) {
+            self.uuid = uuid
+            self.name = name
+            self.type = type
+            self.version = version
+            self.details = details
+            self.author = author
+            self.update = update
+        }
+
+        // turn legacy into modern struct
+        public func modernize() -> BuildObjectConfiguration {
+            return .init(
+                uuid: uuid,
+                name: name,
+                types: [type],
+                versions: ProjectVersions(
+                    built: ObjectVersion.default_version(for: .built),
+                    repository: version
+                ),
+                details: details,
+                author: author,
+                update: update
+            )
+        }
     }
 }

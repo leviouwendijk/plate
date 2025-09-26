@@ -30,9 +30,9 @@ public struct BuildSpecification {
         let cfg = try BuildObjectConfiguration.parse(from: url)
 
         self.version = BuildVersion(
-            major: cfg.version.major,
-            minor: cfg.version.minor,
-            patch: cfg.version.patch
+            major: cfg.versions.built.major,
+            minor: cfg.versions.built.minor,
+            patch: cfg.versions.built.patch
         )
         self.name = cfg.name
         self.author = cfg.author
