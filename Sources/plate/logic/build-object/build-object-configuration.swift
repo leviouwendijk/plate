@@ -11,13 +11,39 @@ enum TraverseError: Error, LocalizedError {
     }
 }
 
+public struct CompileInstructionDefaults: Codable, Sendable {
+    public let use: Bool // let sbm compile like this as  override or fallback
+    public let arguments: [String]
+    
+    public init(
+        use: Bool = false,
+        arguments: [String] = []
+    ) {
+        self.use = use
+        self.arguments = arguments
+    }
+
+    public var args: String {
+        return arguments
+        .map { String(reflecting: $0).indent() }
+        .joined(separator: " ")
+    }
+
+    public func contents() -> String {
+        return """
+            use = \(use)
+            arguments { \(args) }
+        """
+    }
+}
+
 // for local repository build info: build-object.pkl 
 public struct BuildObjectConfiguration: Codable, Sendable {
     public let uuid: UUID
     public let name: String
     public let types: [ExecutableObjectType]
-    // public let version: ObjectVersion
     public let versions: ProjectVersions
+    public let compile: CompileInstructionDefaults
     public let details: String
     public let author: String
     public let update: String
@@ -26,8 +52,8 @@ public struct BuildObjectConfiguration: Codable, Sendable {
         uuid: UUID = UUID(),
         name: String,
         types: [ExecutableObjectType],
-        // version: ObjectVersion,
         versions: ProjectVersions,
+        compile: CompileInstructionDefaults,
         details: String,
         author: String,
         update: String
@@ -36,6 +62,7 @@ public struct BuildObjectConfiguration: Codable, Sendable {
         self.name = name
         self.types = types
         self.versions = versions
+        self.compile = compile
         self.details = details
         self.author = author
         self.update = update
@@ -120,6 +147,7 @@ extension BuildObjectConfiguration {
                 built: ObjectVersion.default_version(for: .built),
                 repository: ObjectVersion.default_version(for: .repository)
             ),
+            compile: .init(),
             details: "",
             author: "",
             update: ""
@@ -154,6 +182,9 @@ extension BuildObjectConfiguration {
                 minor = \(versions.repository.minor)
                 patch = \(versions.repository.patch)
             }
+        }
+        compile {
+        \(compile.contents())
         }
         details = "\(details)"
         author = "\(author)"
@@ -214,6 +245,7 @@ extension BuildObjectConfiguration {
                     built: ObjectVersion.default_version(for: .built),
                     repository: version
                 ),
+                compile: .init(),
                 details: details,
                 author: author,
                 update: update

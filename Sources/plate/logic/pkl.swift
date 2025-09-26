@@ -197,6 +197,60 @@ public class PklParser {
         return ProjectVersions(built: b, repository: r)
     }
 
+    private func parseCompile() throws -> CompileInstructionDefaults {
+        try expect("{")
+        var use: Bool?
+        var args: [String] = []
+
+        while true {
+            skipWhitespaceAndNewlines()
+            if idx < input.endIndex, input[idx] == "}" {
+                idx = input.index(after: idx)
+                break
+            }
+            let key = try parseIdentifier()
+            skipWhitespaceAndNewlines()
+
+            if key == "arguments" {
+                // arguments { "sbm" "--targets" "disk-map" }
+                try expect("{")
+                var out: [String] = []
+                while true {
+                    skipWhitespaceAndNewlines()
+                    if idx < input.endIndex, input[idx] == "}" {
+                        idx = input.index(after: idx); break
+                    }
+                    guard idx < input.endIndex, input[idx] == "\"" else {
+                        let found = idx < input.endIndex ? String(input[idx]) : "EOF"
+                        throw PklParserError.syntaxError("Expected string literal in arguments at pos \(position), found '\(found)'")
+                    }
+                    out.append(try parseString())
+                    skipWhitespaceAndNewlines()
+                    if idx < input.endIndex, input[idx] == "," { idx = input.index(after: idx) }
+                }
+                args = out
+            } else {
+                // use = true|false
+                try expect("=")
+                // support 0/1 as numbers too, just in case
+                if idx < input.endIndex, input[idx].isNumber {
+                    let n = try parseNumber()
+                    use = (n != 0)
+                } else {
+                    let ident = try parseIdentifier() // true/false as bare identifiers
+                    switch ident {
+                    case "true":  use = true
+                    case "false": use = false
+                    default:
+                        throw PklParserError.invalidValue(field: "use", value: ident)
+                    }
+                }
+            }
+        }
+
+        return .init(use: use ?? false, arguments: args)
+    }
+
     private var position: Int {
         return input.distance(from: input.startIndex, to: idx)
     }
@@ -208,6 +262,7 @@ extension PklParser {
         var name: String?
         var types: [ExecutableObjectType]?
         var versions: ProjectVersions?
+        var compile: CompileInstructionDefaults?
         var details: String?
         var author: String?
         var update: String?
@@ -219,14 +274,14 @@ extension PklParser {
                 versions = try parseVersions()
             } else if key == "types" {
                 let names = try parseStringListBlock()
-                var acc: [ExecutableObjectType] = []
-                for s in names {
-                    guard let t = ExecutableObjectType(rawValue: s) else {
-                        throw PklParserError.invalidValue(field: "types", value: s)
+                types = try names.map {
+                    guard let t = ExecutableObjectType(rawValue: $0) else {
+                        throw PklParserError.invalidValue(field: "types", value: $0)
                     }
-                    acc.append(t)
+                    return t
                 }
-                types = acc
+            } else if key == "compile" {
+                compile = try parseCompile()
             } else {
                 try expect("=")
                 let val = try parseValue()
@@ -266,6 +321,7 @@ extension PklParser {
         guard let nm = name else     { throw PklParserError.missingField("name") }
         guard let tp = types, !tp.isEmpty else { throw PklParserError.missingField("types") }
         guard let ver = versions else { throw PklParserError.missingField("versions") }
+        let cmp = compile ?? .init(use: false, arguments: [])
         guard let det = details else { throw PklParserError.missingField("details") }
         guard let au = author else     { throw PklParserError.missingField("author") }
         guard let up = update else     { throw PklParserError.missingField("update") }
@@ -275,6 +331,7 @@ extension PklParser {
             name: nm, 
             types: tp,
             versions: ver, 
+            compile: cmp,
             details: det,
             author: au,
             update: up
