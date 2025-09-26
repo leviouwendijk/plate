@@ -128,7 +128,7 @@ extension BuildObjectConfiguration {
 }
 
 extension BuildObjectConfiguration {
-    public func new(to url: URL) throws {
+    public static func new(to url: URL) throws {
         let new = empty()
         do {
             try new.write(to: url, atomically: true, encoding: .utf8)
@@ -139,7 +139,7 @@ extension BuildObjectConfiguration {
         }
     }
 
-    public func empty() -> String {
+    public static func empty() -> String {
         let empty = BuildObjectConfiguration(
             name: "",
             types: [],
