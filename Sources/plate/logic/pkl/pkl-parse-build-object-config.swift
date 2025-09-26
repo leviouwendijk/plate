@@ -96,6 +96,7 @@ extension PklParser {
             skipWhitespaceAndNewlines()
             if key == "version" {
                 version = try parseVersionBlock()
+                continue
             } else {
                 try expect("=")
                 let val = try parseValue()
