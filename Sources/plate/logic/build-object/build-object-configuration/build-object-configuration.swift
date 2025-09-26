@@ -5,7 +5,7 @@ public struct BuildObjectConfiguration: Codable, Sendable {
     public let uuid: UUID
     public let name: String
     public let types: [ExecutableObjectType]
-    public let versions: ProjectVersions
+    public var versions: ProjectVersions
     public let compile: CompileInstructionDefaults
     public let details: String
     public let author: String
