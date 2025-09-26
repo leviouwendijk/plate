@@ -1,23 +1,5 @@
 import Foundation
 
-public enum VersionReference: String, RawRepresentable, Codable, CaseIterable, Sendable {
-    case built
-    case repository
-}
-
-public struct ProjectVersions: Codable, Sendable {
-    public var built: ObjectVersion
-    public var repository: ObjectVersion
-    
-    public init(
-        built: ObjectVersion,
-        repository: ObjectVersion
-    ) {
-        self.built = built
-        self.repository = repository
-    }
-}
-
 public enum ObjectVersionLevel: String, RawRepresentable, Codable, CaseIterable, Sendable {
     case major
     case minor
@@ -37,15 +19,28 @@ public struct ObjectVersion: Codable, Comparable, Sendable {
         self.patch = patch
     }
 
-    public static func default_version(for reference: VersionReference = .repository) -> ObjectVersion {
+    public static func default_version(for reference: VersionReference = .release) -> ObjectVersion {
         switch reference {
-        case .repository:
+        // case .repository:
+        //     return .init(
+        //         major: 0,
+        //         minor: 1,
+        //         patch: 0
+        //     )
+        // case .built:
+        //     return .init(
+        //         major: 0,
+        //         minor: 0,
+        //         patch: 0
+        //     )
+        // }
+        case .release:
             return .init(
                 major: 0,
                 minor: 1,
                 patch: 0
             )
-        case .built:
+        case .compiled:
             return .init(
                 major: 0,
                 minor: 0,

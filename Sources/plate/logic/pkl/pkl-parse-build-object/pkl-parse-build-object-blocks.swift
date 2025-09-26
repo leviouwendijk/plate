@@ -45,8 +45,9 @@ extension PklParser {
         // expects:
         // versions { built { ... } repository { ... } }
         try expect("{")
-        var built: ObjectVersion?
-        var repo:  ObjectVersion?
+        // var built: ObjectVersion?
+        // var repo:  ObjectVersion?
+        var release:  ObjectVersion?
 
         while true {
             skipWhitespaceAndNewlines()
@@ -55,7 +56,7 @@ extension PklParser {
                 idx = input.index(after: idx)
                 break
             }
-            let sub = try parseIdentifier() // "built" or "repository"
+            let sub = try parseIdentifier() // prev. "built" or "repository" -- now "release", "beta?"
             skipWhitespaceAndNewlines()
             // sub-block (no '=' here)
             try expect("{")
@@ -65,17 +66,27 @@ extension PklParser {
             let ver = try parseVersionBlock()
 
             switch sub {
-            case "built":       built = ver
-            case "repository":  repo  = ver
+            // case "built":       built = ver
+            // case "repository":  repo  = ver
+            // case "beta":     beta = ver // for extensibility
+            case "release":  release  = ver
             default:
                 throw PklParserError.syntaxError("Unknown versions subsection '\(sub)' at pos \(position)")
             }
         }
 
-        guard let b = built, let r = repo else {
+        // guard let b = built, let r = repo else {
+        guard 
+            // let b = built, 
+            // let r = repo else 
+            let rel = release else 
+        {
             throw PklParserError.syntaxError("versions block must contain both 'built' and 'repository'")
         }
-        return ProjectVersions(built: b, repository: r)
+        // return ProjectVersions(built: b, repository: r)
+        return ProjectVersions(
+            release: rel
+        )
     }
 
     public func parseCompile() throws -> CompileInstructionDefaults {

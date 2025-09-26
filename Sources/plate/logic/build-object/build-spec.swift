@@ -26,16 +26,36 @@ public struct BuildSpecification {
         return "\(name) \(version.major).\(version.minor).\(version.patch)"
     }
 
-    public init(fromPkl url: URL = URL(fileURLWithPath: "build-object.pkl")) throws {
-        let cfg = try BuildObjectConfiguration.parse(from: url)
+    // public init(fromPkl url: URL = URL(fileURLWithPath: "build-object.pkl")) throws {
+    //     let cfg = try BuildObjectConfiguration.parse(from: url)
+
+    //     self.version = BuildVersion(
+    //         major: cfg.versions.built.major,
+    //         minor: cfg.versions.built.minor,
+    //         patch: cfg.versions.built.patch
+    //     )
+    //     self.name = cfg.name
+    //     self.author = cfg.author
+    //     self.description = cfg.details
+    // }
+
+    // use new separation of files
+    public init(
+        buildObjectPkl buildObjectUrl: URL = URL(fileURLWithPath: "build-object.pkl"),
+        compiledPkl compiledUrl: URL = URL(fileURLWithPath: "compiled.pkl")
+    ) throws {
+        let compiled = try CompiledLocalBuildObject.parse(from: compiledUrl)
 
         self.version = BuildVersion(
-            major: cfg.versions.built.major,
-            minor: cfg.versions.built.minor,
-            patch: cfg.versions.built.patch
+            major: compiled.version.major,
+            minor: compiled.version.minor,
+            patch: compiled.version.patch
         )
-        self.name = cfg.name
-        self.author = cfg.author
-        self.description = cfg.details
+
+        let buildObject = try BuildObjectConfiguration.parse(from: buildObjectUrl)
+
+        self.name = buildObject.name
+        self.author = buildObject.author
+        self.description = buildObject.details
     }
 }
