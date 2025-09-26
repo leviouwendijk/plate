@@ -11,11 +11,19 @@ extension PklParser {
             if key == "compiled" {
                 try expect("{")
                 skipWhitespaceAndNewlines()
+
+                let nestedKey = try parseIdentifier()
+                if nestedKey != "version" {
+                    throw PklParserError.syntaxError("Expected 'version' at \(position), found: \(nestedKey)") 
+                }
+
                 version = try parseVersionBlock()
+
                 let args = try parseIdentifier()
                 if args == "arguments" {
                     arguments = try parseStringListBlock()
                 }
+
                 try expect("}")
             } else {
                 throw PklParserError.syntaxError("Expected 'compiled' at \(position), found: \(key)")
