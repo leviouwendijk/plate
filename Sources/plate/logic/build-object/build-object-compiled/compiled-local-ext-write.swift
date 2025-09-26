@@ -10,7 +10,7 @@ extension CompiledLocalBuildObject {
 
         let pklContent = """
         compiled {
-            release {
+            version {
                 major = \(version.major)
                 minor = \(version.minor)
                 patch = \(version.patch)
