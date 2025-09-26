@@ -10,7 +10,7 @@ extension PklParser {
         guard start < idx else {
             let found = idx < input.endIndex ? String(input[idx]) : "EOF"
             throw PklParserError.syntaxError(
-              "Expected identifier at pos \(position), found '\(found)'"
+                "Expected identifier at pos \(position), found '\(found)'"
             )
         }
         return String(input[start..<idx])

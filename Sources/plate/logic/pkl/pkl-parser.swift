@@ -43,5 +43,6 @@ public class PklParser {
     public var position: Int {
         return input.distance(from: input.startIndex, to: idx)
     }
-}
 
+    public func reset() { idx = input.startIndex }
+}
