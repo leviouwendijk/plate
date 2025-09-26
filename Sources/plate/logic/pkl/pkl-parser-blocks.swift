@@ -24,6 +24,7 @@ extension PklParser {
             }
             let k = try parseIdentifier()
             try expect("=")
+            skipWhitespaceAndNewlines()
             let n = try parseNumber()
             switch k {
             case "major": maj = n
