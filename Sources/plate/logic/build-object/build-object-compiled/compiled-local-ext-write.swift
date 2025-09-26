@@ -15,8 +15,8 @@ extension CompiledLocalBuildObject {
                 minor = \(version.minor)
                 patch = \(version.patch)
             }
+            arguments { \(args) }
         }
-        arguments { \(args) }
         """
 
         return pklContent
