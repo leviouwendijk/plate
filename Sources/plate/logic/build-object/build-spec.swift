@@ -1,5 +1,6 @@
 import Foundation
 
+@available(*, deprecated, message: "Superseded by BuildObjectConfiguration")
 public struct BuildSpecification {
     public let version: BuildVersion
     public let name: String
