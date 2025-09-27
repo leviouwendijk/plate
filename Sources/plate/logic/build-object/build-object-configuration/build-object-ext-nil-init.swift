@@ -1,7 +1,7 @@
 import Foundation
 
 extension BuildObjectConfiguration {
-    public func nil_init() -> BuildObjectConfiguration {
+    public static func nil_init() -> BuildObjectConfiguration {
         return .init(
             name: "",
             types: [],
