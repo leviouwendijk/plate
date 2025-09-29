@@ -15,7 +15,7 @@ extension String: StringIndentable {
         let indent = String(repeating: " ", count: spaces)
 
         return self
-            .split(separator: "\n")
+            .split(separator: "\n", omittingEmptySubsequences: false)
             .map { "\(indent)\($0)" }
             .joined(separator: "\n")
     }
