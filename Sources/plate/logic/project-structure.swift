@@ -50,6 +50,30 @@ public enum ProjectPathSegmentType: String, RawRepresentable, Sendable {
     }
 }
 
+public struct PathExistence: Sendable {
+    public static func check(url: URL) -> (Bool, ProjectPathSegmentType?) {
+        var isDirectory: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+        let type = exists ? ProjectPathSegmentType.from(isDirectory) : nil
+
+        return (exists, type)
+    }
+
+    public static func string(result: (Bool, ProjectPathSegmentType?)) -> String {
+        var resp = ""
+        if result.0 {
+            if let type = result.1 {
+                resp = "This \(type.rawValue) exists"
+            } else {
+                resp = "This path exists"
+            }
+        } else {
+            resp = "This path does not exist"
+        }
+        return resp
+    }
+}
+
 public protocol ProjectSegmentable: Sendable {
     var value: String { get set }
     var type: ProjectPathSegmentType? { get set }
@@ -150,11 +174,7 @@ public struct ProjectStructure: Sendable {
 
     public func exists(for key: String) throws -> (Bool, ProjectPathSegmentType?) {
         let url = try path(for: key)
-
-        var isDirectory: ObjCBool = false
-        let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
-        let type = exists ? ProjectPathSegmentType.from(isDirectory) : nil
-
+        let (exists, type) = PathExistence.check(url: url)
         return (exists, type)
     }
 
