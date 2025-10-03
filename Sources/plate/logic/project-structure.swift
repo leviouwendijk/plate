@@ -1,8 +1,53 @@
 import Foundation
 
-public enum ProjectPathSegmentType: Sendable {
+public enum ProjectError: Error, LocalizedError {
+    case noPathStoredForKey(String)
+    case assumedTargetDoesNotExist(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .noPathStoredForKey(let key):
+            return "No path has been stored for the key '\(key)'. Check your project structure configuration."
+        case .assumedTargetDoesNotExist(let path):
+            return "The assumed target at path '\(path)' does not exist. Verify the file or directory is present."
+        }
+    }
+
+    public var failureReason: String? {
+        switch self {
+        case .noPathStoredForKey:
+            return "The requested key could not be matched in the configured project paths."
+        case .assumedTargetDoesNotExist:
+            return "FileManager could not find any file or directory at the specified location."
+        }
+    }
+
+    public var recoverySuggestion: String? {
+        switch self {
+        case .noPathStoredForKey:
+            return "Ensure the key is registered in your ProjectStructure paths dictionary."
+        case .assumedTargetDoesNotExist:
+            return "Ensure the target file or directory exists, or correct the name in your code."
+        }
+    }
+
+    public var helpAnchor: String? {
+        switch self {
+        case .noPathStoredForKey:
+            return "project.paths.configuration"
+        case .assumedTargetDoesNotExist:
+            return "filesystem.target.validation"
+        }
+    }
+}
+
+public enum ProjectPathSegmentType: String, RawRepresentable, Sendable {
     case directory
     case file
+
+    public static func from(_ is_dir_obj_c: ObjCBool) -> ProjectPathSegmentType {
+        return  is_dir_obj_c.boolValue ? .directory : .file
+    }
 }
 
 public protocol ProjectSegmentable: Sendable {
@@ -36,10 +81,6 @@ public struct ProjectPath: Sendable {
         segments.map { $0.value }
         .joined(separator: "/")
     }
-}
-
-public enum ProjectError: Error, LocalizedError {
-    case noPathStoredForKey(String)
 }
 
 public struct ProjectStructure: Sendable {
@@ -84,15 +125,37 @@ public struct ProjectStructure: Sendable {
         return url
     }   
 
-    // public enum Place: Sendable {
-    //     case in_dictionary
-    //     case on_disk
-    // }
+    public func subroot(using key: String?) throws -> URL {
+        if let k = key {
+            let match = try match(for: k)
+            return append(path: match)
+        } else {
+            return root
+        }
+    }   
 
-    // public func exists(for key: String, in place: Place) throws -> (Bool, String) {
-    public func exists(for key: String) throws -> Bool {
+    public func locate(subroot key: String?, appending target: String) throws -> URL {
+        let subroot = try subroot(using: key)
+        let assumedTarget = subroot.appendingPathComponent(target)
+
+        var isDirectory: ObjCBool = false
+        let existent = FileManager.default.fileExists(atPath: assumedTarget.path, isDirectory: &isDirectory)
+
+        if existent { 
+            return assumedTarget
+        } else {
+            throw ProjectError.assumedTargetDoesNotExist(assumedTarget.path)
+        }
+    }   
+
+    public func exists(for key: String) throws -> (Bool, ProjectPathSegmentType?) {
         let url = try path(for: key)
-        return FileManager.default.fileExists(atPath: url.path)
+
+        var isDirectory: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+        let type = exists ? ProjectPathSegmentType.from(isDirectory) : nil
+
+        return (exists, type)
     }
 
     public func read(for key: String) throws -> [String: String] {
