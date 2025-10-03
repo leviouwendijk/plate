@@ -9,7 +9,7 @@ public struct PathExistence: Sendable {
         return (exists, type)
     }
 
-    public static func string(result: (Bool, ProjectPathSegmentType?)) -> String {
+    public static func readable(result: (Bool, ProjectPathSegmentType?)) -> String {
         var resp = ""
         if result.0 {
             if let type = result.1 {
