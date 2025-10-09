@@ -1,6 +1,13 @@
-import Testing
-@testable import plate
+// import Testing
+// @testable import plate
 
-@Test func example() async throws {
-    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-}
+// @Test 
+// func objectVersion() async throws {
+//     let obj_version = ObjectVersion(
+//         major: 0,
+//         minor: 1,
+//         patch: 6
+//     )
+//     let src_version = obj_version.string()
+//     #expect(src_version == "0.1.6")
+// }

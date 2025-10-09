@@ -49,19 +49,32 @@ public struct ObjectVersion: Codable, Comparable, Sendable {
         }
     }
 
-    public func string(prefixStyle: VersionPrefixStyle = .long, remote: Bool = false) -> String {
+    public func string(prefixStyle: VersionPrefixStyle = .long, remote: Bool = false, prefixSpace: Bool = true) -> String {
         let versionPrefix = prefixStyle.prefix()
-        var str = ""
+
+        var str: [String] = []
+
         if remote {
             str.append("latest")
-            str.append(" ")
         }
+
+        var version_comps: [String] = []
         if !(prefixStyle == .none) {
-            str.append(versionPrefix)
-            str.append(" ")
+            version_comps.append(versionPrefix)
         }
-        str.append("\(self.major).\(self.minor).\(self.patch)")
-        return str
+
+        var numerics: [String] = []
+        numerics.append("\(self.major)")
+        numerics.append("\(self.minor)")
+        numerics.append("\(self.patch)")
+        let nums = numerics.joined(separator: ".")
+
+        version_comps.append(nums)
+
+        let version = prefixSpace ? version_comps.joined(separator: " ") : version_comps.joined()
+        str.append(version)
+
+        return str.joined(separator: " ")
     }
 
     public mutating func increment(_ type: ObjectVersionLevel) {
