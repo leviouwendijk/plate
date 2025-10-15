@@ -11,28 +11,75 @@ public extension SafelyWritable {
         .appendingPathComponent(url.lastPathComponent + suffix, isDirectory: false)
     }
 
-    /// Returns a simple unified-like diff (lines starting with " - " / " + ").
-    /// If `backupURL` is nil, uses the default backup path.
+    // /// Returns a simple unified-like diff (lines starting with " - " / " + ").
+    // /// If `backupURL` is nil, uses the default backup path.
+    // @inlinable
+    // func diffAgainstBackup(
+    //     backupURL: URL? = nil,
+    //     encoding: String.Encoding = .utf8,
+    //     backupSuffix: String = "_previous_version.bak"
+    // ) throws -> String {
+    //     let fm = FileManager.default
+    //     let bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+    //     guard fm.fileExists(atPath: bu.path) else { throw SafeFileError.backupNotFound(bu) }
+    //     guard fm.fileExists(atPath: url.path) else { throw SafeFileError.nothingToRestore(url) }
+
+    //     let oldStr = try String(contentsOf: bu, encoding: encoding)
+    //     let newStr = try String(contentsOf: url, encoding: encoding)
+    //     return makeSimpleLineDiff(
+    //         old: oldStr,
+    //         new: newStr,
+    //         oldName: bu.lastPathComponent,
+    //         newName: url.lastPathComponent
+    //     )
+    // }
+
     @inlinable
     func diffAgainstBackup(
         backupURL: URL? = nil,
         encoding: String.Encoding = .utf8,
-        backupSuffix: String = "_previous_version.bak"
+        backupSuffix: String = "_previous_version.bak",
+        options: SafeWriteOptions = .init()
     ) throws -> String {
         let fm = FileManager.default
-        let bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+        var bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+        if !fm.fileExists(atPath: bu.path), options.createBackupDirectory,
+            let setURL = latestSetBackupURL(options: options) {
+                bu = setURL
+            }
         guard fm.fileExists(atPath: bu.path) else { throw SafeFileError.backupNotFound(bu) }
         guard fm.fileExists(atPath: url.path) else { throw SafeFileError.nothingToRestore(url) }
 
         let oldStr = try String(contentsOf: bu, encoding: encoding)
         let newStr = try String(contentsOf: url, encoding: encoding)
-        return makeSimpleLineDiff(
-            old: oldStr,
-            new: newStr,
-            oldName: bu.lastPathComponent,
-            newName: url.lastPathComponent
-        )
+        return makeSimpleLineDiff(old: oldStr, new: newStr, oldName: bu.lastPathComponent, newName: url.lastPathComponent)
     }
+
+    // /// Restores the backup over the current file. By default, preserves the current file
+    // /// to a timestamped ".restore_point.bak".
+    // @discardableResult
+    // @inlinable
+    // func restoreFromBackup(
+    //     backupURL: URL? = nil,
+    //     backupSuffix: String = "_previous_version.bak",
+    //     keepCurrentAsRestorePoint: Bool = true
+    // ) throws -> URL {
+    //     let fm = FileManager.default
+    //     let bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+    //     guard fm.fileExists(atPath: bu.path) else { throw SafeFileError.backupNotFound(bu) }
+
+    //     if fm.fileExists(atPath: url.path), keepCurrentAsRestorePoint {
+    //         let rp = timestampedSibling(for: url, extraSuffix: ".restore_point.bak")
+    //         try fm.copyItem(at: url, to: rp)
+    //     }
+
+    //     // Replace current with backup (copy then replace for safety)
+    //     let tmp = timestampedSibling(for: url, extraSuffix: ".tmp.restore")
+    //     try? fm.removeItem(at: tmp)
+    //     try fm.copyItem(at: bu, to: tmp)
+    //     try replaceItem(at: url, with: tmp) // atomic-ish replace
+    //     return url
+    // }
 
     /// Restores the backup over the current file. By default, preserves the current file
     /// to a timestamped ".restore_point.bak".
@@ -41,10 +88,18 @@ public extension SafelyWritable {
     func restoreFromBackup(
         backupURL: URL? = nil,
         backupSuffix: String = "_previous_version.bak",
-        keepCurrentAsRestorePoint: Bool = true
+        keepCurrentAsRestorePoint: Bool = true,
+        options: SafeWriteOptions = .init()
     ) throws -> URL {
         let fm = FileManager.default
-        let bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+
+        var bu = backupURL ?? defaultBackupURL(suffix: backupSuffix)
+        if !fm.fileExists(atPath: bu.path),
+           options.createBackupDirectory,
+           let setURL = latestSetBackupURL(options: options) {
+            bu = setURL
+        }
+
         guard fm.fileExists(atPath: bu.path) else { throw SafeFileError.backupNotFound(bu) }
 
         if fm.fileExists(atPath: url.path), keepCurrentAsRestorePoint {
@@ -52,11 +107,10 @@ public extension SafelyWritable {
             try fm.copyItem(at: url, to: rp)
         }
 
-        // Replace current with backup (copy then replace for safety)
         let tmp = timestampedSibling(for: url, extraSuffix: ".tmp.restore")
         try? fm.removeItem(at: tmp)
         try fm.copyItem(at: bu, to: tmp)
-        try replaceItem(at: url, with: tmp) // atomic-ish replace
+        try replaceItem(at: url, with: tmp)
         return url
     }
 }
@@ -167,5 +221,20 @@ public extension SafelyWritable {
         if dirs.count > keep {
             for url in dirs.prefix(dirs.count - keep) { try? fm.removeItem(at: url) }
         }
+    }
+
+    @inlinable
+    func latestSetBackupURL(options: SafeWriteOptions) -> URL? {
+        let fm = FileManager.default
+        let base = backupBaseDir(options: options)
+        guard let entries = try? fm.contentsOfDirectory(at: base, includingPropertiesForKeys: [.isDirectoryKey]),
+              !entries.isEmpty else { return nil }
+        // pick newest overwrite_<yyyyMMdd_HHmmss>
+        let sets = entries.filter {
+            (try? $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true
+        }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+        guard let newestSet = sets.last else { return nil }
+        let candidate = newestSet.appendingPathComponent(url.lastPathComponent, isDirectory: false)
+        return fm.fileExists(atPath: candidate.path) ? candidate : nil
     }
 }
