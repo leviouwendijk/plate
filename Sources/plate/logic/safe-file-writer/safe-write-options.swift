@@ -16,6 +16,15 @@ public struct SafeWriteOptions: Sendable {
     /// Write atomically (via `.atomic`).
     public var atomic: Bool
 
+    /// If true, store backups in <target-dir>/safe-file-backups/overwrite_<timestamp>/.
+    public var createBackupDirectory: Bool
+    /// Name of the folder created in the target file's directory.
+    public var backupDirectoryName: String
+    /// Prefix used for subfolders representing one overwrite operation.
+    public var backupSetPrefix: String
+    /// Keep at most this many backup SET folders (per target directory). Nil = unlimited.
+    public var maxBackupSets: Int?
+
     public init(
         overrideExisting: Bool = false,
         makeBackupOnOverride: Bool = true,
@@ -23,7 +32,12 @@ public struct SafeWriteOptions: Sendable {
         backupSuffix: String = "_previous_version.bak",
         addTimestampIfBackupExists: Bool = true,
         createIntermediateDirectories: Bool = true,
-        atomic: Bool = true
+        atomic: Bool = true,
+
+        createBackupDirectory: Bool = true,
+        backupDirectoryName: String = "safe-file-backups",
+        backupSetPrefix: String = "overwrite_",
+        maxBackupSets: Int? = nil
     ) {
         self.overrideExisting = overrideExisting
         self.makeBackupOnOverride = makeBackupOnOverride
@@ -32,5 +46,10 @@ public struct SafeWriteOptions: Sendable {
         self.addTimestampIfBackupExists = addTimestampIfBackupExists
         self.createIntermediateDirectories = createIntermediateDirectories
         self.atomic = atomic
+
+        self.createBackupDirectory = createBackupDirectory
+        self.backupDirectoryName = backupDirectoryName
+        self.backupSetPrefix = backupSetPrefix
+        self.maxBackupSets = maxBackupSets
     }
 }

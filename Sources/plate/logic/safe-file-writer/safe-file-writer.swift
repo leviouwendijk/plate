@@ -9,6 +9,46 @@ public struct SafeFile: Sendable, SafelyWritable {
         self.url = url
     }
 
+    // @discardableResult
+    // public func write(_ data: Data, options: SafeWriteOptions = .init()) throws -> SafeWriteResult {
+    //     do {
+    //         try ensureParentExists(createIfNeeded: options.createIntermediateDirectories)
+
+    //         let fm = FileManager.default
+    //         var backupURL: URL? = nil
+    //         var overwritten = false
+
+    //         if fm.fileExists(atPath: url.path) {
+    //             let isBlank = try fileIsBlank(whitespaceCounts: options.whitespaceOnlyIsBlank)
+    //             if !isBlank && !options.overrideExisting {
+    //                 throw SafeFileError.fileExistsAndNotBlank(url)
+    //             }
+    //             if !isBlank && options.overrideExisting, options.makeBackupOnOverride {
+    //                 overwritten = true
+    //                 backupURL = try makeBackup(
+    //                     suffix: options.backupSuffix,
+    //                     addTimestampIfExists: options.addTimestampIfBackupExists
+    //                 )
+    //             }
+    //         }
+
+    //         let writeOpts: Data.WritingOptions = options.atomic ? [.atomic] : []
+    //         try data.write(to: url, options: writeOpts)
+
+    //         return .init(
+    //             target: url,
+    //             wrote: true,
+    //             backupURL: backupURL,
+    //             overwrittenExisting: overwritten,
+    //             bytesWritten: data.count
+    //         )
+    //     } catch let e as SafeFileError {
+    //         throw e
+    //     } catch {
+    //         throw SafeFileError.io(underlying: error)
+    //     }
+    // }
+
     @discardableResult
     public func write(_ data: Data, options: SafeWriteOptions = .init()) throws -> SafeWriteResult {
         do {
@@ -20,15 +60,28 @@ public struct SafeFile: Sendable, SafelyWritable {
 
             if fm.fileExists(atPath: url.path) {
                 let isBlank = try fileIsBlank(whitespaceCounts: options.whitespaceOnlyIsBlank)
-                if !isBlank && !options.overrideExisting {
-                    throw SafeFileError.fileExistsAndNotBlank(url)
-                }
+                if !isBlank && !options.overrideExisting { throw SafeFileError.fileExistsAndNotBlank(url) }
+
                 if !isBlank && options.overrideExisting, options.makeBackupOnOverride {
                     overwritten = true
-                    backupURL = try makeBackup(
-                        suffix: options.backupSuffix,
-                        addTimestampIfExists: options.addTimestampIfBackupExists
-                    )
+                    if options.createBackupDirectory {
+                        let ts = timestampString()
+                        let setDir = try ensureBackupSetDir(options: options, timestamp: ts)
+                        let dst = setDir.appendingPathComponent(url.lastPathComponent, isDirectory: false)
+                        try? fm.removeItem(at: dst)
+                        try fm.copyItem(at: url, to: dst)
+                        backupURL = dst
+                        try pruneBackupSets(
+                            baseDir: setDir.deletingLastPathComponent(),
+                            prefix: options.backupSetPrefix,
+                            keep: options.maxBackupSets
+                        )
+                    } else {
+                        backupURL = try makeBackup(
+                            suffix: options.backupSuffix,
+                            addTimestampIfExists: options.addTimestampIfBackupExists
+                        )
+                    }
                 }
             }
 

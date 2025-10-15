@@ -125,4 +125,47 @@ public extension SafelyWritable {
             throw SafeFileError.io(underlying: error)
         }
     }
+
+    @inlinable
+    func timestampString() -> String {
+        let df = DateFormatter()
+        df.dateFormat = "yyyyMMdd_HHmmss"
+        df.locale = Locale(identifier: "en_US_POSIX")
+        return df.string(from: Date())
+    }
+
+    @inlinable
+    func backupBaseDir(options: SafeWriteOptions) -> URL {
+        url.deletingLastPathComponent()
+           .appendingPathComponent(options.backupDirectoryName, isDirectory: true)
+    }
+
+    @inlinable
+    func ensureBackupSetDir(options: SafeWriteOptions, timestamp: String) throws -> URL {
+        let fm = FileManager.default
+        let base = backupBaseDir(options: options)
+        try fm.createDirectory(at: base, withIntermediateDirectories: true)
+        let set = base.appendingPathComponent("\(options.backupSetPrefix)\(timestamp)", isDirectory: true)
+        try fm.createDirectory(at: set, withIntermediateDirectories: true)
+        return set
+    }
+
+    @inlinable
+    func pruneBackupSets(baseDir: URL, prefix: String, keep: Int?) throws {
+        guard let keep = keep, keep >= 0 else { return }
+        let fm = FileManager.default
+        let dirs = try fm.contentsOfDirectory(
+                at: baseDir,
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: [.skipsHiddenFiles]
+            )
+            .filter { 
+                (try? $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true
+                    && $0.lastPathComponent.hasPrefix(prefix) 
+            }
+            .sorted { $0.lastPathComponent < $1.lastPathComponent } // timestamp-friendly
+        if dirs.count > keep {
+            for url in dirs.prefix(dirs.count - keep) { try? fm.removeItem(at: url) }
+        }
+    }
 }
