@@ -1,11 +1,11 @@
 import Foundation
 
-struct GenericEntryPoint {
-    let registered_arguments: [ProcessableGenericArgument]
-    var provided_arguments: [String]
-    let entry_point: String
+public struct GenericEntryPoint {
+    public let registered_arguments: [ProcessableGenericArgument]
+    public var provided_arguments: [String]
+    public let entry_point: String
 
-    init(
+    public init(
         with registered_arguments: [ProcessableGenericArgument] = []
     ) { 
         self.registered_arguments = registered_arguments
@@ -17,7 +17,7 @@ struct GenericEntryPoint {
     }
 
     @discardableResult
-    func process_entry() throws -> [String] {
+    public func process_entry() throws -> [String] {
         try process_args()
     }
 

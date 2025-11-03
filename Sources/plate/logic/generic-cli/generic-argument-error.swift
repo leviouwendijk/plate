@@ -1,12 +1,12 @@
 import Foundation
 
-enum GenericArgumentError: Error, LocalizedError {
+public enum GenericArgumentError: Error, LocalizedError {
     case unrecognizedGenericArgument(String, Int)
     case missingValue(forFlag: String)
     case invalidCombination(String)
     case noGenericArgumentsRegisteredAtRuntime
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case let .unrecognizedGenericArgument(arg, pos):
             return "Unrecognized argument: '\(arg)' at position \(pos)"

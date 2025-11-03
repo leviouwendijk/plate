@@ -1,10 +1,10 @@
 import Foundation
 
-enum GenericArgumentAliasType {
+public enum GenericArgumentAliasType {
     case short
     case long
 
-    var prefix: String {
+    public var prefix: String {
         switch self {
         case .short:
             return "-"
@@ -14,11 +14,11 @@ enum GenericArgumentAliasType {
     }
 }
 
-struct GenericArgumentAlias {
-    let type: GenericArgumentAliasType
-    let name: String
+public struct GenericArgumentAlias {
+    public let type: GenericArgumentAliasType
+    public let name: String
 
-    var identifier: String {
+    public var identifier: String {
         return type.prefix + name
     }
 }

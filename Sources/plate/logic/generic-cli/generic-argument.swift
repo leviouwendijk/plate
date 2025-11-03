@@ -1,12 +1,12 @@
 import Foundation
 
-struct ProcessableGenericArgument {
-    let id: String
-    let aliases: [GenericArgumentAlias]
-    let kind: GenericArgumentKind
+public struct ProcessableGenericArgument {
+    public let id: String
+    public let aliases: [GenericArgumentAlias]
+    public let kind: GenericArgumentKind
     // let action: () -> Void
 
-    func match(
+    public func match(
         identifiers: [String]
     ) -> Bool {
         for ident in identifiers {
