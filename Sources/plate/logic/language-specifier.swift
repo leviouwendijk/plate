@@ -54,3 +54,5 @@ extension LanguageSpecifier: Codable {
         try container.encode(self.code)
     }
 }
+
+extension LanguageSpecifier: PreparableContent {}
