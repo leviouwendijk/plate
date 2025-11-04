@@ -1,9 +1,11 @@
 public func simpleMatch(
     in string: String,
-    identifiers: [String]
+    identifiers: [String],
+    lowercasing: Bool = true
 ) -> Bool {
+    let str = string.lowercased()
     for ident in identifiers {
-        if string == ident {
+        if str == ident {
             return true 
         } else {
             continue
