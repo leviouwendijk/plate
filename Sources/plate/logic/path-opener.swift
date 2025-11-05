@@ -8,9 +8,18 @@ public enum PathOpenerOpeningMethod {
     case inParentDirectory
 }
 
-public enum PathOpenerError: Error {
+public enum PathOpenerError: Error, LocalizedError {
     case notFound(path: String)
     case unsupportedPlatform
+    
+    public var errorDescription: String? {
+        switch self {
+        case .notFound(let path):
+            return "Path not found at \(path)"
+        case .unsupportedPlatform:
+            return "Unsupported platform"
+        }
+    }
 }
 
 public struct PathOpener {
