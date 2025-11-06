@@ -1,6 +1,6 @@
 import Foundation
 
-public enum VersionPrefixStyle {
+public enum VersionPrefixStyle: Sendable, Codable {
     case short
     case long
     case none
