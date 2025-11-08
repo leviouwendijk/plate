@@ -1,11 +1,11 @@
 import Foundation
 
 extension UUID {
-    var noDashes: String {
+    public var noDashes: String {
         return self.uuidString.replacingOccurrences(of: "-", with: "")
     }
 
-    static func newNoDashString() -> String {
+    public static func newNoDashString() -> String {
         return UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
 }
