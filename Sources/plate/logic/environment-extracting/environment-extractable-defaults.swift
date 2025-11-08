@@ -23,24 +23,24 @@ extension EnvironmentExtractable {
 /// Value configurations
 extension EnvironmentExtractable {
     // Instance conveniences built on top of the generic layer
-    func value() throws -> String {
+    public func value() throws -> String {
         try value(for: key, infer: resolvedKey)
     }
 
-    func value<T: LosslessStringConvertible>(as: T.Type = T.self) throws -> T {
+    public func value<T: LosslessStringConvertible>(as: T.Type = T.self) throws -> T {
         try value(for: key, as: T.self, infer: resolvedKey)
     }
 
-    func optionalValue() -> String? {
+    public func optionalValue() -> String? {
         optional(for: key, infer: resolvedKey)
     }
 
-    func boolValue() throws -> Bool {
+    public func boolValue() throws -> Bool {
         try bool(for: key, infer: resolvedKey)
     }
 
-    func intValue() throws -> Int { try value(as: Int.self) }
-    func doubleValue() throws -> Double { try value(as: Double.self) }
+    public func intValue() throws -> Int { try value(as: Int.self) }
+    public func doubleValue() throws -> Double { try value(as: Double.self) }
 }
 
 extension Collection where Element: EnvironmentExtractable {
