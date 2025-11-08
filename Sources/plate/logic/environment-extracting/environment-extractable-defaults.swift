@@ -22,47 +22,35 @@ extension EnvironmentExtractable {
 
 /// Value configurations
 extension EnvironmentExtractable {
-    /// Default throwing fetch using process environment.
-    public func get(_ key: String) throws -> String {
-        guard let raw = ProcessInfo.processInfo.environment[key] else {
-            throw EnvironmentExtractableError.missing(key)
+    // Instance conveniences built on top of the generic layer
+    func value() throws -> String {
+        try value(for: key, infer: resolvedKey)
+    }
+
+    func value<T: LosslessStringConvertible>(as: T.Type = T.self) throws -> T {
+        try value(for: key, as: T.self, infer: resolvedKey)
+    }
+
+    func optionalValue() -> String? {
+        optional(for: key, infer: resolvedKey)
+    }
+
+    func boolValue() throws -> Bool {
+        try bool(for: key, infer: resolvedKey)
+    }
+
+    func intValue() throws -> Int { try value(as: Int.self) }
+    func doubleValue() throws -> Double { try value(as: Double.self) }
+}
+
+extension Collection where Element: EnvironmentExtractable {
+    /// Validate a set of keys at once; returns `[Element: String]`.
+    public func validate() throws -> [Element: String] {
+        var out: [Element: String] = [:]
+        out.reserveCapacity(self.count)
+        for k in self {
+            out[k] = try k.value()
         }
-        guard !raw.isEmpty else {
-            throw EnvironmentExtractableError.empty(key)
-        }
-        return raw
+        return out
     }
-
-    /// Fetch the value for this case (throws if missing/empty).
-    public func value() throws -> String {
-        return try get(resolvedKey)
-    }
-
-    /// Lossless typed fetch.
-    public func value<T: LosslessStringConvertible>(as: T.Type = T.self) throws -> T {
-        let s = try value()
-        guard let converted = T(s) else {
-            // Keep semantics simple: treat unparseable as invalid
-            throw EnvironmentExtractableError.empty(resolvedKey)
-        }
-        return converted
-    }
-
-    /// Optional soft fetch.
-    public func optionalValue() -> String? {
-        (try? value())
-    }
-
-    /// Common typed helpers.
-    public func boolValue() throws -> Bool {
-        let v = try value().lowercased()
-        switch v {
-        case "1", "true", "yes", "y", "on":  return true
-        case "0", "false", "no", "n", "off": return false
-        default: throw EnvironmentExtractableError.empty(resolvedKey)
-        }
-    }
-
-    public func intValue() throws -> Int { try value(as: Int.self) }
-    public func doubleValue() throws -> Double { try value(as: Double.self) }
 }

@@ -1,0 +1,117 @@
+import Foundation
+
+public enum EnvironmentExtractor {
+    @discardableResult
+    public static func value(_ name: String) throws -> String {
+        guard let raw = ProcessInfo.processInfo.environment[name] else {
+            throw EnvironmentExtractableError.missing(name)
+        }
+        guard !raw.isEmpty else {
+            throw EnvironmentExtractableError.empty(name)
+        }
+        return raw
+    }
+
+    public static func value<T: LosslessStringConvertible>(
+        _ name: String,
+        as: T.Type = T.self
+    ) throws -> T {
+        let s = try value(name)
+        guard let t = T(s) else { throw EnvironmentExtractableError.empty(name) }
+        return t
+    }
+
+    public static func bool(_ name: String) throws -> Bool {
+        let v = try value(name).lowercased()
+        switch v {
+        case "1", "true", "yes", "y", "on":  return true
+        case "0", "false", "no", "n", "off": return false
+        default: throw EnvironmentExtractableError.empty(name)
+        }
+    }
+
+    public static func optional(_ name: String) -> String? {
+        (try? value(name))
+    }
+
+    // -------- Key-only overloads (throws if `.auto`) --------
+
+    @discardableResult
+    public static func value(_ key: EnvironmentExtractableKey) throws -> String {
+        switch key {
+        case .symbol(let s): return try value(s)
+        case .auto:          throw EnvironmentExtractableError.inferenceRequired
+        }
+    }
+
+    public static func value<T: LosslessStringConvertible>(
+        _ key: EnvironmentExtractableKey,
+        as: T.Type = T.self
+    ) throws -> T {
+        switch key {
+        case .symbol(let s): return try value(s, as: T.self)
+        case .auto:          throw EnvironmentExtractableError.inferenceRequired
+        }
+    }
+
+    public static func bool(_ key: EnvironmentExtractableKey) throws -> Bool {
+        switch key {
+        case .symbol(let s): return try bool(s)
+        case .auto:          throw EnvironmentExtractableError.inferenceRequired
+        }
+    }
+
+    public static func optional(_ key: EnvironmentExtractableKey) -> String? {
+        switch key {
+        case .symbol(let s): return optional(s)
+        case .auto:          return nil
+        }
+    }
+
+    // -------- Key + infer overloads (required for `.auto`) --------
+
+    @discardableResult
+    public static func value(
+        _ key: EnvironmentExtractableKey,
+        infer name: @autoclosure () -> String
+    ) throws -> String {
+        switch key {
+        case .symbol(let s): return try value(s)
+        case .auto:          return try value(name())
+        }
+    }
+
+    public static func value<T: LosslessStringConvertible>(
+        _ key: EnvironmentExtractableKey,
+        as: T.Type = T.self,
+        infer name: @autoclosure () -> String
+    ) throws -> T {
+        let s = try value(key, infer: name())
+        guard let t = T(s) else {
+            let n = (keyName(key) ?? name())
+            throw EnvironmentExtractableError.empty(n)
+        }
+        return t
+    }
+
+    public static func bool(
+        _ key: EnvironmentExtractableKey,
+        infer name: @autoclosure () -> String
+    ) throws -> Bool {
+        let n = keyName(key) ?? name()
+        return try bool(n)
+    }
+
+    public static func optional(
+        _ key: EnvironmentExtractableKey,
+        infer name: @autoclosure () -> String
+    ) -> String? {
+        (try? value(key, infer: name()))
+    }
+
+    // util
+    private static func keyName(_ key: EnvironmentExtractableKey) -> String? {
+        if case let .symbol(s) = key { return s }
+        return nil
+    }
+}
