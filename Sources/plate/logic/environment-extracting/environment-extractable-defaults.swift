@@ -42,6 +42,9 @@ extension EnvironmentExtractable {
         optional(for: key, infer: resolvedKey, replacer: replacer)
     }
 
+    // left without replacers for now
+    // can be added for examples where you want to link to another value
+    // say: THIS_VALUE=$DEBUG_FLAG
     public func boolValue() throws -> Bool {
         try bool(for: key, infer: resolvedKey)
     }
