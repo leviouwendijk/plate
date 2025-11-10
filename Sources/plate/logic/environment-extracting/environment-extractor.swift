@@ -2,21 +2,28 @@ import Foundation
 
 public enum EnvironmentExtractor {
     @discardableResult
-    public static func value(_ name: String) throws -> String {
+    public static func value(
+        _ name: String,
+        replacer: EnvironmentReplacer = .init()
+    ) throws -> String {
         guard let raw = ProcessInfo.processInfo.environment[name] else {
             throw EnvironmentExtractableError.missing(name)
         }
         guard !raw.isEmpty else {
             throw EnvironmentExtractableError.empty(name)
         }
+        if !replacer.replacements.isEmpty {
+            return replacer.apply(to: raw)
+        }
         return raw
     }
 
     public static func value<T: LosslessStringConvertible>(
         _ name: String,
-        as: T.Type = T.self
+        as: T.Type = T.self,
+        replacer: EnvironmentReplacer = .init()
     ) throws -> T {
-        let s = try value(name)
+        let s = try value(name, replacer: replacer)
         guard let t = T(s) else { throw EnvironmentExtractableError.empty(name) }
         return t
     }
@@ -30,26 +37,33 @@ public enum EnvironmentExtractor {
         }
     }
 
-    public static func optional(_ name: String) -> String? {
-        (try? value(name))
+    public static func optional(
+        _ name: String,
+        replacer: EnvironmentReplacer = .init()
+    ) -> String? {
+        (try? value(name, replacer: replacer))
     }
 
     // -------- Key-only overloads (throws if `.auto`) --------
 
     @discardableResult
-    public static func value(_ key: EnvironmentExtractableKey) throws -> String {
+    public static func value(
+        _ key: EnvironmentExtractableKey,
+        replacer: EnvironmentReplacer = .init()
+    ) throws -> String {
         switch key {
-        case .symbol(let s): return try value(s)
+        case .symbol(let s): return try value(s, replacer: replacer)
         case .auto:          throw EnvironmentExtractableError.inferenceRequired
         }
     }
 
     public static func value<T: LosslessStringConvertible>(
         _ key: EnvironmentExtractableKey,
-        as: T.Type = T.self
+        as: T.Type = T.self,
+        replacer: EnvironmentReplacer = .init()
     ) throws -> T {
         switch key {
-        case .symbol(let s): return try value(s, as: T.self)
+        case .symbol(let s): return try value(s, as: T.self, replacer: replacer)
         case .auto:          throw EnvironmentExtractableError.inferenceRequired
         }
     }
@@ -61,9 +75,12 @@ public enum EnvironmentExtractor {
         }
     }
 
-    public static func optional(_ key: EnvironmentExtractableKey) -> String? {
+    public static func optional(
+        _ key: EnvironmentExtractableKey,
+        replacer: EnvironmentReplacer = .init()
+    ) -> String? {
         switch key {
-        case .symbol(let s): return optional(s)
+        case .symbol(let s): return optional(s, replacer: replacer)
         case .auto:          return nil
         }
     }
@@ -73,20 +90,22 @@ public enum EnvironmentExtractor {
     @discardableResult
     public static func value(
         _ key: EnvironmentExtractableKey,
-        infer name: @autoclosure () -> String
+        infer name: @autoclosure () -> String,
+        replacer: EnvironmentReplacer = .init()
     ) throws -> String {
         switch key {
-        case .symbol(let s): return try value(s)
-        case .auto:          return try value(name())
+        case .symbol(let s): return try value(s, replacer: replacer)
+        case .auto:          return try value(name(), replacer: replacer)
         }
     }
 
     public static func value<T: LosslessStringConvertible>(
         _ key: EnvironmentExtractableKey,
         as: T.Type = T.self,
-        infer name: @autoclosure () -> String
+        infer name: @autoclosure () -> String,
+        replacer: EnvironmentReplacer = .init()
     ) throws -> T {
-        let s = try value(key, infer: name())
+        let s = try value(key, infer: name(), replacer: replacer)
         guard let t = T(s) else {
             let n = (keyName(key) ?? name())
             throw EnvironmentExtractableError.empty(n)
@@ -104,9 +123,10 @@ public enum EnvironmentExtractor {
 
     public static func optional(
         _ key: EnvironmentExtractableKey,
-        infer name: @autoclosure () -> String
+        infer name: @autoclosure () -> String,
+        replacer: EnvironmentReplacer = .init()
     ) -> String? {
-        (try? value(key, infer: name()))
+        (try? value(key, infer: name(), replacer: replacer))
     }
 
     // util
