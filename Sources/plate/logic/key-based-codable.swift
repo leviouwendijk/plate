@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol KeyBasedCodable: Codable, CaseIterable, RawRepresentable where RawValue == String {
+public protocol KeyBasedCodable: Sendable, Codable, CaseIterable, RawRepresentable where RawValue == String {
     var key: String { get }
 }
 
