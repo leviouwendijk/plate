@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CustomTimeZone: String {
+public enum CustomTimeZone: String, Sendable {
     case utc = "UTC"
     
     // North America
