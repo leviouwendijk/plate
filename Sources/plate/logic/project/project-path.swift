@@ -28,6 +28,16 @@ public struct ProjectPath: SegmentConcatenable {
     ) {
         self.segments = segments
     }
-}
 
-public typealias GenericPath = ProjectPath
+    public init(
+        _ segments: [ProjectPathSegment]
+    ) {
+        self.segments = segments
+    }
+
+    public init(
+        _ segments: [String]
+    ) {
+        self.segments = segments.map( { .init(value: $0, type: nil) } )
+    }
+}

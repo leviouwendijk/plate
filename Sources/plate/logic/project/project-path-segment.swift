@@ -11,7 +11,7 @@ public struct ProjectPathSegment: ProjectSegmentable {
     
     public init(
         value: String,
-        type: ProjectPathSegmentType?
+        type: ProjectPathSegmentType? = nil
     ) {
         self.value = value
         self.type = type
