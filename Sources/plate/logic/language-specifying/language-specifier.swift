@@ -1,5 +1,6 @@
 import Foundation
 
+@available(*, message: "use Locale.Language / Locale.LanguageCode instead")
 public enum LanguageSpecifier: String, LanguageSpecifying {
     case english
     case dutch
@@ -17,5 +18,3 @@ public enum LanguageSpecifier: String, LanguageSpecifying {
         .japanese :  LanguageData(abbreviation: "ja", locales: ["ja_JP"]),
     ]
 }
-
-// extension LanguageSpecifier: PreparableContent {}
