@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ProjectPathSegmentType: String, RawRepresentable, Sendable {
+public enum ProjectPathSegmentType: String, RawRepresentable, Sendable, Codable {
     case directory
     case file
 

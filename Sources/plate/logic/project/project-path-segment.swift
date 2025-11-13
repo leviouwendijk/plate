@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ProjectSegmentable: Sendable {
+public protocol ProjectSegmentable: Sendable, Codable {
     var value: String { get set }
     var type: ProjectPathSegmentType? { get set }
 }
@@ -12,6 +12,14 @@ public struct ProjectPathSegment: ProjectSegmentable {
     public init(
         value: String,
         type: ProjectPathSegmentType?
+    ) {
+        self.value = value
+        self.type = type
+    }
+
+    public init(
+        _ value: String,
+        _ type: ProjectPathSegmentType? = nil
     ) {
         self.value = value
         self.type = type
