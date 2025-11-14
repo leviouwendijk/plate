@@ -18,7 +18,7 @@ public actor StandardLogger {
         self.fileHandle = try Self.makeFileHandle(for: url)
     }
 
-    public init(symbol: String) throws {
+    public init(symbol: String = "APP_NAME") throws {
         let name = try EnvironmentExtractor.value(.symbol(symbol))
         try self.init(for: name)
     }
