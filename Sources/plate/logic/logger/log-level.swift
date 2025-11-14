@@ -1,6 +1,6 @@
 import Foundation
 
-public enum LogLevel: Int, Comparable, CustomStringConvertible {
+public enum LogLevel: Int, Sendable, Codable, Comparable, CustomStringConvertible {
     case info, warn, error, critical, debug
 
     public var label: String {
