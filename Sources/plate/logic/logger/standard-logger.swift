@@ -4,7 +4,7 @@ public actor StandardLogger {
     public var minimumLevel: LogLevel = .info
     public var onError: ((Error) -> Void)?
     
-    public init(logFileURL: URL? = nil) throws {
+    public init(logFileURL: URL) throws {
         self.fileHandle = try Self.makeFileHandle(for: logFileURL)
     }
     
@@ -27,7 +27,7 @@ public actor StandardLogger {
         try? fileHandle?.close()
     }
     
-    public func configure(logFileURL: URL?) async throws {
+    public func configure(logFileURL: URL) async throws {
         try fileHandle?.close()
         fileHandle = try Self.makeFileHandle(for: logFileURL)
     }
@@ -78,8 +78,8 @@ public actor StandardLogger {
 
     private var fileHandle: FileHandle?
 
-    private static func makeFileHandle(for url: URL?) throws -> FileHandle? {
-        guard let url = url else { return nil }
+    private static func makeFileHandle(for url: URL) throws -> FileHandle? {
+        // guard let url = url else { return nil }
         let dir = url.deletingLastPathComponent()
         try FileManager.default.createDirectory(
             at: dir, withIntermediateDirectories: true
