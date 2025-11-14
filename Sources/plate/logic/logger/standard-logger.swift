@@ -1,23 +1,5 @@
 import Foundation
 
-public enum LogLevel: Int, Comparable {
-    case info, warn, error, critical, debug
-
-    public var label: String {
-        switch self {
-        case .info:  return "INFO"
-        case .warn:  return "WARN"
-        case .error: return "ERROR"
-        case .critical: return "CRITICAL"
-        case .debug: return "DEBUG"
-        }
-    }
-
-    public static func < (lhs: LogLevel, rhs: LogLevel) -> Bool {
-        lhs.rawValue < rhs.rawValue
-    }
-}
-
 public actor StandardLogger {
     public var minimumLevel: LogLevel = .info
     public var onError: ((Error) -> Void)?
@@ -27,9 +9,9 @@ public actor StandardLogger {
     }
     
     public init(for applicationName: String) throws {
-        let home     = Home.string()
+        let home = Home.string()
 
-        let url      = URL(filePath: home)
+        let url = URL(filePath: home)
         .appendingPathComponent("api-logs")
         .appendingPathComponent("\(applicationName).log")
 
@@ -51,7 +33,7 @@ public actor StandardLogger {
         let ts   = Self.sharedFormatter.value.string(from: Date())
         let line = "[\(ts)] [\(level.label)] \(message)\n"
         guard let data = line.data(using: String.Encoding.utf8) else {
-            assertionFailure("Logger: UTF-8 encoding failed")
+            onError?(StandardLoggerError.failedToWriteLog("UTF-8 encoding failed"))
             return
         }
 
@@ -62,7 +44,7 @@ public actor StandardLogger {
                 FileHandle.standardOutput.write(data)
             }
         } catch {
-            onError?(error)
+            onError?(StandardLoggerError.failedToWriteLog(error.localizedDescription))
         }
     }
     
@@ -100,14 +82,18 @@ public actor StandardLogger {
 
         let created = FileManager.default.createFile(atPath: url.path, contents: nil)
         guard created || FileManager.default.fileExists(atPath: url.path) else {
-            throw CocoaError(
-                .fileWriteUnknown,
-                userInfo: [NSFilePathErrorKey: url.path]
-            )
+            throw StandardLoggerError.failedToCreateLogFile(url.path)
         }
 
-        let fh = try FileHandle(forWritingTo: url)
-        fh.seekToEndOfFile()
-        return fh
+        // let fh = try FileHandle(forWritingTo: url)
+        // fh.seekToEndOfFile()
+        // return fh
+        do {
+            let fh = try FileHandle(forWritingTo: url)
+            fh.seekToEndOfFile()
+            return fh
+        } catch {
+            throw StandardLoggerError.failedToCloseFile(error.localizedDescription)
+        }
     }
 }
