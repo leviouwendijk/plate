@@ -1,6 +1,7 @@
 import Foundation
 
 public enum StandardLoggerError: Error, LocalizedError, Sendable {
+    case symbolResolvedToNull
     case failedToCreateLogFile(String)
     case failedToWriteLog(String)
     case failedToCloseFile(String)
@@ -9,6 +10,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
     
     public var errorDescription: String? {
         switch self {
+        case .symbolResolvedToNull:
+            return "Cannot initialize from a nil value symbol"
         case .failedToCreateLogFile(let path):
             return "Failed to create log file at: \(path)"
         case .failedToWriteLog(let reason):
@@ -24,6 +27,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
     
     public var failureReason: String? {
         switch self {
+        case .symbolResolvedToNull:
+            return "Symbol provided to init(symbol: String?) for environment extraction resolved to nil value"
         case .failedToCreateLogFile:
             return "The directory or file system may not be writable"
         case .failedToWriteLog:
@@ -39,6 +44,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
     
     public var recoverySuggestion: String? {
         switch self {
+        case .symbolResolvedToNull:
+            return "Ensure the provided symbol resolves for correct initialization"
         case .failedToCreateLogFile(let path):
             return "Ensure the directory exists and is writable: \(path)"
         case .failedToWriteLog:

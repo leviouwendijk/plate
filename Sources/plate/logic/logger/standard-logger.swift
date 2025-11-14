@@ -23,6 +23,14 @@ public actor StandardLogger {
         try self.init(for: name)
     }
 
+    public init(symbol: String?) throws {
+        guard let symbol else {
+            throw StandardLoggerError.symbolResolvedToNull
+        }
+        let name = try EnvironmentExtractor.value(.symbol(symbol))
+        try self.init(for: name)
+    }
+
     deinit {
         try? fileHandle?.close()
     }
