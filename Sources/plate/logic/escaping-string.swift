@@ -37,4 +37,3 @@ extension String {
         return EscapeKind.escape(self, kind: kind)
     }
 }
-

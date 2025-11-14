@@ -4,7 +4,7 @@ public enum DocumentExtensionError: Error, Sendable {
     case unsupportedExtension(filename: String)
 }
 
-public enum DocumentExtensionType: String, RawRepresentable, CaseIterable, PreparableContent {
+public enum DocumentExtensionType: String, RawRepresentable, CaseIterable, Sendable, Codable {
     case txt
     case md
     case norg
