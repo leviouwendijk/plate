@@ -8,27 +8,36 @@ public actor StandardLogger {
         self.fileHandle = try Self.makeFileHandle(for: logFileURL)
     }
     
-    public init(for applicationName: String) throws {
-        let home = Home.string()
-
-        let url = URL(filePath: home)
+    public init(name: String) throws {
+        let url = Home.url()
         .appendingPathComponent("api-logs")
-        .appendingPathComponent("\(applicationName).log")
+        .appendingPathComponent("\(name).log")
 
         self.fileHandle = try Self.makeFileHandle(for: url)
     }
 
+    public init(name: String?) throws {
+        guard let name else {
+            throw StandardLoggerError.appNameEmpty
+        }
+        try self.init(name: name)
+    }
+
+    @available(*, message: "Deprecation: use other init(name:) init(symbol:) methods instead")
+    public init(for applicationName: String) throws {
+        try self.init(name: applicationName)
+    }
+
     public init(symbol: String = "APP_NAME") throws {
         let name = try EnvironmentExtractor.value(.symbol(symbol))
-        try self.init(for: name)
+        try self.init(name: name)
     }
 
     public init(symbol: String?) throws {
         guard let symbol else {
             throw StandardLoggerError.symbolResolvedToNull
         }
-        let name = try EnvironmentExtractor.value(.symbol(symbol))
-        try self.init(for: name)
+        try self.init(symbol: symbol)
     }
 
     deinit {

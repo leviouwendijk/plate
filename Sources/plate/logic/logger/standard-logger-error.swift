@@ -1,6 +1,7 @@
 import Foundation
 
 public enum StandardLoggerError: Error, LocalizedError, Sendable {
+    case appNameEmpty
     case symbolResolvedToNull
     case failedToCreateLogFile(String)
     case failedToWriteLog(String)
@@ -10,6 +11,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
     
     public var errorDescription: String? {
         switch self {
+        case .appNameEmpty:
+            return "Cannot initialize from a nil value app name"
         case .symbolResolvedToNull:
             return "Cannot initialize from a nil value symbol"
         case .failedToCreateLogFile(let path):
@@ -27,6 +30,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
     
     public var failureReason: String? {
         switch self {
+        case .appNameEmpty:
+            return "The provided app name parameter resolves as nil"
         case .symbolResolvedToNull:
             return "Symbol provided to init(symbol: String?) for environment extraction resolved to nil value"
         case .failedToCreateLogFile:
@@ -44,6 +49,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
     
     public var recoverySuggestion: String? {
         switch self {
+        case .appNameEmpty:
+            return "Ensure the provided app name resolves for correct initialization"
         case .symbolResolvedToNull:
             return "Ensure the provided symbol resolves for correct initialization"
         case .failedToCreateLogFile(let path):
