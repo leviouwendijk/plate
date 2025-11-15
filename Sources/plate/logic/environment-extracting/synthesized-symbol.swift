@@ -51,6 +51,7 @@ public struct SyntheticSymbolOptions: Sendable {
 }
 
 public enum SynthesizedSymbol: String, RawRepresentable, Sendable, Codable {
+    case app_name
     case api_key
     case token
     case bearer
