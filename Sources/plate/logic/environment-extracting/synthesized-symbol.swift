@@ -69,4 +69,20 @@ public enum SynthesizedSymbol: String, RawRepresentable, Sendable, Codable {
         guard let name else { throw SyntheticSymbolError.nameIsEmpty }
         return synthesize(name: name, using: options)
     }
+
+    public func synthesize(
+        name: String,
+    ) -> String {
+        var options = SyntheticSymbolOptions()
+        options.suffix = self
+
+        return Self.synthesize(name: name, using: options)
+    }
+
+    public static func synthesize(
+        name: String,
+        suffix: SynthesizedSymbol
+    ) -> String {
+        return suffix.synthesize(name: name)
+    }
 }
