@@ -1,11 +1,11 @@
 import Foundation
 
-public enum KeyFormattingStrategy {
+public enum KeyFormattingStrategy: Sendable {
     case raw
     case uppercased
     case lowercased
     case capitalized
-    case custom((String) -> String)
+    case custom(@Sendable (String) -> String)
 
     @inline(__always)
     public func apply(_ s: String) -> String {
