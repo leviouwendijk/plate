@@ -1,43 +1,60 @@
 import Foundation
 
 public actor StandardLogger {
-    public var minimumLevel: LogLevel = .info
+    public var minimumLevel: LogLevel
     public var onError: ((Error) -> Void)?
     
-    public init(logFileURL: URL) throws {
+    public init(
+        logFileURL: URL,
+        minimumLevel: LogLevel = .info
+    ) throws {
         self.fileHandle = try Self.makeFileHandle(for: logFileURL)
+        self.minimumLevel = minimumLevel
     }
     
-    public init(name: String) throws {
+    public init(
+        name: String,
+        minimumLevel: LogLevel = .info
+    ) throws {
         let url = Home.url()
         .appendingPathComponent("api-logs")
         .appendingPathComponent("\(name).log")
 
         self.fileHandle = try Self.makeFileHandle(for: url)
+        self.minimumLevel = minimumLevel
     }
 
-    public init(name: String?) throws {
+    public init(
+        name: String?,
+        minimumLevel: LogLevel = .info
+    ) throws {
         guard let name else {
             throw StandardLoggerError.appNameEmpty
         }
-        try self.init(name: name)
+        try self.init(name: name, minimumLevel: minimumLevel)
     }
 
     @available(*, message: "Deprecation: use other init(name:) init(symbol:) methods instead")
-    public init(for applicationName: String) throws {
-        try self.init(name: applicationName)
+    public init(for applicationName: String, minimumLevel: LogLevel = .info) throws {
+        try self.init(name: applicationName, minimumLevel: minimumLevel)
     }
 
-    public init(symbol: String = "APP_NAME") throws {
+    public init(
+        symbol: String = "APP_NAME",
+        minimumLevel: LogLevel = .info
+    ) throws {
         let name = try EnvironmentExtractor.value(.symbol(symbol))
-        try self.init(name: name)
+        try self.init(name: name, minimumLevel: minimumLevel)
     }
 
-    public init(symbol: String?) throws {
+    public init(
+        symbol: String?,
+        minimumLevel: LogLevel = .info
+    ) throws {
         guard let symbol else {
             throw StandardLoggerError.symbolResolvedToNull
         }
-        try self.init(symbol: symbol)
+        try self.init(symbol: symbol, minimumLevel: minimumLevel)
     }
 
     deinit {
@@ -117,5 +134,9 @@ public actor StandardLogger {
         } catch {
             throw StandardLoggerError.failedToCloseFile(error.localizedDescription)
         }
+    }
+
+    public func setLevel(to level: LogLevel) {
+        self.minimumLevel = level
     }
 }
