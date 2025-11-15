@@ -135,3 +135,15 @@ public enum EnvironmentExtractor {
         return nil
     }
 }
+
+extension EnvironmentExtractor {
+    @discardableResult
+    public static func value(
+        name: String,
+        suffix: SynthesizedSymbol,
+        replacer: EnvironmentReplacer = .init()
+    ) throws -> String {
+        let symbol = SynthesizedSymbol.synthesize(name: name, suffix: suffix)
+        return try value(symbol, replacer: replacer)
+    }
+}
