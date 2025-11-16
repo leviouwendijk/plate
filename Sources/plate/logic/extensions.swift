@@ -2,12 +2,6 @@ import Foundation
 import SwiftUI
 import AppKit
 
-extension Array where Element == Any {
-    public func all_nil() -> Bool {
-        return plate.all_nil(self)
-    }
-}
-
 extension String {
     public func wrapJsonForCLI() -> String {
         return "'[\(self)]'"
