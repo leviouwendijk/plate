@@ -19,3 +19,9 @@ extension Array where Element == Any {
         return plate.all_nil(self)
     }
 }
+
+extension Array where Element == Any? {
+    public var allNil: Bool {
+        return plate.all_nil(self)
+    }
+}
