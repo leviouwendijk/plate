@@ -15,7 +15,7 @@ public func all_nil(_ values: [Any?]) -> Bool {
 }
 
 extension Array where Element == Any {
-    public func allNil() -> Bool {
+    public var allNil: Bool {
         return plate.all_nil(self)
     }
 }
