@@ -3,35 +3,39 @@ import Foundation
 public actor StandardLogger {
     public var minimumLevel: LogLevel
     public var onError: ((Error) -> Void)?
+    private var fileHandle: FileHandle?
     
     public init(
         logFileURL: URL,
-        minimumLevel: LogLevel = .info
+        minimumLevel: LogLevel = .info,
+        writeMode: StandardLoggerWriteMode = .append
     ) throws {
-        self.fileHandle = try Self.makeFileHandle(for: logFileURL)
+        self.fileHandle = try Self.makeFileHandle(for: logFileURL, writeMode: writeMode)
         self.minimumLevel = minimumLevel
     }
     
     public init(
         name: String,
-        minimumLevel: LogLevel = .info
+        minimumLevel: LogLevel = .info,
+        writeMode: StandardLoggerWriteMode = .append
     ) throws {
         let url = Home.url()
         .appendingPathComponent("api-logs")
         .appendingPathComponent("\(name).log")
 
-        self.fileHandle = try Self.makeFileHandle(for: url)
+        self.fileHandle = try Self.makeFileHandle(for: url, writeMode: writeMode)
         self.minimumLevel = minimumLevel
     }
 
     public init(
         name: String?,
-        minimumLevel: LogLevel = .info
+        minimumLevel: LogLevel = .info,
+        writeMode: StandardLoggerWriteMode = .append
     ) throws {
         guard let name else {
             throw StandardLoggerError.appNameEmpty
         }
-        try self.init(name: name, minimumLevel: minimumLevel)
+        try self.init(name: name, minimumLevel: minimumLevel, writeMode: writeMode)
     }
 
     @available(*, message: "Deprecation: use other init(name:) init(symbol:) methods instead")
@@ -41,29 +45,31 @@ public actor StandardLogger {
 
     public init(
         symbol: String = "APP_NAME",
-        minimumLevel: LogLevel = .info
+        minimumLevel: LogLevel = .info,
+        writeMode: StandardLoggerWriteMode = .append
     ) throws {
         let name = try EnvironmentExtractor.value(.symbol(symbol))
-        try self.init(name: name, minimumLevel: minimumLevel)
+        try self.init(name: name, minimumLevel: minimumLevel, writeMode: writeMode)
     }
 
     public init(
         symbol: String?,
-        minimumLevel: LogLevel = .info
+        minimumLevel: LogLevel = .info,
+        writeMode: StandardLoggerWriteMode = .append
     ) throws {
         guard let symbol else {
             throw StandardLoggerError.symbolResolvedToNull
         }
-        try self.init(symbol: symbol, minimumLevel: minimumLevel)
+        try self.init(symbol: symbol, minimumLevel: minimumLevel, writeMode: writeMode)
     }
 
     deinit {
         try? fileHandle?.close()
     }
     
-    public func configure(logFileURL: URL) async throws {
+    public func configure(logFileURL: URL, writeMode: StandardLoggerWriteMode = .append) async throws {
         try fileHandle?.close()
-        fileHandle = try Self.makeFileHandle(for: logFileURL)
+        fileHandle = try Self.makeFileHandle(for: logFileURL, writeMode: writeMode)
     }
     
     public func log(_ message: String, level: LogLevel = .info) async {
@@ -110,18 +116,35 @@ public actor StandardLogger {
         init(_ make: () -> T) { self.value = make() }
     }
 
-    private var fileHandle: FileHandle?
-
-    private static func makeFileHandle(for url: URL) throws -> FileHandle? {
+    private static func makeFileHandle(
+        for url: URL,
+        writeMode: StandardLoggerWriteMode
+    ) throws -> FileHandle? {
         // guard let url = url else { return nil }
         let dir = url.deletingLastPathComponent()
-        try FileManager.default.createDirectory(
+        let fm = FileManager.default
+        try fm.createDirectory(
             at: dir, withIntermediateDirectories: true
         )
 
-        let created = FileManager.default.createFile(atPath: url.path, contents: nil)
-        guard created || FileManager.default.fileExists(atPath: url.path) else {
-            throw StandardLoggerError.failedToCreateLogFile(url.path)
+        // let created = FileManager.default.createFile(atPath: url.path, contents: nil)
+        // guard created || FileManager.default.fileExists(atPath: url.path) else {
+        //     throw StandardLoggerError.failedToCreateLogFile(url.path)
+        // }
+
+        switch writeMode {
+        case .append:
+            // Only create the file if missing; do not truncate or touch contents.
+            if !fm.fileExists(atPath: url.path) {
+                let created = fm.createFile(atPath: url.path, contents: nil)
+                guard created else {
+                    throw StandardLoggerError.failedToCreateLogFile(url.path)
+                }
+            }
+
+        case .reset(let options):
+            let safe = SafeFile(url)
+            _ = try safe.write(Data(), options: options)
         }
 
         // let fh = try FileHandle(forWritingTo: url)
