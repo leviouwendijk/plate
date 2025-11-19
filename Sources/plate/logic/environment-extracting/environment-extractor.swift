@@ -48,9 +48,8 @@ public enum EnvironmentExtractor {
         _ name: String,
         replacer: EnvironmentReplacer = .init(),
         default: String? = nil,
-    ) -> String? {
-        let debugDescription = `default` ?? "[DEBUG]: \(name) not found in environment"
-        return (try? value(name, replacer: replacer)) ?? debugDescription
+    ) -> String {
+        return (try? value(name, replacer: replacer)) ?? name.debugDescription(default: `default`)
     }
 
     // -------- Key-only overloads (throws if `.auto`) --------
@@ -91,6 +90,19 @@ public enum EnvironmentExtractor {
         switch key {
         case .symbol(let s): return optional(s, replacer: replacer)
         case .auto:          return nil
+        }
+    }
+
+    public static func valueOrDefault(
+        _ key: EnvironmentExtractableKey,
+        replacer: EnvironmentReplacer = .init(),
+        default: String? = nil,
+    ) -> String {
+        switch key {
+        case .symbol(let s): 
+            return (try? value(key, replacer: replacer)) ?? s.debugDescription(default: `default`)
+        case .auto:
+            return "[DEBUG]: EnvironmentExtractor method .auto not applicable"
         }
     }
 
@@ -142,6 +154,18 @@ public enum EnvironmentExtractor {
     private static func keyName(_ key: EnvironmentExtractableKey) -> String? {
         if case let .symbol(s) = key { return s }
         return nil
+    }
+}
+
+extension EnvironmentExtractor {
+    internal static func debugDescription(default: String? = nil, _ name: String) -> String {
+        return `default` ?? "[DEBUG]: \(name) not found in environment"
+    }
+}
+
+extension String {
+    internal func debugDescription(default: String? = nil) -> String {
+        return EnvironmentExtractor.debugDescription(default: `default`, self)
     }
 }
 
