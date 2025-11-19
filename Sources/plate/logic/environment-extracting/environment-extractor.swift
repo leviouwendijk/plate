@@ -44,6 +44,15 @@ public enum EnvironmentExtractor {
         (try? value(name, replacer: replacer))
     }
 
+    public static func valueOrDefault(
+        _ name: String,
+        replacer: EnvironmentReplacer = .init(),
+        default: String? = nil,
+    ) -> String? {
+        let debugDescription = `default` ?? "[DEBUG]: \(name) not found in environment"
+        return (try? value(name, replacer: replacer)) ?? debugDescription
+    }
+
     // -------- Key-only overloads (throws if `.auto`) --------
 
     @discardableResult
