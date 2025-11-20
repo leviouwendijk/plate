@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // .package(url: "https://github.com/apple/pkl-swift", from: "0.2.1")
-        .package(url: "https://github.com/swiftlang/swift-testing.git", from: "6.2.0")
+        // .package(url: "https://github.com/swiftlang/swift-testing.git", from: "6.2.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -38,7 +38,7 @@ let package = Package(
             name: "plateTests",
             dependencies: [
                 "plate",
-                .product(name: "Testing", package: "swift-testing"),
+                // .product(name: "Testing", package: "swift-testing"),
             ]
         ),
     ]
