@@ -5,47 +5,146 @@ public struct StandardIndentation: Sendable {
     public static let times: Int = 1
 }
 
-public struct IndentationOptions: Codable, Sendable {
-    public var spaces: Int
+public func indentation(size: Int = 4, times: Int = 1) -> String {
+    return String(repeating: " ", count: (size * times))
+}
+
+public struct IndentationSetting: Codable, Sendable {
+    public var size: Int
     public var times: Int
+    public var skip: Bool
     
     public init(
-        spaces: Int = 4,
-        times: Int = 1
+        size: Int = 4,
+        times: Int = 1,
+        skip: Bool = false
     ) {
-        self.spaces = spaces
+        self.size = size
         self.times = times
+        self.skip = skip
     }
 
     public var indent: String {
-        return String(repeating: " ", count: spaces)
+        return plate.indentation(size: size, times: 1)
     }
 
     public var indentation: String {
-        return String(repeating: indent, count: times)
+        return plate.indentation(size: size, times: times)
+    }
+}
+
+public struct IndentationOverride: Codable, Sendable {
+    public let index: [Int: IndentationSetting]
+}
+
+public struct IndentationOptions: Codable, Sendable {
+    public var size: Int
+    public var times: Int
+    public var overrides: [IndentationOverride]
+    
+    public init(
+        size: Int = 4,
+        times: Int = 1,
+        overrides: [IndentationOverride] = []
+    ) {
+        self.size = size
+        self.times = times
+        self.overrides = overrides
+    }
+
+    public var defaultSetting: IndentationSetting {
+        IndentationSetting(size: size, times: times, skip: false)
+    }
+
+    public func setting(for index: Int) -> IndentationSetting {
+        var setting = defaultSetting
+
+        for override in overrides {
+            if let s = override.index[index] {
+                setting = s
+            }
+        }
+
+        return setting
     }
 }
 
 public protocol StringIndentable {
-    func indent(_ indentation: Int, times: Int) -> String
+    func indent(_ size: Int, times: Int, overrides: [IndentationOverride]) -> String
     func indent(options: IndentationOptions) -> String
 }
 
-extension String: StringIndentable {
-    public func indent(_ indentation: Int = StandardIndentation.size, times: Int = StandardIndentation.times) -> String { 
-        let spaces = indentation * times
-        let indent = String(repeating: " ", count: spaces)
-
-        return self
+extension String {
+    fileprivate func indenting(with prefix: String) -> String {
+        self
             .split(separator: "\n", omittingEmptySubsequences: false)
-            .map { "\(indent)\($0)" }
+            .map { "\(prefix)\($0)" }
             .joined(separator: "\n")
     }
+}
 
-    public func indent(options: IndentationOptions = .init()) -> String { 
-        return self
+extension String: StringIndentable {
+    public func indent(_ size: Int = StandardIndentation.size, times: Int = StandardIndentation.times, overrides: [IndentationOverride] = []) -> String { 
+        if overrides.isEmpty {
+            let indentation = plate.indentation(size: size, times: times)
+            return indenting(with: indentation)
+        }
+
+        // Overrides path: split into lines and let the array logic handle it.
+        let options = IndentationOptions(
+            size: size,
+            times: times,
+            overrides: overrides
+        )
+
+        let lines = self
             .split(separator: "\n", omittingEmptySubsequences: false)
-            .map { "\(options.indentation)\($0)" }
+            .map(String.init)
+
+        return lines.indent(options: options)
+
+        // // let size = indentation * times
+        // // let indent = String(repeating: " ", count: size)
+        // return self
+        //     .split(separator: "\n", omittingEmptySubsequences: false)
+        //     // .map { "\(indent)\($0)" }
+        //     // .joined(separator: "\n")
+        //     .map { "\($0)" }
+        //     .indent(size, times: times, overrides: overrides)
+    }
+
+    public func indent(options: IndentationOptions = .init()) -> String {
+        self.indent(options.size, times: options.times, overrides: options.overrides)
+    }
+}
+
+extension Array: StringIndentable where Element == String {
+    public func indent(
+        _ size: Int = StandardIndentation.size,
+        times: Int = StandardIndentation.times,
+        overrides: [IndentationOverride] = []
+    ) -> String {
+        let options = IndentationOptions(
+            size: size,
+            times: times,
+            overrides: overrides
+        )
+        return indent(options: options)
+    }
+
+    public func indent(options: IndentationOptions = .init()) -> String {
+        self
+            .enumerated()
+            .map { index, element in
+                let setting = options.setting(for: index)
+
+                if setting.skip {
+                    return element
+                }
+
+                // Important: pass empty overrides here so we don't re-enter override logic per line.
+                return element.indent(setting.size, times: setting.times, overrides: [])
+            }
             .joined(separator: "\n")
     }
 }
