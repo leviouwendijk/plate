@@ -44,6 +44,14 @@ public enum EnvironmentExtractor {
         (try? value(name, replacer: replacer))
     }
 
+    public static func optional(
+        _ name: String?,
+        replacer: EnvironmentReplacer = .init()
+    ) -> String? {
+        guard let name else { return nil }
+        return optional(name, replacer: replacer)
+    }
+
     public static func valueOrDefault(
         _ name: String,
         replacer: EnvironmentReplacer = .init(),
