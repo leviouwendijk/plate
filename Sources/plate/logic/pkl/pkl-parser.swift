@@ -37,6 +37,39 @@ public class PklParser {
         while idx < input.endIndex && input[idx].isWhitespaceOrNewline {
             idx = input.index(after: idx)
         }
+
+        ignoreComments()
+
+        return idx < input.endIndex
+    }
+
+    @discardableResult
+    public func ignoreComments() -> Bool {
+        while idx < input.endIndex {
+            // Detect //
+            if input[idx] == "/" {
+                let next = input.index(after: idx)
+                if next < input.endIndex, input[next] == "/" {
+                    // Skip "//"
+                    idx = input.index(after: next)
+
+                    // Skip until newline / EOF
+                    while idx < input.endIndex, !input[idx].isNewline {
+                        idx = input.index(after: idx)
+                    }
+
+                    // After skipping, allow skipWhitespace to clear newline
+                    while idx < input.endIndex, input[idx].isWhitespaceOrNewline {
+                        idx = input.index(after: idx)
+                    }
+
+                    // Continue looping in case another comment follows
+                    continue
+                }
+            }
+            break
+        }
+
         return idx < input.endIndex
     }
 
