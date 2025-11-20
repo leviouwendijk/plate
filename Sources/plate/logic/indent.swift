@@ -5,8 +5,30 @@ public struct StandardIndentation: Sendable {
     public static let times: Int = 1
 }
 
+public struct IndentationOptions: Codable, Sendable {
+    public var spaces: Int
+    public var times: Int
+    
+    public init(
+        spaces: Int = 4,
+        times: Int = 1
+    ) {
+        self.spaces = spaces
+        self.times = times
+    }
+
+    public var indent: String {
+        return String(repeating: " ", count: spaces)
+    }
+
+    public var indentation: String {
+        return String(repeating: indent, count: times)
+    }
+}
+
 public protocol StringIndentable {
     func indent(_ indentation: Int, times: Int) -> String
+    func indent(options: IndentationOptions) -> String
 }
 
 extension String: StringIndentable {
@@ -17,6 +39,13 @@ extension String: StringIndentable {
         return self
             .split(separator: "\n", omittingEmptySubsequences: false)
             .map { "\(indent)\($0)" }
+            .joined(separator: "\n")
+    }
+
+    public func indent(options: IndentationOptions = .init()) -> String { 
+        return self
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { "\(options.indentation)\($0)" }
             .joined(separator: "\n")
     }
 }
