@@ -97,7 +97,7 @@ public actor StandardLogger {
     public nonisolated func warn(_  message: String) { Task { await log(message, level: .warn)  } }
     public nonisolated func error(_ message: String) { Task { await log(message, level: .error) } }
     public nonisolated func critical(_ message: String) { Task { await log(message, level: .critical) } }
-    public nonisolated func debug(_ message: String) { Task { await log(message, level: .critical) } }
+    public nonisolated func debug(_ message: String) { Task { await log(message, level: .debug) } }
 
     // private static let sharedFormatter: ISO8601DateFormatter = {
     //     let f = ISO8601DateFormatter()
@@ -155,7 +155,7 @@ public actor StandardLogger {
             fh.seekToEndOfFile()
             return fh
         } catch {
-            throw StandardLoggerError.failedToCloseFile(error.localizedDescription)
+            throw StandardLoggerError.failedToOpenLogFile(url.path)
         }
     }
 

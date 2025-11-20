@@ -4,6 +4,7 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
     case appNameEmpty
     case symbolResolvedToNull
     case failedToCreateLogFile(String)
+    case failedToOpenLogFile(String)
     case failedToWriteLog(String)
     case failedToCloseFile(String)
     case invalidLogLevel(String)
@@ -17,6 +18,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
             return "Cannot initialize from a nil value symbol"
         case .failedToCreateLogFile(let path):
             return "Failed to create log file at: \(path)"
+        case .failedToOpenLogFile(let path):
+            return "Failed to open log file at: \(path)"
         case .failedToWriteLog(let reason):
             return "Failed to write to log: \(reason)"
         case .failedToCloseFile(let reason):
@@ -27,7 +30,7 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
             return "Log file has not been configured"
         }
     }
-    
+
     public var failureReason: String? {
         switch self {
         case .appNameEmpty:
@@ -36,6 +39,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
             return "Symbol provided to init(symbol: String?) for environment extraction resolved to nil value"
         case .failedToCreateLogFile:
             return "The directory or file system may not be writable"
+        case .failedToOpenLogFile:
+            return "The directory or file system may not be readable or writable"
         case .failedToWriteLog:
             return "The log file may be closed or inaccessible"
         case .failedToCloseFile:
@@ -43,7 +48,7 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
         case .invalidLogLevel:
             return "Log level must be one of: debug, info, warn, error, critical"
         case .logFileNotConfigured:
-            return "Configure the log file before attempting to log"
+            return "Log file has not been configured"
         }
     }
     
@@ -55,6 +60,8 @@ public enum StandardLoggerError: Error, LocalizedError, Sendable {
             return "Ensure the provided symbol resolves for correct initialization"
         case .failedToCreateLogFile(let path):
             return "Ensure the directory exists and is writable: \(path)"
+        case .failedToOpenLogFile(let path):                // ← new branch
+            return "Ensure the log file exists and is writable: \(path)"
         case .failedToWriteLog:
             return "Reconfigure the log file and try again"
         case .failedToCloseFile:
