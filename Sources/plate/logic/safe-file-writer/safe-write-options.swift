@@ -52,4 +52,10 @@ public struct SafeWriteOptions: Sendable {
         self.backupSetPrefix = backupSetPrefix
         self.maxBackupSets = maxBackupSets
     }
+
+    public static let overwite: Self = .init(
+        overrideExisting: true,
+        whitespaceOnlyIsBlank: true,
+        maxBackupSets: 10
+    )
 }
