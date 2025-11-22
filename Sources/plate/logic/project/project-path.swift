@@ -3,6 +3,7 @@ import Foundation
 public protocol SegmentConcatenable: Sendable, Codable {
     var segments: [ProjectPathSegment] { get set }
     var concatenated: String { get }
+    func rendered(asRootPath: Bool) -> String
 }
 
 extension SegmentConcatenable {
@@ -17,6 +18,11 @@ extension SegmentConcatenable {
             res = res.appendingPathComponent(i.value)
         }
         return res
+    }
+
+    public func rendered(asRootPath: Bool) -> String {
+        let concat = self.concatenated
+        return asRootPath ? "/" + concat : concat
     }
 }
 
