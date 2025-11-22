@@ -57,4 +57,8 @@ public struct ProjectPath: SegmentConcatenable {
         let typed = strings.map { $0.pathSegment() }
         appendingSegments(typed)
     }
+
+    public mutating func appendingSegments(_ strings: String...) -> Void {
+        appendingSegments(strings)
+    }
 }
