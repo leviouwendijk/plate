@@ -40,4 +40,21 @@ public struct ProjectPath: SegmentConcatenable {
     ) {
         self.segments = segments.map( { .init(value: $0, type: nil) } )
     }
+
+    public init(
+        _ segments: String...
+    ) {
+        self.segments = segments.map( { .init(value: $0, type: nil) } )
+    }
+
+    public mutating func appendingSegments(_ segments: [ProjectPathSegment]) -> Void {
+        for s in segments {
+            self.segments.append(s)
+        }
+    }
+
+    public mutating func appendingSegments(_ strings: [String]) -> Void {
+        let typed = strings.map { $0.pathSegment() }
+        appendingSegments(typed)
+    }
 }

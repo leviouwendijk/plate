@@ -25,3 +25,9 @@ public struct ProjectPathSegment: ProjectSegmentable {
         self.type = type
     }
 }
+
+extension String {
+    public func pathSegment(type: ProjectPathSegmentType? = nil) -> ProjectPathSegment {
+        return .init(value: self, type: type)        
+    }
+}
