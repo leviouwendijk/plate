@@ -188,3 +188,28 @@ extension EnvironmentExtractor {
         return try value(symbol, replacer: replacer)
     }
 }
+
+extension EnvironmentExtractor {
+    public static func data(
+        _ key: EnvironmentExtractableKey,
+        replacer: EnvironmentReplacer = .init()
+    ) throws -> Data {
+        let path_value = try value(key, replacer: replacer)
+        let url = path_value.path_url()
+        return try Data(contentsOf: url)
+    }
+
+    public static func base64_data(
+        _ key: EnvironmentExtractableKey,
+        replacer: EnvironmentReplacer = .init()
+    ) throws -> Data {
+        return try data(key, replacer: replacer).base64EncodedData()
+    }
+
+    public static func base64_string(
+        _ key: EnvironmentExtractableKey,
+        replacer: EnvironmentReplacer = .init()
+    ) throws -> String {
+        return try data(key, replacer: replacer).base64EncodedString()
+    }
+}
