@@ -213,3 +213,26 @@ extension EnvironmentExtractor {
         return try data(key, replacer: replacer).base64EncodedString()
     }
 }
+
+extension EnvironmentExtractor {
+    private static func mimeType(from url: URL) -> String {
+        switch url.pathExtension.lowercased() {
+        case "png":  return "image/png"
+        case "jpg", "jpeg": return "image/jpeg"
+        case "svg":  return "image/svg+xml"
+        case "webp": return "image/webp"
+        default:     return "application/octet-stream"
+        }
+    }
+
+    public static func base64_html_src(
+        _ key: EnvironmentExtractableKey,
+        replacer: EnvironmentReplacer = .init()
+    ) throws -> String {
+        let url = try value(key, replacer: replacer).path_url()
+        let mime = mimeType(from: url)
+        let base64 = try base64_string(key, replacer: replacer)
+
+        return "data:\(mime);base64,\(base64)"
+    }
+}
