@@ -36,3 +36,23 @@ extension Array where Element == Any? {
         return !self.allNil
     }
 }
+
+extension Array where Element == String {
+    public var allNil: Bool {
+        return plate.all_nil(self)
+    }
+
+    public var notAllNil: Bool {
+        return !self.allNil
+    }
+}
+
+extension Array where Element == String? {
+    public var allNil: Bool {
+        return plate.all_nil(self)
+    }
+
+    public var notAllNil: Bool {
+        return !self.allNil
+    }
+}
