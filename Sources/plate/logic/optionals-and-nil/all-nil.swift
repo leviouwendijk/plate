@@ -1,5 +1,8 @@
 extension Optional {
     public var isNil: Bool { self == nil }
+    public var isNotNil: Bool { self != nil }
+
+    public var notNil: Bool { self.isNotNil }
 }
 
 // public func all_nil<T>(_ values: [T?]) -> Bool {
@@ -18,10 +21,18 @@ extension Array where Element == Any {
     public var allNil: Bool {
         return plate.all_nil(self)
     }
+
+    public var notAllNil: Bool {
+        return !self.allNil
+    }
 }
 
 extension Array where Element == Any? {
     public var allNil: Bool {
         return plate.all_nil(self)
+    }
+
+    public var notAllNil: Bool {
+        return !self.allNil
     }
 }
