@@ -22,6 +22,7 @@ public enum CustomTimeZone: String, Sendable {
     case moscow = "Europe/Moscow"             // UTC+3
     
     // Middle East & South Asia
+    case israel   = "Asia/Jerusalem" 
     case dubai = "Asia/Dubai"                 // UTC+4
     case kolkata = "Asia/Kolkata"             // UTC+5:30
     case dhaka = "Asia/Dhaka"                 // UTC+6
