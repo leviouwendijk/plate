@@ -74,4 +74,14 @@ public struct ProjectPath: SegmentConcatenable {
     public mutating func appendingSegments(_ strings: String...) -> Void {
         appendingSegments(strings)
     }
+
+    public func merged(appending secondObject: ProjectPath) -> ProjectPath {
+        var new = self
+        new.appendingSegments(secondObject.segments)
+        return new
+    }
+
+    // private func flattened() -> [ProjectPathSegment] {
+    //     return self.segments.compactMap { $0 }
+    // }
 }
