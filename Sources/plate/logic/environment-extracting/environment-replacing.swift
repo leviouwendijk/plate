@@ -20,8 +20,8 @@ public enum EnvironmentReplacementValue: Sendable, Equatable {
 public enum EnvironmentReplacement: Sendable, Equatable {
     case variable(key: String, replacement: EnvironmentReplacementValue)
 
-    static let home = Self.variable(key: "$HOME", replacement: .home)
-    static let cwd = Self.variable(key: "$CWD", replacement: .cwd)
+    public static let home = Self.variable(key: "$HOME", replacement: .home)
+    public static let cwd = Self.variable(key: "$CWD", replacement: .cwd)
 }
 
 /// How to combine explicit replacements with other sources.
