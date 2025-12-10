@@ -6,6 +6,12 @@ public protocol SegmentConcatenable: Sendable, Codable {
     func rendered(asRootPath: Bool) -> String
 }
 
+extension String {
+    public var removed_double_slashes: String {
+        return self.replacingOccurrences(of: "//", with: "/")
+    }
+}
+
 extension SegmentConcatenable {
     public var concatenated: String {
         segments.map { $0.value }
@@ -22,7 +28,8 @@ extension SegmentConcatenable {
 
     public func rendered(asRootPath: Bool) -> String {
         let concat = self.concatenated
-        return asRootPath ? "/" + concat : concat
+        let prefixed = asRootPath ? "/" + concat : concat
+        return prefixed.removed_double_slashes
     }
 }
 
