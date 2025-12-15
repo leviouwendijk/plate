@@ -5,6 +5,7 @@ import SwiftUI
 import AppKit
 #endif
 
+#if os(macOS)
 extension String {
     public func wrapJsonForCLI() -> String {
         return "'[\(self)]'"
@@ -214,7 +215,6 @@ public extension Font {
     static let tableLine = Font.system(size: 14, weight: .regular, design: .default)
 }
 
-#if os(macOS)
 extension NSAttributedString {
     public func justified() -> Self {
         let para = NSMutableParagraphStyle()
