@@ -1,5 +1,6 @@
 import Foundation
 
+#if os(macOS)
 public enum PlaceholderInitializationType: String, RawRepresentable, CaseIterable, Sendable {
     case manual
     case auto
@@ -96,3 +97,4 @@ public struct StringTemplateConverter: Sendable {
         return t
     }
 }
+#endif
