@@ -1,5 +1,6 @@
 import Foundation
 
+#if os(macOS)
 public enum EnvironmentExtractor {
     @discardableResult
     public static func value(
@@ -236,3 +237,4 @@ extension EnvironmentExtractor {
         return "data:\(mime);base64,\(base64)"
     }
 }
+#endif
