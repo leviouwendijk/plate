@@ -6,6 +6,7 @@ import PackageDescription
 let package = Package(
     name: "plate",
     platforms: [
+        .iOS(.v13),
         .macOS(.v13)
     ],
     products: [
