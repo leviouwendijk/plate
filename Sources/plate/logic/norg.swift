@@ -1,8 +1,9 @@
 // adapted from scripts/swift-text-formatter
 import Foundation
-import AppKit
 
-// var verbose = false
+#if os(macOS)
+import AppKit
+#endif
 
 func logVerbose(_ message: String, verbose: Bool = false) {
     if verbose {
@@ -10,6 +11,7 @@ func logVerbose(_ message: String, verbose: Bool = false) {
     }
 }
 
+#if os(macOS)
 public enum NorgTokenType: CustomStringConvertible {
     case bold(String)
     case italic(String)
@@ -448,3 +450,4 @@ extension String {
 //     print("Formatted text copied to clipboard.")
 //     print("")
 // }
+#endif
