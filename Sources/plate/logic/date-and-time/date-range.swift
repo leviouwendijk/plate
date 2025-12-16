@@ -30,4 +30,8 @@ public struct DateRange: Sendable {
 
         self.init(using: (from: s, to: e))
     }
+
+    public func string(in format: String = "dd/MM/yyyy") -> String {
+        return "\(start.conforming(to: format)) - \(end.conforming(to: format))"
+    }
 }
