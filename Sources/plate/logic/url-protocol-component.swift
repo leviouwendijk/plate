@@ -1,7 +1,7 @@
 import Foundation
 
 extension String {
-    public func replaceUnderscores(with string: String = ".") -> String {
+    public func replacingUnderscores(with string: String = ".") -> String {
         return self.replacingOccurrences(
             of: "_",
             with: string
@@ -42,6 +42,6 @@ public enum TopLevelDomainComponent: String, ProtocolComponent {
     case co_il
 
     public var component: String {
-        return "." + self.rawValue.replaceUnderscores()
+        return "." + self.rawValue.replacingUnderscores()
     }
 }
