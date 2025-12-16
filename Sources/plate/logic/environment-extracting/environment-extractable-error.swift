@@ -1,6 +1,5 @@
 import Foundation
 
-#if os(macOS)
 public enum EnvironmentExtractableError: Error, LocalizedError, Sendable, Equatable {
     case missing(String)
     case empty(String)
@@ -24,4 +23,3 @@ public enum EnvironmentExtractableError: Error, LocalizedError, Sendable, Equata
         }
     }
 }
-#endif

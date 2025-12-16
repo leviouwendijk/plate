@@ -1,5 +1,6 @@
 import Foundation
 
+@available(*, message: "Being deprecated in favor of Primitives.TimeZoneIdentifier")
 public enum CustomTimeZone: String, Sendable {
     case utc = "UTC"
     

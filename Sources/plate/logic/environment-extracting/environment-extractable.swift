@@ -1,6 +1,5 @@
 import Foundation
 
-#if os(macOS)
 public protocol EnvironmentExtractable: 
     EnvironmentResolvable,
     RawRepresentable,
@@ -12,4 +11,3 @@ public protocol EnvironmentExtractable:
         func infer() -> String
         // func get(_ key: String) throws -> String
 }
-#endif

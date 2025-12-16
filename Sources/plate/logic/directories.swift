@@ -1,6 +1,5 @@
 import Foundation
 
-#if os(macOS)
 public enum PlateDirectoriesError: Error, LocalizedError {
     case cannotCreateURLFromString
 }
@@ -76,4 +75,3 @@ public struct DefaultEnvironmentVariables {
         return "\(home)/dotfiles/.vars.zsh"
     }
 }
-#endif

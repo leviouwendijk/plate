@@ -1,6 +1,5 @@
 import Foundation
 
-#if os(macOS)
 /// Key configurations
 extension EnvironmentExtractable {
     /// Default to `.auto` so conformers don't have to implement `var key`.
@@ -67,4 +66,3 @@ extension Collection where Element: EnvironmentExtractable {
         return out
     }
 }
-#endif

@@ -8,7 +8,6 @@ import Foundation
 //     }
 // }
 
-#if os(macOS)
 extension EnvironmentResolvable {
     public func get(
         _ name: String,
@@ -76,4 +75,3 @@ extension EnvironmentResolvable {
         return nil
     }
 }
-#endif

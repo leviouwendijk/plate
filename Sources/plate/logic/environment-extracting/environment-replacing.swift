@@ -1,6 +1,5 @@
 import Foundation
 
-#if os(macOS)
 public protocol EnvironmentReplacing: Sendable {
     var replacements: [EnvironmentReplacement] { get }
     var policy: EnvironmentExpansionPolicy { get }
@@ -86,4 +85,3 @@ public struct EnvironmentReplacer: EnvironmentReplacing, Equatable {
         }
     }
 }
-#endif
