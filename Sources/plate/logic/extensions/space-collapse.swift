@@ -29,14 +29,15 @@ import Foundation
 // }
 
 extension String {
-    public func removepattern(_ pattern: String) -> String {
-        return self
-        .replacingOccurrences(
-            of: pattern,
-            with: "",
-            options: .regularExpression
-        )
-    }
+    // moved to methods
+    // public func removepattern(_ pattern: String) -> String {
+    //     return self
+    //     .replacingOccurrences(
+    //         of: pattern,
+    //         with: "",
+    //         options: .regularExpression
+    //     )
+    // }
 
     public func spacecollapse(_ count: Int = 2) -> String {
         return self.replacingOccurrences(
@@ -46,12 +47,14 @@ extension String {
         )
     }
 
-    public var emdashed: String {
-        return self.replacingOccurrences(of: "--", with: "—")
-    }
+    // moved to methods
+    // public var emdashed: String {
+    //     return self.replacingOccurrences(of: "--", with: "—")
+    // }
 
-    public var newlinesplit: [String] {
-        return self
-        .components(separatedBy: .newlines)
-    }
+    // moved to methods
+    // public var newlinesplit: [String] {
+    //     return self
+    //     .components(separatedBy: .newlines)
+    // }
 }
