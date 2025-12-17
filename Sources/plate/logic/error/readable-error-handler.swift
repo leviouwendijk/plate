@@ -1,4 +1,5 @@
 import Foundation
+import Terminal
 
 public struct ReadableErrorHandler: Sendable {
     public var context: Int

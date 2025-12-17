@@ -16,6 +16,7 @@ let package = Package(
             targets: ["plate"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/leviouwendijk/Terminal.git", branch: "master"),
         // .package(url: "https://github.com/apple/pkl-swift", from: "0.2.1")
         // .package(url: "https://github.com/swiftlang/swift-testing.git", from: "6.2.0")
     ],
@@ -27,9 +28,10 @@ let package = Package(
             // swiftSettings: [
             //     .unsafeFlags(["-enable-library-evolution"])
             // ],
-            // dependencies: [
-            //     .product(name: "PklSwift", package: "pkl-swift")
-            // ],
+            dependencies: [
+                .product(name: "Terminal", package: "Terminal"),
+                // .product(name: "PklSwift", package: "pkl-swift")
+            ],
             resources: [
                 .process("Resources")
             ]
