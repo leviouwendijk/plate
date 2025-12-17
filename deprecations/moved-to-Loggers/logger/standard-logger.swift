@@ -1,6 +1,5 @@
 import Foundation
 
-#if os(macOS)
 public actor StandardLogger {
     public var minimumLevel: LogLevel
     public var onError: ((Error) -> Void)?
@@ -164,4 +163,3 @@ public actor StandardLogger {
         self.minimumLevel = level
     }
 }
-#endif
