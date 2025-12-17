@@ -1,4 +1,4 @@
-import Foundation
+import Version
 
 public struct ProjectVersions: Codable, Sendable {
     // public var built: ObjectVersion

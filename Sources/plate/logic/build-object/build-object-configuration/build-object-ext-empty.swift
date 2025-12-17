@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 extension BuildObjectConfiguration {
     public static func new(to url: URL) throws {

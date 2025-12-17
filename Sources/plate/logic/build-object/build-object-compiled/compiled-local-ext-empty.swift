@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 extension CompiledLocalBuildObject {
     public static func new(to url: URL) throws {

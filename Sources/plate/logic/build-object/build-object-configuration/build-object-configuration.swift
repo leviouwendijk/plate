@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 // for local repository build info: build-object.pkl 
 public struct BuildObjectConfiguration: Codable, Sendable {

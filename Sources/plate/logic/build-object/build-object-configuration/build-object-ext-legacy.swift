@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 extension BuildObjectConfiguration {
     public struct LegacyObject: Codable, Sendable {

@@ -1,5 +1,5 @@
 {
-  "originHash" : "7cdba3885a8f081451369c114f3b6232fa8e200acea45a4353b45d6f8548e677",
+  "originHash" : "070d8cc10c61ea9ea8de4eaffd620e6b8c2016632b122c914358dc5c40401b9d",
   "pins" : [
     {
       "identity" : "terminal",
@@ -8,6 +8,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "f71bcf025c0f480c775d9a4fdb6d3ea3db4b33cf"
+      }
+    },
+    {
+      "identity" : "version",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/Version.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "a7eeda6e3b84eca36f61366e5d420787c9aba69f"
       }
     }
   ],

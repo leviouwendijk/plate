@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 // track which version was built locally (.gitignore)
 public struct CompiledLocalBuildObject: Codable, Sendable {

@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 @available(*, deprecated, message: "Superseded by BuildObjectConfiguration")
 public struct BuildSpecification {

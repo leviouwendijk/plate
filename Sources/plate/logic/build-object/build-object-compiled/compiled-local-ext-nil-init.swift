@@ -1,4 +1,5 @@
 import Foundation
+import Version
 
 extension CompiledLocalBuildObject {
     public static func nil_init() -> CompiledLocalBuildObject {
