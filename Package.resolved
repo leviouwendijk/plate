@@ -1,6 +1,15 @@
 {
-  "originHash" : "070d8cc10c61ea9ea8de4eaffd620e6b8c2016632b122c914358dc5c40401b9d",
+  "originHash" : "112dfb961be11d29c2a9b3434c37d22132fe8c3369fed7623ee13bb15d998312",
   "pins" : [
+    {
+      "identity" : "path",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/Path.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "20494a54793be0f24f948af89490319f71d24297"
+      }
+    },
     {
       "identity" : "terminal",
       "kind" : "remoteSourceControl",

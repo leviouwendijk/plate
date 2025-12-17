@@ -1,4 +1,5 @@
 import Foundation
+import Path
 
 public struct ProjectStructure: Sendable {
     public let root: URL
