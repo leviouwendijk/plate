@@ -1,5 +1,6 @@
 import Foundation
 
+// now StandardRegistry inside Registry module
 public actor FieldTypeRegistry<Value: Sendable> {
     public typealias Table = String
     public typealias Key   = String
