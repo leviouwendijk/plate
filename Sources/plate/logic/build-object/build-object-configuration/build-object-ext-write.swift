@@ -1,4 +1,5 @@
 import Foundation
+import Indentation
 
 extension BuildObjectConfiguration {
     public func string() -> String {

@@ -1,4 +1,5 @@
 import Foundation
+import Indentation
 
 public struct EnumParsingError: LocalizedError {
     public let enumName: String

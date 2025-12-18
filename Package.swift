@@ -19,6 +19,7 @@ let package = Package(
         .package(url: "https://github.com/leviouwendijk/Terminal.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Version.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Path.git", branch: "master"),
+        .package(url: "https://github.com/leviouwendijk/Indentation.git", branch: "master"),
         // .package(url: "https://github.com/apple/pkl-swift", from: "0.2.1")
         // .package(url: "https://github.com/swiftlang/swift-testing.git", from: "6.2.0")
     ],
@@ -34,6 +35,7 @@ let package = Package(
                 .product(name: "Terminal", package: "Terminal"),
                 .product(name: "Version", package: "Version"),
                 .product(name: "Path", package: "Path"),
+                .product(name: "Indentation", package: "Indentation"),
                 // .product(name: "PklSwift", package: "pkl-swift")
             ],
             resources: [
