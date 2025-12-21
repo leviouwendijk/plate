@@ -11,9 +11,9 @@ extension String {
         return "'[\(self)]'"
     }
 
-    public func clipboard() -> Void {
-        copyToClipboard(self)
-    }
+    // public func clipboard() -> Void {
+    //     copyToClipboard(self)
+    // }
 
     public func replaceNotEmptyVariable(
         replacing placeholder: String,
