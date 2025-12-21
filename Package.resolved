@@ -1,5 +1,5 @@
 {
-  "originHash" : "e40d5e8e75c174966290b5c7ae4b88b57b2519b1081bea522174b97744e221f7",
+  "originHash" : "20cf9b1b9afe51d630fe6f1effe2f8f1d1e073536971ae24e95e77b704828d19",
   "pins" : [
     {
       "identity" : "indentation",
@@ -20,12 +20,21 @@
       }
     },
     {
+      "identity" : "strings",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/Strings.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "86a939d7bbb3e25808f88fbcedcee4069a5a5ae1"
+      }
+    },
+    {
       "identity" : "terminal",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/leviouwendijk/Terminal.git",
       "state" : {
         "branch" : "master",
-        "revision" : "f71bcf025c0f480c775d9a4fdb6d3ea3db4b33cf"
+        "revision" : "972943a2d925f8ba4bebf99c1af590de8fe896e0"
       }
     },
     {
