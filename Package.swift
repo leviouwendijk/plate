@@ -16,6 +16,8 @@ let package = Package(
             targets: ["plate"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/leviouwendijk/Primitives.git", branch: "master"),
+
         .package(url: "https://github.com/leviouwendijk/Terminal.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Version.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Path.git", branch: "master"),
@@ -33,6 +35,8 @@ let package = Package(
             //     .unsafeFlags(["-enable-library-evolution"])
             // ],
             dependencies: [
+                .product(name: "Primitives", package: "Primitives"),
+
                 .product(name: "Terminal", package: "Terminal"),
                 .product(name: "Version", package: "Version"),
                 .product(name: "Path", package: "Path"),

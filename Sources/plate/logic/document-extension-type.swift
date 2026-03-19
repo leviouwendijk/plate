@@ -4,6 +4,7 @@ public enum DocumentExtensionError: Error, Sendable {
     case unsupportedExtension(filename: String)
 }
 
+@available(*, message: "Deprecated: use Path.<any FileType>")
 public enum DocumentExtensionType: String, RawRepresentable, CaseIterable, Sendable, Codable {
     case txt
     case md

@@ -1,4 +1,5 @@
 import Foundation
+import Primitives
 
 public enum TimeDistanceError: Error, LocalizedError {
     case invalidUnit
