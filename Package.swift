@@ -1,5 +1,4 @@
-// swift-tools-version: 6.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -9,19 +8,20 @@ let package = Package(
         .macOS(.v13)
     ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "plate",
-            type: .static,
-            targets: ["plate"]),
+            // type: .static,
+            targets: ["plate"]
+        ),
+
+        // testing target
         .executable(
-            name: "platetest",
-            targets: ["plateTestFlows"]
+            name: "t_plate",
+            targets: ["PlateTests"]
         ),
     ],
     dependencies: [
         .package(url: "https://github.com/leviouwendijk/Primitives.git", branch: "master"),
-
         .package(url: "https://github.com/leviouwendijk/Terminal.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Version.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Path.git", branch: "master"),
@@ -32,8 +32,6 @@ let package = Package(
         // .package(url: "https://github.com/swiftlang/swift-testing.git", from: "6.2.0")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "plate",
             // swiftSettings: [
@@ -41,7 +39,6 @@ let package = Package(
             // ],
             dependencies: [
                 .product(name: "Primitives", package: "Primitives"),
-
                 .product(name: "Terminal", package: "Terminal"),
                 .product(name: "Version", package: "Version"),
                 .product(name: "Path", package: "Path"),
@@ -55,16 +52,9 @@ let package = Package(
             ]
         ),
         .executableTarget(
-            name: "plateTestFlows",
+            name: "PlateTests",
             dependencies: ["plate"],
-            path: "Sources/plateTestFlows"
-        ),
-        .testTarget(
-            name: "plateTests",
-            dependencies: [
-                "plate",
-                // .product(name: "Testing", package: "swift-testing"),
-            ]
+            path: "Testing/PlateTests"
         ),
     ]
 )
