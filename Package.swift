@@ -14,6 +14,10 @@ let package = Package(
             name: "plate",
             type: .static,
             targets: ["plate"]),
+        .executable(
+            name: "platetest",
+            targets: ["plateTestFlows"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/leviouwendijk/Primitives.git", branch: "master"),
@@ -23,6 +27,7 @@ let package = Package(
         .package(url: "https://github.com/leviouwendijk/Path.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Indentation.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Strings.git", branch: "master"),
+        .package(url: "https://github.com/leviouwendijk/Parsers.git", branch: "master"),
         // .package(url: "https://github.com/apple/pkl-swift", from: "0.2.1")
         // .package(url: "https://github.com/swiftlang/swift-testing.git", from: "6.2.0")
     ],
@@ -42,11 +47,17 @@ let package = Package(
                 .product(name: "Path", package: "Path"),
                 .product(name: "Indentation", package: "Indentation"),
                 .product(name: "Strings", package: "Strings"),
+                .product(name: "Parsers", package: "Parsers"),
                 // .product(name: "PklSwift", package: "pkl-swift")
             ],
             resources: [
                 .process("Resources")
             ]
+        ),
+        .executableTarget(
+            name: "plateTestFlows",
+            dependencies: ["plate"],
+            path: "Sources/plateTestFlows"
         ),
         .testTarget(
             name: "plateTests",
