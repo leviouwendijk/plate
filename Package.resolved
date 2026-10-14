@@ -1,5 +1,5 @@
 {
-  "originHash" : "8b67e64be8974559b21101446303a71c3561e496f1cd0b3e94554223705dc297",
+  "originHash" : "17483b5c7f11d5848901bf6f9f553b46e37faff21cc074c0173234ab40cb9539",
   "pins" : [
     {
       "identity" : "ansi",
@@ -106,7 +106,7 @@
       "location" : "https://github.com/leviouwendijk/Parsers.git",
       "state" : {
         "branch" : "master",
-        "revision" : "b86b8a74359dee4fb3cbab4d2ca6f560a6729423"
+        "revision" : "08d6c4c17b9201e980a904eb27a8382a28f914c8"
       }
     },
     {
@@ -196,7 +196,7 @@
       "location" : "https://github.com/leviouwendijk/Version.git",
       "state" : {
         "branch" : "master",
-        "revision" : "44bf2fd32106873356b33b3d810724c4bde49caa"
+        "revision" : "2cb20d01a832c971e3c78c21f5e49698bd1f3b6e"
       }
     }
   ],

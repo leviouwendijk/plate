@@ -28,6 +28,7 @@ let package = Package(
         .package(url: "https://github.com/leviouwendijk/Indentation.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Strings.git", branch: "master"),
         .package(url: "https://github.com/leviouwendijk/Parsers.git", branch: "master"),
+        .package(url: "https://github.com/leviouwendijk/Testing.git", branch: "master"),
         // .package(url: "https://github.com/apple/pkl-swift", from: "0.2.1")
         // .package(url: "https://github.com/swiftlang/swift-testing.git", from: "6.2.0")
     ],
@@ -53,7 +54,12 @@ let package = Package(
         ),
         .executableTarget(
             name: "PlateTests",
-            dependencies: ["plate"],
+            dependencies: [
+                "plate",
+                .product(name: "Testing", package: "Testing"),
+                .product(name: "Version", package: "Version"),
+                .product(name: "Primitives", package: "Primitives"),
+            ],
             path: "Testing/PlateTests"
         ),
     ]
