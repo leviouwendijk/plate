@@ -1,5 +1,5 @@
 .DS_Store
-/.build
+.build/
 /Packages
 xcuserdata/
 DerivedData/
@@ -17,3 +17,5 @@ libSystemPackage.dylib
 libplate.dylib
 
 remove-lib-build.sh
+**/.testflows/*
+!**/.testflows/snapshots/
